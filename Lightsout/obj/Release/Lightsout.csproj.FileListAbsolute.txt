@@ -1,0 +1,5 @@
+/home/Joker/SCP Plugins/bin/Lightsout/Lightsout.dll
+/home/Joker/SCP Plugins/Lightsout/Lightsout/obj/Release/Lightsout.csprojAssemblyReference.cache
+/home/Joker/SCP Plugins/Lightsout/Lightsout/obj/Release/Lightsout.csproj.CoreCompileInputs.cache
+/home/Joker/SCP Plugins/Lightsout/Lightsout/obj/Release/Lightsout.csproj.CopyComplete
+/home/Joker/SCP Plugins/Lightsout/Lightsout/obj/Release/Lightsout.dll
