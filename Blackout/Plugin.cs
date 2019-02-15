@@ -25,7 +25,6 @@ namespace Blackout
         public static int delayTime;
         public static int waitTime;
         public static int durTime;
-        public static bool giveFlashlights;
         public static bool Timed;
         public static bool announce;
         public static bool toggle;
@@ -37,7 +36,6 @@ namespace Blackout
             instance = this;
 
             AddConfig(new ConfigSetting("blackout_ranks", new string[] { "owner", "admin", "friend", "srmod" }, SettingType.LIST, true, "Valid ranks for the BLACKOUT command."));
-            AddConfig(new ConfigSetting("blackout_flashlights", false, SettingType.BOOL, true, "If everyone should get a flashlight on spawn."));
             AddConfig(new ConfigSetting("blackout_timer", true, SettingType.BOOL, true, "Wether or not to use the automated timer or not."));
             AddConfig(new ConfigSetting("blackout_delay", 300000, SettingType.NUMERIC, true, "The amount of time before the first Blackout occurs" ));
             AddConfig(new ConfigSetting("blackout_duration", 90000, SettingType.NUMERIC, true, "The amount of time the blackout will last."));
@@ -63,16 +61,6 @@ namespace Blackout
 
             if (toggle)
             {
-                if(Plugin.giveFlashlights)
-                {
-                    foreach (Player p in PluginManager.Manager.Server.GetPlayers())
-                    {
-                        if (!p.HasItem(ItemType.FLASHLIGHT))
-                        {
-                            p.GiveItem(ItemType.FLASHLIGHT);
-                        }
-                    }
-                }
                 if (toggle_lcz)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
@@ -92,24 +80,24 @@ namespace Blackout
 
          private static void TenSecondBlackout(float inaccuracy = 0)
         {
-            if (toggle_lcz)
-            {
-                foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
-                {
-                    if (room.ZoneType != ZoneType.ENTRANCE && room.ZoneType != ZoneType.HCZ)
-                    {
-                        room.FlickerLights();
-                    }
-                }
-            }
             Generator079.generators[0].CallRpcOvercharge();
 
             if (toggle)
             {
-                Timing.Timer(TenSecondBlackout, 8 + inaccuracy);
+                Timing.Timer(TenSecondBlackout, 11 + inaccuracy);
             }
         }           
 
+        // private static void LightTenBlackout(float inaccuracy = 0)
+        // {
+        //     foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
+        //     {
+        //         if (room.ZoneType == ZoneType.LCZ)
+        //         {
+        //             room.FlickerLights();
+        //         }
+        //     }
+        // }
         
         public static void DisableBlackouts() {
             enabled = false;

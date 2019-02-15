@@ -1,21 +1,3 @@
-/home/Joker/Blackout/Blackout/obj/Release/Blackout.csprojAssemblyReference.cache
-/home/Joker/Blackout/Blackout/obj/Release/Blackout.csproj.CoreCompileInputs.cache
-/home/Joker/Blackout/Blackout/obj/Release/Blackout.csproj.CopyComplete
-/home/Joker/Blackout/Blackout/obj/Release/Blackout.dll
-/home/Joker/Blackout/Blackout/Blackout.dll
-/home/Joker/Blackout/Blackout/Assembly-CSharp.dll
-/home/Joker/Blackout/Blackout/Smod2.dll
-/home/Joker/Blackout/Blackout/UnityEngine.CoreModule.dll
-/home/Joker/Blackout/Blackout/UnityEngine.dll
-/home/Joker/Blackout/Blackout/UnityEngine.Networking.dll
-/home/Joker/Blackout/Blackout/UnityEngine.PhysicsModule.dll
-/home/Joker/Blackout/Blackout/bin/Blackout.dll
-/home/Joker/Blackout/Blackout/bin/Assembly-CSharp.dll
-/home/Joker/Blackout/Blackout/bin/Smod2.dll
-/home/Joker/Blackout/Blackout/bin/UnityEngine.CoreModule.dll
-/home/Joker/Blackout/Blackout/bin/UnityEngine.dll
-/home/Joker/Blackout/Blackout/bin/UnityEngine.Networking.dll
-/home/Joker/Blackout/Blackout/bin/UnityEngine.PhysicsModule.dll
 /home/Joker/SCP Plugins/Blackout/Blackout/bin/Blackout.dll
 /home/Joker/SCP Plugins/Blackout/Blackout/bin/Assembly-CSharp.dll
 /home/Joker/SCP Plugins/Blackout/Blackout/bin/Smod2.dll

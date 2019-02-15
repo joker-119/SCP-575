@@ -9,12 +9,13 @@ using Smod2.Commands;
 
 namespace Blackout
 {
-    public class EventHandlers : IEventHandlerRoundStart, IEventHandlerRoundEnd, IEventHandlerRoundRestart, IEventHandlerPlayerTriggerTesla
+    public class EventHandlers : IEventHandlerRoundStart, IEventHandlerRoundEnd, IEventHandlerRoundRestart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers
     {
 		public static Timer timer;
         public bool timed = false;
         public bool tesla = true;
-        public void OnRoundStart(RoundStartEvent ev)
+
+        public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
             Plugin.validRanks = Plugin.instance.GetConfigList("blackout_ranks");
             Plugin.delayTime = Plugin.instance.GetConfigInt("blackout_delay");
@@ -24,17 +25,16 @@ namespace Blackout
             Plugin.announce = Plugin.instance.GetConfigBool("blackout_light_announcments");
             Plugin.toggle_lcz = Plugin.instance.GetConfigBool("blackout_toggle_lcz");
             Plugin.timed_lcz = Plugin.instance.GetConfigBool("blackout_timed_lcz");
-
-            Plugin.giveFlashlights = Plugin.instance.GetConfigBool("blackout_flashlights");
-            timer = new System.Timers.Timer();
+        }
+        public void OnRoundStart(RoundStartEvent ev)
+        {
+            timer = new Timer();
             timer.Interval = Plugin.delayTime;
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = false;
             timer.Enabled = true;
             timed = false;
             tesla = true;
-
-
         }
         public void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e) {
             timer.Interval = Plugin.waitTime;
@@ -55,6 +55,10 @@ namespace Blackout
                             
                         }
                         Timing.Timer(TimedBlackout, 8.7f);
+                        // if (Plugin.timed_lcz)
+                        // {
+                        //     Timing.Timer(TimedLightBlackout, 8.7f);
+                        // }
                         timer.Interval = Plugin.durTime;
                         tesla = !tesla;
                     }
@@ -65,22 +69,27 @@ namespace Blackout
             }            
         }
         private void TimedBlackout(float inaccuracy = 0) {
-            if (Plugin.timed_lcz)
-            {
-                foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
-                {
-                    if (room.ZoneType != ZoneType.ENTRANCE && room.ZoneType != ZoneType.HCZ)
-                    {
-                        room.FlickerLights();
-                    }
-                }
-            }
             Generator079.generators[0].CallRpcOvercharge();
-            if (timed)  {
-                Timing.Timer(TimedBlackout, 8 + inaccuracy);
 
+            if (timed)  {
+                Timing.Timer(TimedBlackout, 11 + inaccuracy);
                 }
         }
+
+        // private void TimedLightBlackout(float inaccuracy = 0)
+        // {
+        //     foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
+        //     {
+        //         if (room.ZoneType == ZoneType.LCZ)
+        //         {
+        //             room.FlickerLights();
+        //         }
+        //     }
+        //     if (timed && Plugin.timed_lcz)
+        //     {
+        //         Timing.Timer(TimedLightBlackout, 6 + inaccuracy);
+        //     }
+        // }
         private void LightsOn(float inaccuracy = 0) {
             if (Plugin.announce)
             {
