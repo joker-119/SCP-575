@@ -1,8 +1,8 @@
 ﻿using Smod2.Commands;
 
-namespace Lightsout
+namespace SCP575
 {
-    public class LightsoutCommand : ICommandHandler
+    public class SCP575Command : ICommandHandler
     {
         public string GetCommandDescription()
         {
@@ -11,13 +11,13 @@ namespace Lightsout
 
         public string GetUsage()
         {
-            return "Lightsout Commands \n"+
-            "[lightsout / lo] HELP \n"+
-            "lightsout TOGGLE \n"+
-            "lightsout ENABLE \n"+
-            "lightsout DISABLE \n"+
-            "lightsout ANNOUNCE ON \n"+
-            "lightsout ANNOUNCE OFF \n";
+            return "SCP575 Commands \n"+
+            "[SCP575 / 575] HELP \n"+
+            "SCP575 TOGGLE \n"+
+            "SCP575 ENABLE \n"+
+            "SCP575 DISABLE \n"+
+            "SCP575 ANNOUNCE ON \n"+
+            "SCP575 ANNOUNCE OFF \n";
         }
 
         public string[] OnCall(ICommandSender sender, string[] args)
@@ -28,12 +28,12 @@ namespace Lightsout
                 {
                     return new string[]
                     {
-                        "Lightsout Command List \n"+
-                        "lightsout toggle - Toggles a manual blackout on/off. \n"+
-                        "lightsout enable - Enables timed Lightout events. \n"+
-                        "lightsout disable - Disables timed Lightout events. \n"+
-                        "lightsout announce on - Enables CASSIE announcements for events. \n"+
-                        "lightsout announce off - Disables CASSIE announcements for events. \n"
+                        "SCP575 Command List \n"+
+                        "SCP575 toggle - Toggles a manual blackout on/off. \n"+
+                        "SCP575 enable - Enables timed Lightout events. \n"+
+                        "SCP575 disable - Disables timed Lightout events. \n"+
+                        "SCP575 announce on - Enables CASSIE announcements for events. \n"+
+                        "SCP575 announce off - Disables CASSIE announcements for events. \n"
                     };
                 }
                 else if (args[0].ToLower() == "toggle")

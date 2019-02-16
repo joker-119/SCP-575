@@ -7,14 +7,14 @@
     <ProjectGuid>{C31B6833-2B98-44EE-B7D9-366A598DFC42}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lightsout</RootNamespace>
-    <AssemblyName>Lightsout</AssemblyName>
+    <RootNamespace>SCP-575</RootNamespace>
+    <AssemblyName>SCP-575</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Lightsout</OutputPath>
+    <OutputPath>..\..\bin\SCP-575</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -48,9 +48,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LightsoutCommand.cs" />
+    <Compile Include="SCP-575Command.cs" />
     <Compile Include="EventsHandler.cs" />
-    <Compile Include="Lightsout.cs" />
+    <Compile Include="SCP-575.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timing.cs" />
   </ItemGroup>

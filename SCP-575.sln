@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightsout", "Lightsout\Lightsout.csproj", "{C31B6833-2B98-44EE-B7D9-366A598DFC42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCP-575", "SCP-575\SCP-575.csproj", "{C31B6833-2B98-44EE-B7D9-366A598DFC42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +21,6 @@ Global
 		SolutionGuid = {AE39CB50-D283-4EE5-B873-02F670CF8E78}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		outputpath = ../bin/Lightsout
+		outputpath = ../bin/SCP-575
 	EndGlobalSection
 EndGlobal
