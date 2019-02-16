@@ -1,5 +1,0 @@
-/home/Joker/SCP Plugins/bin/SCP-575/SCP-575.dll
-/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Release/SCP-575.csprojAssemblyReference.cache
-/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Release/SCP-575.csproj.CoreCompileInputs.cache
-/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Release/SCP-575.csproj.CopyComplete
-/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Release/SCP-575.dll
