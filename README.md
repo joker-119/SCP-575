@@ -1,4 +1,4 @@
-# Blackout
+# Lightsout
 Custom light blackout effect for SCP:SL
 
 
