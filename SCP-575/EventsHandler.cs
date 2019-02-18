@@ -40,7 +40,7 @@ namespace SCP575
         public void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             timer.Interval = SCP575.waitTime * 1000;
-            if (SCP575.enabled && SCP575.Timed)
+            if (SCP575.Timed)
             {
                 SCP575.timer = !SCP575.timer;
                 if (SCP575.timer)
@@ -57,10 +57,6 @@ namespace SCP575
                         }
                     }
                     Timing.Timer(Functions.Blackout, 8.7f);
-                    if (SCP575.timed_lcz)
-                    {
-                        Timing.Timer(Functions.LightBlackout, 8.7f);
-                    }
                     timer.Interval = SCP575.durTime * 1000;
                     tesla = !tesla;
                 }

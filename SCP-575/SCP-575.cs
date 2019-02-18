@@ -65,10 +65,31 @@ namespace SCP575
         {
             Generator079.generators[0].CallRpcOvercharge();
 
-            if (SCP575.timer || SCP575.toggle)
+            if (SCP575.timer)
             {
-                Timing.Timer(Blackout, 11 + inaccuracy);
+                if (SCP575.timed_lcz)
+                {
+                    LightBlackout();
+                    Timing.Timer(Blackout, 9 + inaccuracy);
+                }
+                else
+                {
+                    Timing.Timer(Blackout, 11 + inaccuracy);
+                }
             }
+            else if (SCP575.toggle)
+            {
+                if (SCP575.toggle_lcz)
+                {
+                    LightBlackout();
+                    Timing.Timer(Blackout, 9 + inaccuracy);
+                }
+                else
+                {
+                    Timing.Timer(Blackout, 11 + inaccuracy);
+                }
+            }
+
         }
         public static void LightsOn(float inaccuracy = 0)
         {
@@ -108,23 +129,15 @@ namespace SCP575
             }
 
             Timing.Timer(Blackout, 8.7f);
-            if (SCP575.toggle_lcz)
-            {
-                Timing.Timer(LightBlackout, 8.7f);
-            }
         }
 
-        public static void LightBlackout(float inaccuracy = 0)
+        public static void LightBlackout()
         {
             foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
             {
                 if (room.ZoneType == ZoneType.LCZ)
                 {
                     room.FlickerLights();
-                }
-                if (SCP575.timer || SCP575.toggle)
-                {
-                    Timing.Timer(LightBlackout, 6 + inaccuracy);
                 }
             }
         }
