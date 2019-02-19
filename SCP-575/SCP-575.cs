@@ -126,9 +126,8 @@ namespace SCP575
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
                 }
+                Timing.Timer(Blackout, 8.7f);
             }
-
-            Timing.Timer(Blackout, 8.7f);
         }
 
         public static void LightBlackout()
