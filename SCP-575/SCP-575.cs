@@ -4,6 +4,7 @@ using Smod2;
 using Smod2.API;
 using Smod2.Events;
 using scp4aiur;
+using System.Collections.Generic;
 
 namespace SCP575
 {
@@ -26,12 +27,15 @@ namespace SCP575
         public static int waitTime;
         public static int durTime;
         public static bool Timed;
+        public static bool firstTimer = true;
         public static bool announce;
         public static bool toggle;
         public static bool toggle_lcz;
         public static bool timed_lcz;
+        public static bool tesla = true;
         public static bool timed_override = false;
         public static bool timer = false;
+        public static List<Room> BlackoutRoom = new List<Room>();
 
         public override void OnDisable()
         {
@@ -53,7 +57,7 @@ namespace SCP575
             this.AddConfig(new ConfigSetting("575_announce", true, SettingType.BOOL, true, "If CASSIE should announce events."));
             this.AddConfig(new ConfigSetting("575_toggle_lcz", true, SettingType.BOOL, true, "If toggled events should affect LCZ."));
             this.AddConfig(new ConfigSetting("575_timed_lcz", false, SettingType.BOOL, true, "If timed events should affect LCZ."));
-            this.AddEventHandlers(new Timing(Info));
+            Timing.Init(this);
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
         }
@@ -61,35 +65,92 @@ namespace SCP575
 
     public class Functions
     {
-        public static void Blackout(float inaccuracy = 0)
+        public static IEnumerable<float> RunBlackout(float delay)
         {
-            Generator079.generators[0].CallRpcOvercharge();
-
-            if (SCP575.timer)
+            yield return delay;
+            SCP575.plugin.Info("Blackout Function has started");
+            while ((SCP575.timer && SCP575.timed_lcz) || (SCP575.toggle && SCP575.toggle_lcz))
             {
-                if (SCP575.timed_lcz)
+                SCP575.plugin.Info("Running first WHILE loop.");
+                SCP575.plugin.Info("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
+                foreach (Room room in SCP575.BlackoutRoom)
                 {
-                    LightBlackout();
-                    Timing.Timer(Blackout, 9 + inaccuracy);
+                    room.FlickerLights();
+                }
+                Generator079.generators[0].CallRpcOvercharge();
+                yield return 9;
+            }
+            while ((SCP575.timer && !SCP575.timed_lcz) || (SCP575.toggle && !SCP575.toggle_lcz))
+            {
+                SCP575.plugin.Info("Running second WHILE loop.");
+                SCP575.plugin.Info("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
+                Generator079.generators[0].CallRpcOvercharge();
+                yield return 11;
+            }
+        }
+        public static IEnumerable<float> EnableTimer(float delay)
+        {
+            if (SCP575.Timed)
+            {
+                SCP575.plugin.Info("Running EnableTimer Function.");
+                yield return delay;
+                SCP575.plugin.Info("Timer & Tesla swapped.");
+                SCP575.timer = !SCP575.timer;
+                SCP575.tesla = !SCP575.tesla;
+                if (SCP575.announce && SCP575.timed_lcz)
+                {
+                    PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
                 else
                 {
-                    Timing.Timer(Blackout, 11 + inaccuracy);
+                    PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
+                }
+                Timing.Run(RunBlackout(8.7f));
+                yield return SCP575.durTime;
+                SCP575.timer = !SCP575.timer;
+                SCP575.tesla = !SCP575.tesla;
+                if (SCP575.announce)
+                {
+                    PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
                 }
             }
-            else if (SCP575.toggle)
+        }
+        //         public static IEnumerable<float> EnableFirstTimer(float delay)
+        // {
+        //     if (SCP575.firstTimer)
+        //     {
+        //         SCP575.firstTimer = !SCP575.firstTimer;
+        //         SCP575.plugin.Info("Running EnableFirstTimer Function.");
+        //         yield return delay;
+        //         SCP575.plugin.Info("Timer & Tesla swapped.");
+        //         SCP575.timer = !SCP575.timer;
+        //         SCP575.tesla = !SCP575.tesla;
+        //         if (SCP575.announce && SCP575.timed_lcz)
+        //         {
+        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
+        //         }
+        //         else
+        //         {
+        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
+        //         }
+        //         yield return SCP575.durTime;
+        //         SCP575.timer = !SCP575.timer;
+        //         SCP575.tesla = !SCP575.tesla;
+        //         if (SCP575.announce)
+        //         {
+        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
+        //         }
+        //     }
+        // }
+        public static void Get079Rooms()
+        {
+            foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
             {
-                if (SCP575.toggle_lcz)
+                if (room.ZoneType == ZoneType.LCZ)
                 {
-                    LightBlackout();
-                    Timing.Timer(Blackout, 9 + inaccuracy);
-                }
-                else
-                {
-                    Timing.Timer(Blackout, 11 + inaccuracy);
+                    SCP575.BlackoutRoom.Add(room);
                 }
             }
-
         }
         public static void LightsOn(float inaccuracy = 0)
         {
@@ -97,7 +158,6 @@ namespace SCP575
             {
                 PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
             }
-            EventsHandler.tesla = !EventsHandler.tesla;
         }
 
         public static void ToggleBlackout()
@@ -126,18 +186,7 @@ namespace SCP575
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
                 }
-                Timing.Timer(Blackout, 8.7f);
-            }
-        }
-
-        public static void LightBlackout()
-        {
-            foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
-            {
-                if (room.ZoneType == ZoneType.LCZ)
-                {
-                    room.FlickerLights();
-                }
+                Timing.Run(RunBlackout(8.7f));
             }
         }
 
