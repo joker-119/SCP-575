@@ -56,7 +56,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-      <PostBuildEvent>rm Assembly* Smod* *.pdb Unity*</PostBuildEvent>
-      <PostBuildEvent>rm -rf "/home/Joker/SCP Plugins/SCP-575/SCP-575/obj"</PostBuildEvent>
+      <PostBuildEvent>rm -rf Assembly* Smod* *.pdb Unity* "/home/Joker/SCP Plugins/SCP-575/SCP-575/obj"</PostBuildEvent>
   </PropertyGroup>
 </Project>
