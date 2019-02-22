@@ -1,9 +1,6 @@
 ﻿using scp4aiur;
 using Smod2.EventHandlers;
 using Smod2.Events;
-using System;
-using System.Timers;
-using UnityEngine;
 
 namespace SCP575
 {
