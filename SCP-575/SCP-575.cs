@@ -68,11 +68,11 @@ namespace SCP575
         public static IEnumerable<float> RunBlackout(float delay)
         {
             yield return delay;
-            SCP575.plugin.Info("Blackout Function has started");
+            SCP575.plugin.Debug("Blackout Function has started");
             while ((SCP575.timer && SCP575.timed_lcz) || (SCP575.toggle && SCP575.toggle_lcz))
             {
-                SCP575.plugin.Info("Running first WHILE loop.");
-                SCP575.plugin.Info("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
+                SCP575.plugin.Debug("Running first WHILE loop.");
+                SCP575.plugin.Debug("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
                 foreach (Room room in SCP575.BlackoutRoom)
                 {
                     room.FlickerLights();
@@ -82,8 +82,8 @@ namespace SCP575
             }
             while ((SCP575.timer && !SCP575.timed_lcz) || (SCP575.toggle && !SCP575.toggle_lcz))
             {
-                SCP575.plugin.Info("Running second WHILE loop.");
-                SCP575.plugin.Info("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
+                SCP575.plugin.Debug("Running second WHILE loop.");
+                SCP575.plugin.Debug("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
                 Generator079.generators[0].CallRpcOvercharge();
                 yield return 11;
             }
@@ -92,9 +92,9 @@ namespace SCP575
         {
             if (SCP575.Timed)
             {
-                SCP575.plugin.Info("Running EnableTimer Function.");
+                SCP575.plugin.Debug("Running EnableTimer Function.");
                 yield return delay;
-                SCP575.plugin.Info("Timer & Tesla swapped.");
+                SCP575.plugin.Debug("Timer & Tesla swapped.");
                 SCP575.timer = !SCP575.timer;
                 SCP575.tesla = !SCP575.tesla;
                 if (SCP575.announce && SCP575.timed_lcz)

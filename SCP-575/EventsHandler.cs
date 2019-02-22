@@ -27,9 +27,9 @@ namespace SCP575
 
         public void OnRoundStart(RoundStartEvent ev)
         {
-            plugin.Info("Getting 079 rooms.");
+            plugin.Debug("Getting 079 rooms.");
             Functions.Get079Rooms();
-            plugin.Info("Initial Delay: " + SCP575.delayTime + "s.");
+            plugin.Debug("Initial Delay: " + SCP575.delayTime + "s.");
             Timing.Run(Functions.EnableTimer(SCP575.delayTime));
             if (SCP575.toggle)
             {
