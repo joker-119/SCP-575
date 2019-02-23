@@ -47,7 +47,7 @@ namespace SCP575
             {
                 SCP575.timed_override = true;
                 SCP575.Timed = false;
-                Timing.Run(Functions.RunBlackout(0));
+                Timing.Run(Functions.ToggledBlackout(0));
             }
         }
         public void OnPlayerJoin(PlayerJoinEvent ev)

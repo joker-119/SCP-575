@@ -77,38 +77,48 @@ namespace SCP575
 
     public class Functions
     {
-        public static IEnumerable<float> RunBlackout(float delay)
+        public static void RunBlackout()
         {
-            yield return delay;
             SCP575.plugin.Debug("Blackout Function has started");
-            while ((SCP575.timer && SCP575.timed_lcz) || (SCP575.toggle && SCP575.toggle_lcz))
+            if ((SCP575.timer && SCP575.timed_lcz) || (SCP575.toggle && SCP575.toggle_lcz))
             {
-                SCP575.plugin.Debug("Running first WHILE loop.");
-                SCP575.plugin.Debug("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
                 foreach (Room room in SCP575.BlackoutRoom)
                 {
                     room.FlickerLights();
                 }
                 Generator079.generators[0].CallRpcOvercharge();
-                yield return 9;
             }
-            while ((SCP575.timer && !SCP575.timed_lcz) || (SCP575.toggle && !SCP575.toggle_lcz))
+            else if ((SCP575.timer && !SCP575.timed_lcz) || (SCP575.toggle && !SCP575.toggle_lcz))
             {
-                SCP575.plugin.Debug("Running second WHILE loop.");
-                SCP575.plugin.Debug("Timer: " + SCP575.timer + " Toggle: " + SCP575.toggle + " LCZ Timed: " + SCP575.timed_lcz + " LCZ Toggle: " + SCP575.toggle_lcz);
+                Generator079.generators[0].CallRpcOvercharge();
+            }
+        }
+        public static IEnumerable<float> ToggledBlackout(float delay)
+        {
+            yield return delay;
+            while (SCP575.toggle && SCP575.toggle_lcz)
+            {
+                foreach (Room room in SCP575.BlackoutRoom)
+                {
+                    room.FlickerLights();
+                }
+                Generator079.generators[0].CallRpcOvercharge();
+                yield return 8;
+            }
+            while (SCP575.toggle && !SCP575.toggle_lcz)
+            {
                 Generator079.generators[0].CallRpcOvercharge();
                 yield return 11;
             }
-            Timing.Run(Functions.EnableTimer(SCP575.waitTime));
         }
         public static IEnumerable<float> EnableTimer(float delay)
         {
-            if (SCP575.Timed)
+            SCP575.plugin.Debug("Being Delayed");
+            yield return delay;
+            while (SCP575.Timed)
             {
-                SCP575.plugin.Debug("Running EnableTimer Function.");
-                yield return delay;
-                SCP575.plugin.Debug("Timer & Tesla swapped.");
-                if (SCP575.announce && SCP575.timed_lcz)
+                SCP575.plugin.Debug("Announcing");
+                if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
@@ -117,17 +127,29 @@ namespace SCP575
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
                 yield return 8.7f;
+                float blackout_dur = SCP575.durTime;
+                SCP575.plugin.Debug("Flipping Bools1");
                 SCP575.timer = !SCP575.timer;
                 SCP575.tesla = !SCP575.tesla;
-                Timing.Run(RunBlackout(0));
-                yield return SCP575.durTime;
-                SCP575.plugin.Debug("Timer & Tesla swapped.");
-                SCP575.timer = !SCP575.timer;
-                SCP575.tesla = !SCP575.tesla;
-                if (SCP575.announce)
+                do 
+                {
+                    SCP575.plugin.Debug("Running Blackout");
+                    RunBlackout();
+                } while ((blackout_dur -= 11) > 0);
+                if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
+                {
+                    PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
+                }
+                else
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
                 }
+                yield return 8.7f;
+                SCP575.plugin.Debug("Flipping bools2");
+                SCP575.timer = !SCP575.timer;
+                SCP575.tesla = !SCP575.tesla;
+                SCP575.plugin.Debug("Waiting to re-execute..");
+                yield return SCP575.waitTime;
             }
         }
         public static IEnumerable<float> KeterDamage(float delay, Player player)
@@ -177,15 +199,15 @@ namespace SCP575
         public static void ToggleBlackout()
         {
             SCP575.toggle = !SCP575.toggle;
-            if (SCP575.Timed && !SCP575.timed_override)
+            if (SCP575.Timed)
             {
                 SCP575.timed_override = true;
-                SCP575.Timed = !SCP575.Timed;
+                SCP575.Timed = false;
             }
-            else if (SCP575.timed_override && !SCP575.Timed)
+            else if (SCP575.timed_override)
             {
                 SCP575.timed_override = false;
-                SCP575.Timed = !SCP575.Timed;
+                SCP575.Timed = true;
             }
             if (SCP575.toggle)
             {
@@ -200,7 +222,7 @@ namespace SCP575
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
                 }
-                Timing.Run(RunBlackout(8.7f));
+                Timing.Run(ToggledBlackout(8.7f));
             }
         }
 
