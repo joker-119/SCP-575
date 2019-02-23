@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SCP575
 {
-    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerMakeNoise
+    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerMakeNoise, IEventHandlerPlayerJoin
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
@@ -38,7 +38,10 @@ namespace SCP575
             Timing.Run(Functions.EnableTimer(SCP575.delayTime));
             foreach (Player player in ev.Server.GetPlayers())
             {
-                SCP575.canKeter.Add(player.Name);
+                if (!SCP575.canKeter.Contains(player.Name))
+                {
+                    SCP575.canKeter.Add(player.Name);
+                }
             }
             if (SCP575.toggle)
             {
@@ -46,6 +49,10 @@ namespace SCP575
                 SCP575.Timed = false;
                 Timing.Run(Functions.RunBlackout(0));
             }
+        }
+        public void OnPlayerJoin(PlayerJoinEvent ev)
+        {
+            SCP575.canKeter.Add(ev.Player.Name);
         }
         public void OnMakeNoise(PlayerMakeNoiseEvent ev)
         {
