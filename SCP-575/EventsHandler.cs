@@ -49,14 +49,17 @@ namespace SCP575
         }
         public void OnMakeNoise(PlayerMakeNoiseEvent ev)
         {
-            SCP575.plugin.Debug(ev.Player.Name + " made noise!");
-            if (SCP575.enabled && (SCP575.timer || SCP575.toggle) && SCP575.canKeter.Contains(ev.Player.Name) && SCP575.keter)
+            if (ev.Player.TeamRole.Team != Smod2.API.Team.SCP)
             {
-                SCP575.plugin.Debug("Getting Player Position!");
-                if (ev.Player.GetCurrentItem().ItemType != ItemType.FLASHLIGHT && Functions.IsInDangerZone(ev.Player))
+                SCP575.plugin.Debug(ev.Player.Name + " made noise!");
+                if (SCP575.enabled && (SCP575.timer || SCP575.toggle) && SCP575.canKeter.Contains(ev.Player.Name) && SCP575.keter)
                 {
-                    SCP575.plugin.Debug("Triggering Keter Damage!");
-                    Timing.Run(Functions.KeterDamage(2.5f, ev.Player));
+                    SCP575.plugin.Debug("Getting Player Position!");
+                    if (ev.Player.GetCurrentItem().ItemType != ItemType.FLASHLIGHT && Functions.IsInDangerZone(ev.Player))
+                    {
+                        SCP575.plugin.Debug("Triggering Keter Damage!");
+                        Timing.Run(Functions.KeterDamage(2.5f, ev.Player));
+                    }
                 }
             }
         }
