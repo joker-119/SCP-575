@@ -11,6 +11,7 @@ namespace SCP575
 {
     [PluginDetails(
         author = "Joker119",
+        name = "SCP-575",
         description = "Adds light blackout command + timed events",
         id = "joker.SCP575",
         version = "2.0",
@@ -41,7 +42,7 @@ namespace SCP575
             keter;
         public static bool timer = false;
         public static int KeterDamage;
-        public static List<Player> canKeter = new List<Player>();
+        public static List<String> canKeter = new List<String>();
         public static List<Room> BlackoutRoom = new List<Room>();
 
         public override void OnDisable()
@@ -58,12 +59,12 @@ namespace SCP575
         {
             this.AddConfig(new ConfigSetting("575_ranks", new string[] { "owner", "admin" }, SettingType.LIST, true, "The list of ranks able to use the LO commands."));
             this.AddConfig(new ConfigSetting("575_timed", true, SettingType.BOOL, true, "If timed events should be active."));
-            this.AddConfig(new ConfigSetting("575_delay", 300, SettingType.FLOAT, true, "The amount of seconds before the first timed blackout occurs."));
-            this.AddConfig(new ConfigSetting("575_duration", 90, SettingType.FLOAT, true, "The amount of time that Lightout events last."));
-            this.AddConfig(new ConfigSetting("575_wait", 180, SettingType.FLOAT, true, "The amoutn of time to wait between subsequent timed events."));
+            this.AddConfig(new ConfigSetting("575_delay", 300f, SettingType.FLOAT, true, "The amount of seconds before the first timed blackout occurs."));
+            this.AddConfig(new ConfigSetting("575_duration", 90f, SettingType.FLOAT, true, "The amount of time that Lightout events last."));
+            this.AddConfig(new ConfigSetting("575_wait", 180f, SettingType.FLOAT, true, "The amoutn of time to wait between subsequent timed events."));
             this.AddConfig(new ConfigSetting("575_announce", true, SettingType.BOOL, true, "If CASSIE should announce events."));
             this.AddConfig(new ConfigSetting("575_toggle_lcz", true, SettingType.BOOL, true, "If toggled events should affect LCZ."));
-            this.AddConfig(new ConfigSetting("575_timed_lcz", false, SettingType.BOOL, true, "If timed events should affect LCZ."));
+            this.AddConfig(new ConfigSetting("575_timed_lcz", true, SettingType.BOOL, true, "If timed events should affect LCZ."));
             this.AddConfig(new ConfigSetting("575_toggle_tesla", true, SettingType.BOOL, true, "If teslas should be disabled during toggled events."));
             this.AddConfig(new ConfigSetting("575_timed_tesla", true, SettingType.BOOL, true, "If teslas should be disabled during timed events."));
             this.AddConfig(new ConfigSetting("575_keter_damage", 10, SettingType.NUMERIC, true, "How much damage per 5 seconds people in affected areas take."));
@@ -104,15 +105,9 @@ namespace SCP575
         {
             if (SCP575.Timed)
             {
-                if (SCP575.firstTimer)
-                {
-                    SCP575.firstTimer = !SCP575.firstTimer;
-                }
                 SCP575.plugin.Debug("Running EnableTimer Function.");
                 yield return delay;
                 SCP575.plugin.Debug("Timer & Tesla swapped.");
-                SCP575.timer = !SCP575.timer;
-                SCP575.tesla = !SCP575.tesla;
                 if (SCP575.announce && SCP575.timed_lcz)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
@@ -121,8 +116,12 @@ namespace SCP575
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
-                Timing.Run(RunBlackout(8.7f));
+                yield return 8.7f;
+                SCP575.timer = !SCP575.timer;
+                SCP575.tesla = !SCP575.tesla;
+                Timing.Run(RunBlackout(0));
                 yield return SCP575.durTime;
+                SCP575.plugin.Debug("Timer & Tesla swapped.");
                 SCP575.timer = !SCP575.timer;
                 SCP575.tesla = !SCP575.tesla;
                 if (SCP575.announce)
@@ -131,24 +130,28 @@ namespace SCP575
                 }
             }
         }
-        public static IEnumerable<float> KeterDamage(float delay, Player player, Vector loc)
+        public static IEnumerable<float> KeterDamage(float delay, Player player)
         {
-            yield return delay;
-            while (SCP575.canKeter.Contains(player))
+            SCP575.plugin.Debug("Keter Damage in: " + delay + " for " + SCP575.KeterDamage);
+            while (SCP575.canKeter.Contains(player.Name))
             {
-                if (Functions.IsInDangerZone(player, loc))
+                SCP575.canKeter.Remove(player.Name);
+                yield return delay;
+                if (Functions.IsInDangerZone(player))
                 {
                     player.Damage(SCP575.KeterDamage);
                 }
-                yield return 5;
-                SCP575.canKeter.Add(player);
+                yield return 3f;
+                SCP575.plugin.Debug("Times up! Back into the list for you!");
             }
+            SCP575.canKeter.Add(player.Name);
         }
-        public static bool IsInDangerZone(Player player, Vector loc)
+        public static bool IsInDangerZone(Player player)
         {
-            foreach (Room room in SCP575.BlackoutRoom)
+            Vector loc = player.GetPosition();
+            foreach (Room room in SCP575.plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
             {
-                if (room.ZoneType == ZoneType.HCZ || room.ZoneType == ZoneType.LCZ)
+                if (room.ZoneType == ZoneType.HCZ || (SCP575.timer && SCP575.timed_lcz && room.ZoneType == ZoneType.LCZ) || (SCP575.toggle && SCP575.toggle_lcz && room.ZoneType == ZoneType.LCZ))
                 {
                     float x = Math.Abs(loc.x - room.Position.x),
                         y = Math.Abs(loc.y - room.Position.y),

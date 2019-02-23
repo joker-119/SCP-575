@@ -27,6 +27,7 @@ namespace SCP575
             SCP575.timedTesla = this.plugin.GetConfigBool("575_timed_tesla");
             SCP575.toggleTesla = this.plugin.GetConfigBool("575_toggle_tesla");
             SCP575.keter = this.plugin.GetConfigBool("575_keter");
+            SCP575.KeterDamage = this.plugin.GetConfigInt("575_keter_damage");
         }
 
         public void OnRoundStart(RoundStartEvent ev)
@@ -37,7 +38,7 @@ namespace SCP575
             Timing.Run(Functions.EnableTimer(SCP575.delayTime));
             foreach (Player player in ev.Server.GetPlayers())
             {
-                SCP575.canKeter.Add(player);
+                SCP575.canKeter.Add(player.Name);
             }
             if (SCP575.toggle)
             {
@@ -48,13 +49,14 @@ namespace SCP575
         }
         public void OnMakeNoise(PlayerMakeNoiseEvent ev)
         {
-            if (SCP575.enabled && (SCP575.timer || SCP575.toggle) && SCP575.canKeter.Contains(ev.Player) && SCP575.keter)
+            SCP575.plugin.Debug(ev.Player.Name + " made noise!");
+            if (SCP575.enabled && (SCP575.timer || SCP575.toggle) && SCP575.canKeter.Contains(ev.Player.Name) && SCP575.keter)
             {
-                Vector playerLoc = ev.Player.GetPosition();
-                if (ev.Player.GetCurrentItem().ItemType != ItemType.FLASHLIGHT && Functions.IsInDangerZone(ev.Player, playerLoc))
+                SCP575.plugin.Debug("Getting Player Position!");
+                if (ev.Player.GetCurrentItem().ItemType != ItemType.FLASHLIGHT && Functions.IsInDangerZone(ev.Player))
                 {
-                    Timing.Run(Functions.KeterDamage(2.5f, ev.Player, playerLoc));
-                    SCP575.canKeter.Remove(ev.Player);
+                    SCP575.plugin.Debug("Triggering Keter Damage!");
+                    Timing.Run(Functions.KeterDamage(2.5f, ev.Player));
                 }
             }
         }
