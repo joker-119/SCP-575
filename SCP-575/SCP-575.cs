@@ -1,4 +1,5 @@
-﻿using Smod2.Attributes;
+﻿using System;
+using Smod2.Attributes;
 using Smod2.Config;
 using Smod2;
 using Smod2.API;
@@ -23,18 +24,24 @@ namespace SCP575
         internal static SCP575 plugin;
         public static string[] validRanks;
         public static bool enabled = true;
-        public static int delayTime;
-        public static int waitTime;
-        public static int durTime;
-        public static bool Timed;
-        public static bool firstTimer = true;
-        public static bool announce;
-        public static bool toggle;
-        public static bool toggle_lcz;
-        public static bool timed_lcz;
-        public static bool tesla = true;
-        public static bool timed_override = false;
+        public static float delayTime;
+        public static float waitTime;
+        public static float durTime;
+        public static bool 
+            Timed,
+            firstTimer = true,
+            announce,
+            toggle,
+            toggle_lcz,
+            timed_lcz,
+            tesla = true,
+            timed_override = false,
+            toggleTesla,
+            timedTesla,
+            keter;
         public static bool timer = false;
+        public static int KeterDamage;
+        public static List<Player> canKeter = new List<Player>();
         public static List<Room> BlackoutRoom = new List<Room>();
 
         public override void OnDisable()
@@ -51,12 +58,16 @@ namespace SCP575
         {
             this.AddConfig(new ConfigSetting("575_ranks", new string[] { "owner", "admin" }, SettingType.LIST, true, "The list of ranks able to use the LO commands."));
             this.AddConfig(new ConfigSetting("575_timed", true, SettingType.BOOL, true, "If timed events should be active."));
-            this.AddConfig(new ConfigSetting("575_delay", 300, SettingType.NUMERIC, true, "The amount of seconds before the first timed blackout occurs."));
-            this.AddConfig(new ConfigSetting("575_duration", 90, SettingType.NUMERIC, true, "The amount of time that Lightout events last."));
-            this.AddConfig(new ConfigSetting("575_wait", 180, SettingType.NUMERIC, true, "The amoutn of time to wait between subsequent timed events."));
+            this.AddConfig(new ConfigSetting("575_delay", 300, SettingType.FLOAT, true, "The amount of seconds before the first timed blackout occurs."));
+            this.AddConfig(new ConfigSetting("575_duration", 90, SettingType.FLOAT, true, "The amount of time that Lightout events last."));
+            this.AddConfig(new ConfigSetting("575_wait", 180, SettingType.FLOAT, true, "The amoutn of time to wait between subsequent timed events."));
             this.AddConfig(new ConfigSetting("575_announce", true, SettingType.BOOL, true, "If CASSIE should announce events."));
             this.AddConfig(new ConfigSetting("575_toggle_lcz", true, SettingType.BOOL, true, "If toggled events should affect LCZ."));
             this.AddConfig(new ConfigSetting("575_timed_lcz", false, SettingType.BOOL, true, "If timed events should affect LCZ."));
+            this.AddConfig(new ConfigSetting("575_toggle_tesla", true, SettingType.BOOL, true, "If teslas should be disabled during toggled events."));
+            this.AddConfig(new ConfigSetting("575_timed_tesla", true, SettingType.BOOL, true, "If teslas should be disabled during timed events."));
+            this.AddConfig(new ConfigSetting("575_keter_damage", 10, SettingType.NUMERIC, true, "How much damage per 5 seconds people in affected areas take."));
+            this.AddConfig(new ConfigSetting("575_keter", true, SettingType.BOOL, true, "If SCP-575 should make use of it's Keter status."));
             Timing.Init(this);
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
@@ -87,11 +98,16 @@ namespace SCP575
                 Generator079.generators[0].CallRpcOvercharge();
                 yield return 11;
             }
+            Timing.Run(Functions.EnableTimer(SCP575.waitTime));
         }
         public static IEnumerable<float> EnableTimer(float delay)
         {
             if (SCP575.Timed)
             {
+                if (SCP575.firstTimer)
+                {
+                    SCP575.firstTimer = !SCP575.firstTimer;
+                }
                 SCP575.plugin.Debug("Running EnableTimer Function.");
                 yield return delay;
                 SCP575.plugin.Debug("Timer & Tesla swapped.");
@@ -115,33 +131,36 @@ namespace SCP575
                 }
             }
         }
-        //         public static IEnumerable<float> EnableFirstTimer(float delay)
-        // {
-        //     if (SCP575.firstTimer)
-        //     {
-        //         SCP575.firstTimer = !SCP575.firstTimer;
-        //         SCP575.plugin.Info("Running EnableFirstTimer Function.");
-        //         yield return delay;
-        //         SCP575.plugin.Info("Timer & Tesla swapped.");
-        //         SCP575.timer = !SCP575.timer;
-        //         SCP575.tesla = !SCP575.tesla;
-        //         if (SCP575.announce && SCP575.timed_lcz)
-        //         {
-        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
-        //         }
-        //         else
-        //         {
-        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
-        //         }
-        //         yield return SCP575.durTime;
-        //         SCP575.timer = !SCP575.timer;
-        //         SCP575.tesla = !SCP575.tesla;
-        //         if (SCP575.announce)
-        //         {
-        //             PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
-        //         }
-        //     }
-        // }
+        public static IEnumerable<float> KeterDamage(float delay, Player player, Vector loc)
+        {
+            yield return delay;
+            while (SCP575.canKeter.Contains(player))
+            {
+                if (Functions.IsInDangerZone(player, loc))
+                {
+                    player.Damage(SCP575.KeterDamage);
+                }
+                yield return 5;
+                SCP575.canKeter.Add(player);
+            }
+        }
+        public static bool IsInDangerZone(Player player, Vector loc)
+        {
+            foreach (Room room in SCP575.BlackoutRoom)
+            {
+                if (room.ZoneType == ZoneType.HCZ || room.ZoneType == ZoneType.LCZ)
+                {
+                    float x = Math.Abs(loc.x - room.Position.x),
+                        y = Math.Abs(loc.y - room.Position.y),
+                        z = Math.Abs(loc.z - room.Position.z);
+                    if (x < 10 && y < 10 && z < 10)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public static void Get079Rooms()
         {
             foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
@@ -152,14 +171,6 @@ namespace SCP575
                 }
             }
         }
-        public static void LightsOn(float inaccuracy = 0)
-        {
-            if (SCP575.announce)
-            {
-                PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
-            }
-        }
-
         public static void ToggleBlackout()
         {
             SCP575.toggle = !SCP575.toggle;
