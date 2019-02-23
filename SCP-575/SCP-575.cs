@@ -14,10 +14,10 @@ namespace SCP575
         name = "SCP-575",
         description = "Adds light blackout command + timed events",
         id = "joker.SCP575",
-        version = "2.0",
+        version = "2.3.0",
         SmodMajor = 3,
-        SmodMinor = 2,
-        SmodRevision = 2
+        SmodMinor = 3,
+        SmodRevision = 0
     )]
 
     public class SCP575 : Plugin
