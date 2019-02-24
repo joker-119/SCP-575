@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SCP575
 {
-    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerMakeNoise, IEventHandlerPlayerJoin
+    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
@@ -35,14 +35,7 @@ namespace SCP575
             plugin.Debug("Getting 079 rooms.");
             Functions.Get079Rooms();
             plugin.Debug("Initial Delay: " + SCP575.delayTime + "s.");
-            Timing.Run(Functions.EnableTimer(SCP575.delayTime));
-            foreach (Player player in ev.Server.GetPlayers())
-            {
-                if (!SCP575.canKeter.Contains(player.Name))
-                {
-                    SCP575.canKeter.Add(player.Name);
-                }
-            }
+            Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
             if (SCP575.toggle)
             {
                 SCP575.timed_override = true;
@@ -50,30 +43,9 @@ namespace SCP575
                 Timing.Run(Functions.ToggledBlackout(0));
             }
         }
-        public void OnPlayerJoin(PlayerJoinEvent ev)
-        {
-            SCP575.canKeter.Add(ev.Player.Name);
-        }
-        public void OnMakeNoise(PlayerMakeNoiseEvent ev)
-        {
-            if (ev.Player.TeamRole.Team != Smod2.API.Team.SCP)
-            {
-                SCP575.plugin.Debug(ev.Player.Name + " made noise!");
-                if (SCP575.enabled && (SCP575.timer || SCP575.toggle) && SCP575.canKeter.Contains(ev.Player.Name) && SCP575.keter)
-                {
-                    SCP575.plugin.Debug("Getting Player Position!");
-                    if (ev.Player.GetCurrentItem().ItemType != ItemType.FLASHLIGHT && Functions.IsInDangerZone(ev.Player))
-                    {
-                        SCP575.plugin.Debug("Triggering Keter Damage!");
-                        Timing.Run(Functions.KeterDamage(2.5f, ev.Player));
-                    }
-                }
-            }
-        }
-
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
-            if ((!SCP575.tesla && SCP575.timedTesla) || (SCP575.toggle && SCP575.toggleTesla))
+            if ((SCP575.timer && SCP575.timedTesla) || (SCP575.toggle && SCP575.toggleTesla))
             {
                 ev.Triggerable = false;
             }

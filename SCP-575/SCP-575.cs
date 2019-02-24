@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Reflection;
+using System;
 using Smod2.Attributes;
 using Smod2.Config;
 using Smod2;
@@ -6,6 +7,7 @@ using Smod2.API;
 using Smod2.Events;
 using scp4aiur;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SCP575
 {
@@ -35,14 +37,12 @@ namespace SCP575
             toggle,
             toggle_lcz,
             timed_lcz,
-            tesla = true,
+            timer = false,
             timed_override = false,
             toggleTesla,
             timedTesla,
             keter;
-        public static bool timer = false;
         public static int KeterDamage;
-        public static List<String> canKeter = new List<String>();
         public static List<Room> BlackoutRoom = new List<Room>();
 
         public override void OnDisable()
@@ -96,22 +96,14 @@ namespace SCP575
         public static IEnumerable<float> ToggledBlackout(float delay)
         {
             yield return delay;
-            while (SCP575.toggle && SCP575.toggle_lcz)
+            while (SCP575.toggle)
             {
-                foreach (Room room in SCP575.BlackoutRoom)
-                {
-                    room.FlickerLights();
-                }
-                Generator079.generators[0].CallRpcOvercharge();
-                yield return 8;
-            }
-            while (SCP575.toggle && !SCP575.toggle_lcz)
-            {
-                Generator079.generators[0].CallRpcOvercharge();
+                RunBlackout();
+                TriggerKeter();
                 yield return 11;
             }
         }
-        public static IEnumerable<float> EnableTimer(float delay)
+        public static IEnumerable<float> TimedBlackout(float delay)
         {
             SCP575.plugin.Debug("Being Delayed");
             yield return delay;
@@ -129,12 +121,13 @@ namespace SCP575
                 yield return 8.7f;
                 float blackout_dur = SCP575.durTime;
                 SCP575.plugin.Debug("Flipping Bools1");
-                SCP575.timer = !SCP575.timer;
-                SCP575.tesla = !SCP575.tesla;
+                SCP575.timer = true;
                 do 
                 {
                     SCP575.plugin.Debug("Running Blackout");
                     RunBlackout();
+                    TriggerKeter();
+                    yield return 11;
                 } while ((blackout_dur -= 11) > 0);
                 if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
                 {
@@ -146,27 +139,30 @@ namespace SCP575
                 }
                 yield return 8.7f;
                 SCP575.plugin.Debug("Flipping bools2");
-                SCP575.timer = !SCP575.timer;
-                SCP575.tesla = !SCP575.tesla;
+                SCP575.timer = false;
                 SCP575.plugin.Debug("Waiting to re-execute..");
                 yield return SCP575.waitTime;
             }
         }
-        public static IEnumerable<float> KeterDamage(float delay, Player player)
+        public static void TriggerKeter()
         {
-            SCP575.plugin.Debug("Keter Damage in: " + delay + " for " + SCP575.KeterDamage);
-            while (SCP575.canKeter.Contains(player.Name))
+            foreach (Player player in SCP575.plugin.Server.GetPlayers())
             {
-                SCP575.canKeter.Remove(player.Name);
-                yield return delay;
-                if (Functions.IsInDangerZone(player))
+                if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SCP)
                 {
                     player.Damage(SCP575.KeterDamage);
                 }
-                yield return 3f;
-                SCP575.plugin.Debug("Times up! Back into the list for you!");
             }
-            SCP575.canKeter.Add(player.Name);
+        }
+        public static bool HasFlashlight(Player player)
+        {
+            GameObject ply = player.GetGameObject() as GameObject;
+            WeaponManager manager = ply.GetComponent<WeaponManager>();
+            if (manager.NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT)
+            {
+                return true;
+            }
+            return false;
         }
         public static bool IsInDangerZone(Player player)
         {
