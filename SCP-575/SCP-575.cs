@@ -41,9 +41,15 @@ namespace SCP575
             timed_override = false,
             toggleTesla,
             timedTesla,
-            keter;
-        public static int KeterDamage;
+            keter,
+            triggerkill,
+            toggleketer,
+            keterkill;
+        public static int 
+            KeterDamage,
+            keterkill_num;
         public static List<Room> BlackoutRoom = new List<Room>();
+        public static List<Player> keterlist = new List<Player>();
 
         public override void OnDisable()
         {
@@ -69,6 +75,9 @@ namespace SCP575
             this.AddConfig(new ConfigSetting("575_timed_tesla", true, SettingType.BOOL, true, "If teslas should be disabled during timed events."));
             this.AddConfig(new ConfigSetting("575_keter_damage", 10, SettingType.NUMERIC, true, "How much damage per 5 seconds people in affected areas take."));
             this.AddConfig(new ConfigSetting("575_keter", true, SettingType.BOOL, true, "If SCP-575 should make use of it's Keter status."));
+            this.AddConfig(new ConfigSetting("575_keter_toggle", false, SettingType.BOOL, true, "If SCP-575 keter should be enabled for toggled events."));
+            this.AddConfig(new ConfigSetting("575_keter_kill", false, SettingType.BOOL, true, "If SCP-575's keter event should kill players instead of damage them."));
+            this.AddConfig(new ConfigSetting("575_keter_kill_num", 1, SettingType.NUMERIC, true, "The number of players killed during timed Keter events.));"));
             Timing.Init(this);
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
@@ -99,7 +108,10 @@ namespace SCP575
             while (SCP575.toggle)
             {
                 RunBlackout();
-                TriggerKeter();
+                if (SCP575.toggleketer)
+                {
+                    TriggerKeter();
+                }
                 yield return 11;
             }
         }
@@ -122,6 +134,7 @@ namespace SCP575
                 float blackout_dur = SCP575.durTime;
                 SCP575.plugin.Debug("Flipping Bools1");
                 SCP575.timer = true;
+                SCP575.triggerkill = true;
                 do 
                 {
                     SCP575.plugin.Debug("Running Blackout");
@@ -139,6 +152,7 @@ namespace SCP575
                 }
                 yield return 8.7f;
                 SCP575.plugin.Debug("Flipping bools2");
+                SCP575.triggerkill = false;
                 SCP575.timer = false;
                 SCP575.plugin.Debug("Waiting to re-execute..");
                 yield return SCP575.waitTime;
@@ -150,9 +164,33 @@ namespace SCP575
             {
                 if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SCP)
                 {
-                    player.Damage(SCP575.KeterDamage);
+                    if (SCP575.triggerkill && SCP575.keterkill)
+                    {
+                        SCP575.keterlist.Add(player);
+                        Functions.KeterKill(player);
+                    }
+                    else
+                    {
+                        player.Damage(SCP575.KeterDamage);
+                    }
                 }
             }
+        }
+        public static void KeterKill(Player player)
+        {   
+            int randomplayer = new System.Random().Next(SCP575.keterlist.Count);
+            Player kill = SCP575.keterlist[randomplayer];
+            for (int i = 0; i < SCP575.keterkill_num; i++)
+            {
+                foreach (Player p in SCP575.keterlist)
+                {
+                    if (p == kill)
+                    {
+                        p.Kill();
+                    }
+                }
+            }
+            SCP575.triggerkill = false;
         }
         public static bool HasFlashlight(Player player)
         {

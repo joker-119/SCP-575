@@ -28,6 +28,9 @@ namespace SCP575
             SCP575.toggleTesla = this.plugin.GetConfigBool("575_toggle_tesla");
             SCP575.keter = this.plugin.GetConfigBool("575_keter");
             SCP575.KeterDamage = this.plugin.GetConfigInt("575_keter_damage");
+            SCP575.toggleketer = this.plugin.GetConfigBool("575_keter_toggle");
+            SCP575.keterkill = this.plugin.GetConfigBool("575_keter_kill");
+            SCP575.keterkill_num = this.plugin.GetConfigInt("575_keter_kill_num");
         }
 
         public void OnRoundStart(RoundStartEvent ev)
