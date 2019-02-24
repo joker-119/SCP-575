@@ -29,6 +29,9 @@ Config option | Config Type | Default Value | Description
 575_timed_tesla | Bool | True | If tesla gates should be deactivated during timed events.
 575_keter | Bool | True | If the SCP-575 keter-class effects should be used.
 575_keter_damage | Int | 10 | The amount of damage (every 5 seconds) players affected by SCP-575's keter effect will take.
+575_keter_toggle | Bool | False | If keter events should be active during toggled blackouts.
+575_keter_kill | Bool | False | If keter events should kill affected players instead of damage them.
+575_keter_kill_num | Int | 1 | How many people should be killed each blackout cycle by keter_kill.
 
 ### Commands
   Command |  |  | Description
