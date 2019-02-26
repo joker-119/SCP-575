@@ -5,9 +5,9 @@ using Smod2.Config;
 using Smod2;
 using Smod2.API;
 using Smod2.Events;
-using scp4aiur;
 using System.Collections.Generic;
 using UnityEngine;
+using Smod2.Coroutines;
 
 namespace SCP575
 {
@@ -16,7 +16,7 @@ namespace SCP575
         name = "SCP-575",
         description = "Adds light blackout command + timed events",
         id = "joker.SCP575",
-        version = "2.3.3",
+        version = "2.3.4",
         SmodMajor = 3,
         SmodMinor = 3,
         SmodRevision = 0
@@ -32,7 +32,6 @@ namespace SCP575
         public static float durTime;
         public static bool 
             Timed,
-            firstTimer = true,
             announce,
             toggle,
             toggle_lcz,
@@ -49,7 +48,6 @@ namespace SCP575
             KeterDamage,
             keterkill_num;
         public static List<Room> BlackoutRoom = new List<Room>();
-        public static List<Player> keterlist = new List<Player>();
 
         public override void OnDisable()
         {
@@ -78,7 +76,6 @@ namespace SCP575
             this.AddConfig(new ConfigSetting("575_keter_toggle", false, SettingType.BOOL, true, "If SCP-575 keter should be enabled for toggled events."));
             this.AddConfig(new ConfigSetting("575_keter_kill", false, SettingType.BOOL, true, "If SCP-575's keter event should kill players instead of damage them."));
             this.AddConfig(new ConfigSetting("575_keter_kill_num", 1, SettingType.NUMERIC, true, "The number of players killed during timed Keter events.));"));
-            Timing.Init(this);
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
         }
@@ -110,7 +107,7 @@ namespace SCP575
                 RunBlackout();
                 if (SCP575.toggleketer)
                 {
-                    TriggerKeter();
+                    SCP575.plugin.StartCoroutine(Functions.Keter(0));
                 }
                 yield return 11;
             }
@@ -118,7 +115,7 @@ namespace SCP575
         public static IEnumerable<float> TimedBlackout(float delay)
         {
             SCP575.plugin.Debug("Being Delayed");
-            yield return delay;
+            yield return Smod2.Coroutines.Coroutine.WaitForSeconds(delay);
             while (SCP575.Timed)
             {
                 SCP575.plugin.Debug("Announcing");
@@ -130,18 +127,20 @@ namespace SCP575
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
-                yield return 8.7f;
+                yield return Smod2.Coroutines.Coroutine.WaitForSeconds(8.7f);
                 float blackout_dur = SCP575.durTime;
                 SCP575.plugin.Debug("Flipping Bools1");
                 SCP575.timer = true;
                 SCP575.triggerkill = true;
+                SCP575.plugin.Debug(SCP575.timer.ToString() + SCP575.triggerkill.ToString());
                 do 
                 {
                     SCP575.plugin.Debug("Running Blackout");
                     RunBlackout();
-                    TriggerKeter();
-                    yield return 11;
+                    SCP575.plugin.StartCoroutine(Keter(0));
+                    yield return Smod2.Coroutines.Coroutine.WaitForSeconds(11);
                 } while ((blackout_dur -= 11) > 0);
+                SCP575.plugin.Debug("Announcing Disabled.");
                 if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
@@ -150,47 +149,75 @@ namespace SCP575
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
                 }
-                yield return 8.7f;
+                yield return Smod2.Coroutines.Coroutine.WaitForSeconds(8.7f);
                 SCP575.plugin.Debug("Flipping bools2");
-                SCP575.triggerkill = false;
                 SCP575.timer = false;
+                SCP575.triggerkill = false;
+                SCP575.plugin.Debug("Timer: " + SCP575.timer);
+
                 SCP575.plugin.Debug("Waiting to re-execute..");
-                yield return SCP575.waitTime;
+                yield return Smod2.Coroutines.Coroutine.WaitForSeconds(SCP575.waitTime);
             }
         }
-        public static void TriggerKeter()
+        public static void TriggerBools()
         {
-            foreach (Player player in SCP575.plugin.Server.GetPlayers())
-            {
-                if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SCP)
-                {
-                    if (SCP575.triggerkill && SCP575.keterkill)
-                    {
-                        SCP575.keterlist.Add(player);
-                        Functions.KeterKill(player);
-                    }
-                    else
-                    {
-                        player.Damage(SCP575.KeterDamage);
-                    }
-                }
-            }
+            SCP575.timer = !SCP575.timer;
+            SCP575.triggerkill = !SCP575.triggerkill;
         }
-        public static void KeterKill(Player player)
-        {   
-            int randomplayer = new System.Random().Next(SCP575.keterlist.Count);
-            Player kill = SCP575.keterlist[randomplayer];
-            for (int i = 0; i < SCP575.keterkill_num; i++)
+        public static IEnumerable<float> Keter(float delay)
+        {
+            SCP575.plugin.Debug("Keter coroutine started.");
+            yield return delay;
+            while (SCP575.keter)
             {
-                foreach (Player p in SCP575.keterlist)
+                List<Player> players = SCP575.plugin.Server.GetPlayers();
+                List<String> keterlist = new List<String>();
+                SCP575.plugin.Debug("Keter coroutine loop.");
+                SCP575.plugin.Debug("Triggerkill: " + SCP575.triggerkill);
+                foreach (Player player in players)
                 {
-                    if (p == kill)
+                    if (player.TeamRole.Team == Smod2.API.Team.SCP)
                     {
-                        p.Kill();
+                        players.Remove(player);
                     }
                 }
+                if (SCP575.timer || SCP575.toggle)
+                {
+                    for (int i = 0; i < SCP575.keterkill_num; i++)
+                    {
+                        SCP575.plugin.Debug("Selecting a random player..");
+                        int random = new System.Random().Next(players.Count);
+                        string name = players[random].Name;
+                        keterlist.Add(name);
+                        SCP575.plugin.Debug("Player " + name + " selected.");
+                    }
+                    foreach (Player player in players)
+                    {
+                        if (keterlist.Contains(player.Name) && SCP575.keterkill && Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player))
+                        {
+                            SCP575.plugin.Debug("Killing " + player.Name + ".");
+                            player.Kill();
+                            SCP575.triggerkill = false;
+                            SCP575.plugin.Debug("Triggerkill: " + SCP575.triggerkill);
+                            yield return Smod2.Coroutines.Coroutine.WaitForSeconds(SCP575.durTime);
+                        }
+                        else if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player))
+                        {
+                            player.Damage(SCP575.KeterDamage);
+                            SCP575.plugin.Debug("Damaging " + player.Name + ".");
+                            yield return Smod2.Coroutines.Coroutine.WaitForSeconds(5);
+                        }
+                        else
+                        {
+                            yield return Smod2.Coroutines.Coroutine.WaitForSeconds(5);
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
-            SCP575.triggerkill = false;
         }
         public static bool HasFlashlight(Player player)
         {
@@ -205,7 +232,7 @@ namespace SCP575
         public static bool IsInDangerZone(Player player)
         {
             Vector loc = player.GetPosition();
-            foreach (Room room in SCP575.plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
+            foreach (Room room in SCP575.BlackoutRoom)
             {
                 if (room.ZoneType == ZoneType.HCZ || (SCP575.timer && SCP575.timed_lcz && room.ZoneType == ZoneType.LCZ) || (SCP575.toggle && SCP575.toggle_lcz && room.ZoneType == ZoneType.LCZ))
                 {
@@ -256,7 +283,7 @@ namespace SCP575
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
                 }
-                Timing.Run(ToggledBlackout(8.7f));
+                SCP575.plugin.StartCoroutine(ToggledBlackout(0));
             }
         }
 

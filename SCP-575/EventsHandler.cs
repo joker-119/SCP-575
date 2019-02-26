@@ -1,5 +1,4 @@
 ﻿using System;
-using scp4aiur;
 using Smod2.EventHandlers;
 using Smod2.Events;
 using Smod2.API;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace SCP575
 {
-    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers
+    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerRoundRestart
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
@@ -31,6 +30,8 @@ namespace SCP575
             SCP575.toggleketer = this.plugin.GetConfigBool("575_keter_toggle");
             SCP575.keterkill = this.plugin.GetConfigBool("575_keter_kill");
             SCP575.keterkill_num = this.plugin.GetConfigInt("575_keter_kill_num");
+            SCP575.timer = false;
+            SCP575.triggerkill = false;
         }
 
         public void OnRoundStart(RoundStartEvent ev)
@@ -38,13 +39,24 @@ namespace SCP575
             plugin.Debug("Getting 079 rooms.");
             Functions.Get079Rooms();
             plugin.Debug("Initial Delay: " + SCP575.delayTime + "s.");
-            Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
+            plugin.StartCoroutine(Functions.TimedBlackout(SCP575.delayTime));
             if (SCP575.toggle)
             {
                 SCP575.timed_override = true;
                 SCP575.Timed = false;
-                Timing.Run(Functions.ToggledBlackout(0));
+                plugin.StartCoroutine(Functions.ToggledBlackout(0));
             }
+        }
+        public void OnRoundRestart(RoundRestartEvent ev)
+        {
+            SCP575.timer = false;
+            SCP575.triggerkill = false;
+            
+        }
+        public void OnRoundEnd(RoundEndEvent ev)
+        {
+            SCP575.triggerkill = false;
+            SCP575.timer = false;
         }
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
