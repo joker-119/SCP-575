@@ -51,8 +51,8 @@
     <Compile Include="SCP-575Command.cs" />
     <Compile Include="EventsHandler.cs" />
     <Compile Include="SCP-575.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timing.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

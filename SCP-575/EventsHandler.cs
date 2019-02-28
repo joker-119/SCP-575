@@ -1,13 +1,13 @@
 ﻿using System;
-using scp4aiur;
 using Smod2.EventHandlers;
 using Smod2.Events;
 using Smod2.API;
 using UnityEngine;
+using scp4aiur;
 
 namespace SCP575
 {
-    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers
+    public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerRoundRestart
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
@@ -31,6 +31,8 @@ namespace SCP575
             SCP575.toggleketer = this.plugin.GetConfigBool("575_keter_toggle");
             SCP575.keterkill = this.plugin.GetConfigBool("575_keter_kill");
             SCP575.keterkill_num = this.plugin.GetConfigInt("575_keter_kill_num");
+            SCP575.timer = false;
+            SCP575.triggerkill = false;
         }
 
         public void OnRoundStart(RoundStartEvent ev)
@@ -49,6 +51,17 @@ namespace SCP575
             {
                 Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
             }
+        }
+        public void OnRoundRestart(RoundRestartEvent ev)
+        {
+            SCP575.timer = false;
+            SCP575.triggerkill = false;
+            
+        }
+        public void OnRoundEnd(RoundEndEvent ev)
+        {
+            SCP575.triggerkill = false;
+            SCP575.timer = false;
         }
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
