@@ -180,16 +180,15 @@ namespace SCP575
                         player.Kill();
                         SCP575.plugin.Debug("Killing " + player.Name + ".");
                         keterlist.Remove(player.Name);
+                        player.PersonalClearBroadcasts();
+                        player.PersonalBroadcast(15, "You were killed by SCP-575. Having a flashlight out while in an area affected by a blackout will save you from this!",false);
                     }
                     else
                     {
                         player.Damage(SCP575.KeterDamage);
                         SCP575.plugin.Debug("Damaging " + player.Name + ".");
+                        player.PersonalBroadcast(5, "You were damaged by SCP-575!",false);
                     }
-                }
-                else
-                {
-                    break;
                 }
             }
         }
