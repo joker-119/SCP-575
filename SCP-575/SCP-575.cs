@@ -53,12 +53,12 @@ namespace SCP575
 
         public override void OnDisable()
         {
-            plugin.Info(plugin.Details.name + " v." + plugin.Details.version + " has been disabled.");
+            plugin.Debug(plugin.Details.name + " v." + plugin.Details.version + " has been disabled.");
         }
         public override void OnEnable()
         {
             plugin = this;
-            plugin.Info(plugin.Details.name + " v." + plugin.Details.version + " has been enabled.");
+            plugin.Debug(plugin.Details.name + " v." + plugin.Details.version + " has been enabled.");
         }
 
         public override void Register()
@@ -95,11 +95,12 @@ namespace SCP575
                 {
                     room.FlickerLights();
                 }
-                Generator079.generators[0].CallRpcOvercharge();
             }
-            else if ((SCP575.timer && !SCP575.timed_lcz) || (SCP575.toggle && !SCP575.toggle_lcz))
+            Generator079.generators[0].CallRpcOvercharge();
+
+            if ((SCP575.timer && SCP575.keter) || (SCP575.toggle && SCP575.toggleketer))
             {
-                Generator079.generators[0].CallRpcOvercharge();
+                Keter();
             }
         }
         public static IEnumerable<float> ToggledBlackout(float delay)
@@ -108,10 +109,6 @@ namespace SCP575
             while (SCP575.toggle)
             {
                 RunBlackout();
-                if (SCP575.toggleketer)
-                {
-                    TriggerKeter();
-                }
                 yield return 11;
             }
         }
@@ -139,7 +136,6 @@ namespace SCP575
                 {
                     SCP575.plugin.Debug("Running Blackout");
                     RunBlackout();
-                    TriggerKeter();
                     yield return 11;
                 } while ((blackout_dur -= 11) > 0);
                 if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
@@ -158,39 +154,38 @@ namespace SCP575
                 yield return SCP575.waitTime;
             }
         }
-        public static void TriggerKeter()
+        public static void Keter()
         {
-            foreach (Player player in SCP575.plugin.Server.GetPlayers())
+            SCP575.plugin.Debug("Keter function started.");
+            List<Player> players = SCP575.plugin.Server.GetPlayers();
+            List<String> keterlist = new List<String>();
+            for (int i = 0; i < SCP575.keterkill_num; i++)
             {
-                if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SCP)
+                int random = new System.Random().Next(players.Count);
+                string name = players[random].Name;
+                if (players[random].TeamRole.Team != Smod2.API.Team.SCP && players[random].TeamRole.Team != Smod2.API.Team.SPECTATOR)
                 {
-                    if (SCP575.triggerkill && SCP575.keterkill)
+                    keterlist.Add(name);
+                }
+            }
+
+            foreach (Player player in players)
+            {
+                if (Functions.IsInDangerZone(player) && !Functions.HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SPECTATOR && player.TeamRole.Team != Smod2.API.Team.SCP)
+                {
+                    if (keterlist.Contains(player.Name) && SCP575.keterkill)
                     {
-                        SCP575.keterlist.Add(player);
-                        Functions.KeterKill(player);
+                        player.Kill();
+                        SCP575.plugin.Debug("Killing " + player.Name + ".");
+                        keterlist.Remove(player.Name);
                     }
                     else
                     {
                         player.Damage(SCP575.KeterDamage);
+                        SCP575.plugin.Debug("Damaging " + player.Name + ".");
                     }
                 }
             }
-        }
-        public static void KeterKill(Player player)
-        {   
-            int randomplayer = new System.Random().Next(SCP575.keterlist.Count);
-            Player kill = SCP575.keterlist[randomplayer];
-            for (int i = 0; i < SCP575.keterkill_num; i++)
-            {
-                foreach (Player p in SCP575.keterlist)
-                {
-                    if (p == kill)
-                    {
-                        p.Kill();
-                    }
-                }
-            }
-            SCP575.triggerkill = false;
         }
         public static bool HasFlashlight(Player player)
         {

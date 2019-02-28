@@ -38,12 +38,16 @@ namespace SCP575
             plugin.Debug("Getting 079 rooms.");
             Functions.Get079Rooms();
             plugin.Debug("Initial Delay: " + SCP575.delayTime + "s.");
-            Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
             if (SCP575.toggle)
             {
                 SCP575.timed_override = true;
                 SCP575.Timed = false;
+                SCP575.toggle = true;
                 Timing.Run(Functions.ToggledBlackout(0));
+            }
+            else if (SCP575.Timed)
+            {
+                Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
             }
         }
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
