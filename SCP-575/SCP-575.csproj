@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SCP-575</RootNamespace>
     <AssemblyName>SCP-575</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,12 +46,15 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+	<Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SCP-575Command.cs" />
     <Compile Include="EventsHandler.cs" />
     <Compile Include="SCP-575.cs" />
-    <Compile Include="Timing.cs" />
+	<Compile Include="Functions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

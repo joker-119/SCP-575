@@ -43,7 +43,7 @@ namespace SCP575
 			while (SCP575.toggle)
 			{
 				RunBlackout();
-				yield return Timing.WaitForSeconds(delay);
+				yield return Timing.WaitForSeconds(11);
 			}
 		}
 		public IEnumerator<float> TimedBlackout(float delay)
