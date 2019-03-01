@@ -7,7 +7,7 @@ using Smod2.API;
 using Smod2.Events;
 using System.Collections.Generic;
 using UnityEngine;
-using scp4aiur;
+using MEC;
 
 namespace SCP575
 {
@@ -24,7 +24,7 @@ namespace SCP575
 
 	public class SCP575 : Plugin
 	{
-		internal static SCP575 plugin;
+		internal static SCP575 singleton;
 		public static string[] validRanks;
 		public static bool enabled = true;
 		public static float delayTime;
@@ -51,12 +51,12 @@ namespace SCP575
 
 		public override void OnDisable()
 		{
-			plugin.Debug(plugin.Details.name + " v." + plugin.Details.version + " has been disabled.");
+			this.Debug(this.Details.name + " v." + this.Details.version + " has been disabled.");
 		}
 		public override void OnEnable()
 		{
-			plugin = this;
-			plugin.Debug(plugin.Details.name + " v." + plugin.Details.version + " has been enabled.");
+			singleton = this;
+			this.Debug(this.Details.name + " v." + this.Details.version + " has been enabled.");
 		}
 
 		public override void Register()
@@ -77,7 +77,8 @@ namespace SCP575
 			this.AddConfig(new ConfigSetting("575_keter_kill", false, SettingType.BOOL, true, "If SCP-575's keter event should kill players instead of damage them."));
 			this.AddConfig(new ConfigSetting("575_keter_kill_num", 1, SettingType.NUMERIC, true, "The number of players killed during timed Keter events.));"));
 			this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
-			Timing.Init(this);
+			//Timing.Init(this);
+			new Functions(this);
 			this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
 		}
 	}

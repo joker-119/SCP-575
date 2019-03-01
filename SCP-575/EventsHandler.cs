@@ -3,7 +3,8 @@ using Smod2.EventHandlers;
 using Smod2.Events;
 using Smod2.API;
 using UnityEngine;
-using scp4aiur;
+using MEC;
+using System.Collections.Generic;
 
 namespace SCP575
 {
@@ -12,7 +13,7 @@ namespace SCP575
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
         DateTime updateTimer = DateTime.Now;
-
+		public static List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
@@ -38,18 +39,18 @@ namespace SCP575
         public void OnRoundStart(RoundStartEvent ev)
         {
             plugin.Debug("Getting 079 rooms.");
-            Functions.Get079Rooms();
+            Functions.singleton.Get079Rooms();
             plugin.Debug("Initial Delay: " + SCP575.delayTime + "s.");
             if (SCP575.toggle)
             {
                 SCP575.timed_override = true;
                 SCP575.Timed = false;
                 SCP575.toggle = true;
-                Timing.Run(Functions.ToggledBlackout(0));
+                coroutines.Add(Timing.RunCoroutine(Functions.singleton.ToggledBlackout(0)));
             }
             else if (SCP575.Timed)
             {
-                Timing.Run(Functions.TimedBlackout(SCP575.delayTime));
+				coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(SCP575.delayTime)));
             }
         }
         public void OnRoundRestart(RoundRestartEvent ev)
