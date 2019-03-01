@@ -110,6 +110,7 @@ namespace SCP575
 				else {
 					i--;
 					limit++;
+				}
 			}
 
 			foreach (Player player in players)

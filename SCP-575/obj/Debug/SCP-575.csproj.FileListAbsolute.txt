@@ -1,0 +1,2 @@
+/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Debug/SCP-575.csprojAssemblyReference.cache
+/home/Joker/SCP Plugins/SCP-575/SCP-575/obj/Debug/SCP-575.csproj.CoreCompileInputs.cache
