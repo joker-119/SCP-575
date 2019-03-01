@@ -114,7 +114,7 @@ namespace SCP575
 				}
 			}
 
-			foreach (Player player in players)
+			foreach (Player player in SCP575.Server.GetPlayers())
 			{
 				if (IsInDangerZone(player) && !HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SPECTATOR && player.TeamRole.Team != Smod2.API.Team.SCP)
 				{
