@@ -87,7 +87,6 @@ namespace SCP575
 				SCP575.timer = false;
 				SCP575.triggerkill = false;
 				SCP575.Debug("Timer: " + SCP575.timer);
-
 				SCP575.Debug("Waiting to re-execute..");
 				yield return Timing.WaitForSeconds(SCP575.waitTime);
 			}
@@ -101,8 +100,9 @@ namespace SCP575
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
 				if (!SCP575.keterkill || limit > 50 || players.Count == 0) break;
+				yield return Timing.WaitForSeconds(0.1f);
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
-				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
+				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP && IsInDangerZone(ply) && !HasFlashlight(ply))
 				{
 					players.RemoveAll(p => p.PlayerId == ply.PlayerId);
 					keterlist.Add(ply.Name);
@@ -118,7 +118,9 @@ namespace SCP575
 			{
 				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) continue;
 				if (HasFlashlight(player)) continue;
+				yield return Timing.WaitForSeconds(0.1f);
 				if (!IsInDangerZone(player)) continue;
+				yield return Timing.WaitForSeconds(0.1f);
 			
 					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
@@ -136,7 +138,7 @@ namespace SCP575
 						player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
 						yield return Timing.WaitForSeconds(0.05f);
 					}
-				
+				SCP575.triggerkill = false;
 			}
 		}
 
