@@ -97,16 +97,19 @@ namespace SCP575
 			SCP575.Debug("Keter function started.");
 			List<Player> players = SCP575.Server.GetPlayers();
 			List<String> keterlist = new List<String>();
+			int limit = 0;
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
-				if (!SCP575.keterkill) break;
+				if (!SCP575.keterkill || limit > 50) break;
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
-				if(ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
+				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
 				{
 					players.RemoveAll(p => p.PlayerId == ply.PlayerId);
 					keterlist.Add(ply.Name);
 				}
-				else i--;
+				else {
+					i--;
+					limit++;
 			}
 
 			foreach (Player player in players)
