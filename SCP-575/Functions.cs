@@ -130,11 +130,7 @@ namespace SCP575
 		{
 			GameObject ply = player.GetGameObject() as GameObject;
 			WeaponManager manager = ply.GetComponent<WeaponManager>();
-			if (manager.NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT)
-			{
-				return true;
-			}
-			return false;
+			return manager.NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
 		}
 		public bool IsInDangerZone(Player player)
 		{
@@ -182,7 +178,7 @@ namespace SCP575
 						PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
 					}
 				}
-				Timing.RunCoroutine(ToggledBlackout(8.7f));
+				EventsHandler.coroutines.Add(Timing.RunCoroutine(ToggledBlackout(8.7f)));
 			}
 		}
 
