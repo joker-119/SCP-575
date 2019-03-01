@@ -127,7 +127,7 @@ namespace SCP575
 						player.PersonalBroadcast(15, "You were killed by SCP-575. Having a flashlight out while in an area affected by a blackout will save you from this!", false);
 						yield return Timing.WaitForSeconds(0.05f);
 					}
-					else
+					else if(!SCP575.keterkill)
 					{
 						player.Damage(SCP575.KeterDamage);
 						SCP575.Debug("Damaging " + player.Name + ".");
