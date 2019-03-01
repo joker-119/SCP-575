@@ -120,11 +120,8 @@ namespace SCP575
 				if (HasFlashlight(player)) continue;
 				yield return Timing.WaitForSeconds(0.1f);
 				if (!IsInDangerZone(player)) continue;
-<<<<<<< HEAD
 				yield return Timing.WaitForSeconds(0.1f);
 			
-=======
->>>>>>> 7b1eddf25840951be762b8c0a23cb63ce0c7061c
 					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
 						player.Kill();
