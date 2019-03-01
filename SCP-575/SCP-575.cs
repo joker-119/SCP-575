@@ -81,6 +81,4 @@ namespace SCP575
 			this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command());
 		}
 	}
-
-
 }

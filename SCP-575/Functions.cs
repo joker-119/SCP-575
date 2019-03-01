@@ -94,9 +94,7 @@ namespace SCP575
 				int random = new System.Random().Next(players.Count);
 				string name = players[random].Name;
 				if (players[random].TeamRole.Team != Smod2.API.Team.SCP && players[random].TeamRole.Team != Smod2.API.Team.SPECTATOR)
-				{
-					keterlist.Add(name);
-				}
+					keterlist.Add(players[random].Name);
 			}
 
 			foreach (Player player in players)
@@ -133,17 +131,11 @@ namespace SCP575
 		public static bool IsInDangerZone(Player player)
 		{
 			Vector loc = player.GetPosition();
-			foreach (Room room in SCP575.plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
+			foreach (Room room in SCP575.plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA).Where(p => Vector.Distance(loc, p.Position) <= 10f))
 			{
 				if (room.ZoneType == ZoneType.HCZ || (SCP575.timer && SCP575.timed_lcz && room.ZoneType == ZoneType.LCZ) || (SCP575.toggle && SCP575.toggle_lcz && room.ZoneType == ZoneType.LCZ))
 				{
-					float x = Math.Abs(loc.x - room.Position.x),
-						y = Math.Abs(loc.y - room.Position.y),
-						z = Math.Abs(loc.z - room.Position.z);
-					if (x < 10 && y < 10 && z < 10)
-					{
-						return true;
-					}
+					return true;
 				}
 			}
 			return false;
