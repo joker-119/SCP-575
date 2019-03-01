@@ -99,6 +99,7 @@ namespace SCP575
 			List<String> keterlist = new List<String>();
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
+				if (!SCP575.keterkill) break;
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
 				if(ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
 				{
