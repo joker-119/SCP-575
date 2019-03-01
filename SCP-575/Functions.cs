@@ -100,7 +100,7 @@ namespace SCP575
 			int limit = 0;
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
-				if (!SCP575.keterkill || limit > 50) break;
+				if (!SCP575.keterkill || limit > 50 || players.Count == 0) break;
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
 				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
 				{
