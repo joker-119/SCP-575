@@ -39,17 +39,17 @@ namespace SCP575
 		}
 		public IEnumerator<float> ToggledBlackout(float delay)
 		{
-			yield return delay;
+			yield return Timing.WaitForSeconds(delay);
 			while (SCP575.toggle)
 			{
 				RunBlackout();
-				yield return 11;
+				yield return Timing.WaitForSeconds(delay);
 			}
 		}
 		public IEnumerator<float> TimedBlackout(float delay)
 		{
 			SCP575.Debug("Being Delayed");
-			yield return delay;
+			yield return Timing.WaitForSeconds(delay);
 			while (SCP575.Timed)
 			{
 				SCP575.Debug("Announcing");
@@ -61,7 +61,7 @@ namespace SCP575
 				{
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
 				}
-				yield return 8.7f;
+				yield return Timing.WaitForSeconds(8.7f);
 				float blackout_dur = SCP575.durTime;
 				SCP575.Debug("Flipping Bools1");
 				SCP575.timer = true;
@@ -71,7 +71,7 @@ namespace SCP575
 				{
 					SCP575.Debug("Running Blackout");
 					RunBlackout();
-					yield return 11;
+					yield return Timing.WaitForSeconds(11f);
 				} while ((blackout_dur -= 11) > 0);
 				SCP575.Debug("Announcing Disabled.");
 				if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
@@ -82,14 +82,14 @@ namespace SCP575
 				{
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
 				}
-				yield return 8.7f;
+				yield return Timing.WaitForSeconds(8.7f);
 				SCP575.Debug("Flipping bools2");
 				SCP575.timer = false;
 				SCP575.triggerkill = false;
 				SCP575.Debug("Timer: " + SCP575.timer);
 
 				SCP575.Debug("Waiting to re-execute..");
-				yield return SCP575.waitTime;
+				yield return Timing.WaitForSeconds(SCP575.waitTime);
 			}
 		}
 		public IEnumerator<float> Keter()
