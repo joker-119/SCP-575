@@ -1,5 +1,6 @@
 ﻿using System;
 using Smod2.Commands;
+using MEC;
 
 namespace SCP575
 {
@@ -39,7 +40,7 @@ namespace SCP575
                         };
                     case "toggle":
                     {
-                        Functions.ToggleBlackout();
+                        Functions.singleton.ToggleBlackout();
                         return new string[] 
                         { 
                             "Manual SCP-575 event toggled." 
@@ -47,7 +48,7 @@ namespace SCP575
                     }
                     case "enable":
                     {
-                        Functions.EnableBlackouts();
+                        Functions.singleton.EnableBlackouts();
                         return new string[]
                         {
                             "Timed events enabled."
@@ -55,7 +56,7 @@ namespace SCP575
                     }
                     case "disable":
                     {
-                        Functions.DisableBlackouts();
+                        Functions.singleton.DisableBlackouts();
                         return new string[]
                         {
                             "Timed events disabled."
@@ -63,7 +64,7 @@ namespace SCP575
                     }
                     case "anoff":
                     {
-                        Functions.DisableAnnounce();
+                        Functions.singleton.DisableAnnounce();
                         return new string[]
                         {
                             "CASSIE Announcements disabled."
@@ -71,12 +72,18 @@ namespace SCP575
                     }
                     case "anon":
                     {
-                        Functions.EnableAnnounce();
+                        Functions.singleton.EnableAnnounce();
                         return new string[]
                         {
                             "CASSIE Announcements enabled."
                         };
                     }
+					case "halt":
+						{
+							foreach (CoroutineHandle handle in EventsHandler.coroutines) Timing.KillCoroutines(handle);
+							EventsHandler.coroutines.Clear();
+							return new string[] { "Halted all active Coroutines." };
+						}
                     default:
                     {
                         return new string[]
