@@ -107,9 +107,11 @@ namespace SCP575
 					players.RemoveAll(p => p.PlayerId == ply.PlayerId);
 					keterlist.Add(ply.Name);
 				}
-				else {
+				else
+				{
 					i--;
 					limit++;
+				}
 			}
 
 			foreach (Player player in players)
