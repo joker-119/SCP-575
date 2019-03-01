@@ -1,5 +1,6 @@
 ﻿using System;
 using Smod2.Commands;
+using MEC;
 
 namespace SCP575
 {
@@ -77,6 +78,11 @@ namespace SCP575
                             "CASSIE Announcements enabled."
                         };
                     }
+					case "halt":
+						{
+							foreach (CoroutineHandle handle in EventsHandler.coroutines) Timing.KillCoroutines(handle);
+							return new string[] { "Halted all active Coroutines." };
+						}
                     default:
                     {
                         return new string[]

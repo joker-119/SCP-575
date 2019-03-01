@@ -34,7 +34,7 @@ namespace SCP575
 
 			if ((SCP575.timer && SCP575.keter) || (SCP575.toggle && SCP575.toggleketer))
 			{
-				Keter();
+				EventsHandler.coroutines.Add(Timing.RunCoroutine(Keter()));
 			}
 		}
 		public IEnumerator<float> ToggledBlackout(float delay)
@@ -92,46 +92,49 @@ namespace SCP575
 				yield return SCP575.waitTime;
 			}
 		}
-		public void Keter()
+		public IEnumerator<float> Keter()
 		{
 			SCP575.Debug("Keter function started.");
 			List<Player> players = SCP575.Server.GetPlayers();
 			List<String> keterlist = new List<String>();
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
-				int random = new System.Random().Next(players.Count);
-				string name = players[random].Name;
-				if (players[random].TeamRole.Team != Smod2.API.Team.SCP && players[random].TeamRole.Team != Smod2.API.Team.SPECTATOR)
-					keterlist.Add(players[random].Name);
+				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
+				if(ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP)
+				{
+					players.RemoveAll(p => p.PlayerId == ply.PlayerId);
+					keterlist.Add(ply.Name);
+				}
+				else i--;
 			}
 
 			foreach (Player player in players)
 			{
 				if (IsInDangerZone(player) && !HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SPECTATOR && player.TeamRole.Team != Smod2.API.Team.SCP)
 				{
-					if (keterlist.Contains(player.Name) && SCP575.keterkill)
+					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
 						player.Kill();
 						SCP575.Debug("Killing " + player.Name + ".");
 						keterlist.Remove(player.Name);
 						player.PersonalClearBroadcasts();
 						player.PersonalBroadcast(15, "You were killed by SCP-575. Having a flashlight out while in an area affected by a blackout will save you from this!", false);
+						yield return Timing.WaitForSeconds(0.05f);
 					}
 					else
 					{
 						player.Damage(SCP575.KeterDamage);
 						SCP575.Debug("Damaging " + player.Name + ".");
 						player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
+						yield return Timing.WaitForSeconds(0.05f);
 					}
 				}
 			}
 		}
-		public bool HasFlashlight(Player player)
-		{
-			GameObject ply = player.GetGameObject() as GameObject;
-			WeaponManager manager = ply.GetComponent<WeaponManager>();
-			return manager.NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
-		}
+
+		public bool HasFlashlight(Player player) =>
+			(player.GetGameObject() as GameObject).GetComponent<WeaponManager>().NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
+
 		public bool IsInDangerZone(Player player)
 		{
 			Vector loc = player.GetPosition();
