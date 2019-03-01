@@ -56,6 +56,7 @@ namespace SCP575
 		public void OnRoundRestart(RoundRestartEvent ev)
 		{
 			foreach (CoroutineHandle handle in coroutines) Timing.KillCoroutines(handle);
+			coroutines.Clear();
 			SCP575.timer = false;
 			SCP575.triggerkill = false;
 		}

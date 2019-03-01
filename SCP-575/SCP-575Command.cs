@@ -81,6 +81,7 @@ namespace SCP575
 					case "halt":
 						{
 							foreach (CoroutineHandle handle in EventsHandler.coroutines) Timing.KillCoroutines(handle);
+							EventsHandler.coroutines.Clear();
 							return new string[] { "Halted all active Coroutines." };
 						}
                     default:
