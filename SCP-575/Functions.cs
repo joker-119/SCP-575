@@ -116,8 +116,10 @@ namespace SCP575
 
 			foreach (Player player in SCP575.Server.GetPlayers())
 			{
-				if (IsInDangerZone(player) && !HasFlashlight(player) && player.TeamRole.Team != Smod2.API.Team.SPECTATOR && player.TeamRole.Team != Smod2.API.Team.SCP)
-				{
+				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) continue;
+				if (HasFlashlight(player)) continue;
+				if (!IsInDangerZone(player)) continue;
+			
 					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
 						player.Kill();
@@ -134,7 +136,7 @@ namespace SCP575
 						player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
 						yield return Timing.WaitForSeconds(0.05f);
 					}
-				}
+				
 			}
 		}
 
