@@ -32,6 +32,11 @@ Config option | Config Type | Default Value | Description
 575_keter_toggle | Bool | False | If keter events should be active during toggled blackouts.
 575_keter_kill | Bool | False | If keter events should kill affected players instead of damage them.
 575_keter_kill_num | Int | 1 | How many people should be killed each blackout cycle by keter_kill.
+575_random_events | Bool | False | If SCP-575 should randomly cause events, instead of using the set timers.
+575_random_min | Int | 60 | The minimum number of seconds between each random 575 event.
+575_random_max | Int | 300 | The maximum number of seconds between each random 575 event.
+575_random_dur_min | Int | 11 | The minimum number of seconds randomized events should last.
+575_random_dur_max | Int | 90 | The maximum number of seconds randomized events should last.
 
 ### Commands
   Command |  |  | Description

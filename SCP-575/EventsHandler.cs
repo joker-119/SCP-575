@@ -32,6 +32,11 @@ namespace SCP575
 			SCP575.toggleketer = this.plugin.GetConfigBool("575_keter_toggle");
 			SCP575.keterkill = this.plugin.GetConfigBool("575_keter_kill");
 			SCP575.keterkill_num = this.plugin.GetConfigInt("575_keter_kill_num");
+			SCP575.random_events = this.plugin.GetConfigBool("575_random_events");
+			SCP575.random_min = this.plugin.GetConfigInt("575_random_min");
+			SCP575.random_max = this.plugin.GetConfigInt("575_random_max") + 1;
+			SCP575.random_dur_min = this.plugin.GetConfigInt("575_random_dur_min");
+			SCP575.random_dur_max = this.plugin.GetConfigInt("575_random_dur_max") + 1;
 			SCP575.timer = false;
 			SCP575.triggerkill = false;
 		}

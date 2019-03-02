@@ -62,7 +62,15 @@ namespace SCP575
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
 				}
 				yield return Timing.WaitForSeconds(8.7f);
-				float blackout_dur = SCP575.durTime;
+				float blackout_dur;
+				if (SCP575.random_events)
+				{
+					blackout_dur = GetRandom(SCP575.random_dur_min, SCP575.random_dur_max);
+				}
+				else
+				{
+					blackout_dur = SCP575.durTime;
+				} 
 				SCP575.Debug("Flipping Bools1");
 				SCP575.timer = true;
 				SCP575.triggerkill = true;
@@ -88,7 +96,22 @@ namespace SCP575
 				SCP575.triggerkill = false;
 				SCP575.Debug("Timer: " + SCP575.timer);
 				SCP575.Debug("Waiting to re-execute..");
-				yield return Timing.WaitForSeconds(SCP575.waitTime);
+				if (SCP575.random_events)
+				{
+					float rand = GetRandom(SCP575.random_min, SCP575.random_max);
+					yield return rand;
+				}
+				else
+				{
+					yield return Timing.WaitForSeconds(SCP575.waitTime);
+				}
+			}
+		}
+		public int GetRandom(int min, int max)
+		{
+			lock(SCP575.gen)
+			{
+				return SCP575.gen.Next(min, max);
 			}
 		}
 		public IEnumerator<float> Keter()

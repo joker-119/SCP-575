@@ -26,10 +26,12 @@ namespace SCP575
 	{
 		internal static SCP575 singleton;
 		public static string[] validRanks;
+		public static readonly System.Random gen = new System.Random();
 		public static bool enabled = true;
-		public static float delayTime;
-		public static float waitTime;
-		public static float durTime;
+		public static float 
+			waitTime,
+			durTime,
+			delayTime;
 		public static bool 
 			Timed,
 			announce,
@@ -43,9 +45,14 @@ namespace SCP575
 			keter,
 			triggerkill,
 			toggleketer,
+			random_events,
 			keterkill;
 		public static int 
 			KeterDamage,
+			random_min,
+			random_max,
+			random_dur_min,
+			random_dur_max,
 			keterkill_num;
 		public static List<Room> BlackoutRoom = new List<Room>();
 
@@ -76,6 +83,11 @@ namespace SCP575
 			this.AddConfig(new ConfigSetting("575_keter_toggle", false, SettingType.BOOL, true, "If SCP-575 keter should be enabled for toggled events."));
 			this.AddConfig(new ConfigSetting("575_keter_kill", false, SettingType.BOOL, true, "If SCP-575's keter event should kill players instead of damage them."));
 			this.AddConfig(new ConfigSetting("575_keter_kill_num", 1, SettingType.NUMERIC, true, "The number of players killed during timed Keter events.));"));
+			this.AddConfig(new ConfigSetting("575_random_events", false, SettingType.BOOL, true, "If 575 events should be randomized."));
+			this.AddConfig(new ConfigSetting("575_random_min", 60, SettingType.FLOAT, true, "The minimum amount of time between random events."));
+			this.AddConfig(new ConfigSetting("575_random_max", 300, SettingType.FLOAT, true, "The maximum wait time between random events."));
+			this.AddConfig(new ConfigSetting("575_random_dur_min", 11, SettingType.FLOAT, true, "The minimum amount of time a random event should last."));
+			this.AddConfig(new ConfigSetting("575_random_dur_max", 90, SettingType.FLOAT, true, "The maximum amount of time a random event should last."));
 			this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
 			//Timing.Init(this);
 			new Functions(this);
