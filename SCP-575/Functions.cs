@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using MEC;
+using System.Threading;
 
 namespace SCP575
 {
@@ -34,7 +35,7 @@ namespace SCP575
 
 			if ((SCP575.timer && SCP575.keter) || (SCP575.toggle && SCP575.toggleketer))
 			{
-				EventsHandler.coroutines.Add(Timing.RunCoroutine(Keter()));
+				(new Thread(() => Keter())).Start();
 			}
 		}
 		public IEnumerator<float> ToggledBlackout(float delay)
@@ -114,7 +115,7 @@ namespace SCP575
 				return SCP575.gen.Next(min, max);
 			}
 		}
-		public IEnumerator<float> Keter()
+		public void Keter()
 		{
 			SCP575.Debug("Keter function started.");
 			List<Player> players = SCP575.Server.GetPlayers();
@@ -123,7 +124,7 @@ namespace SCP575
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
 				if (!SCP575.keterkill || limit > 50 || players.Count == 0) break;
-				yield return Timing.WaitForSeconds(0.1f);
+				Thread.Sleep(100);
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
 				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP && IsInDangerZone(ply) && !HasFlashlight(ply))
 				{
@@ -141,9 +142,9 @@ namespace SCP575
 			{
 				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) continue;
 				if (HasFlashlight(player)) continue;
-				yield return Timing.WaitForSeconds(0.1f);
+				Thread.Sleep(100);
 				if (!IsInDangerZone(player)) continue;
-				yield return Timing.WaitForSeconds(0.1f);
+				Thread.Sleep(100);
 			
 					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
@@ -152,14 +153,14 @@ namespace SCP575
 						keterlist.Remove(player.Name);
 						player.PersonalClearBroadcasts();
 						player.PersonalBroadcast(15, "You were killed by SCP-575. Having a flashlight out while in an area affected by a blackout will save you from this!", false);
-						yield return Timing.WaitForSeconds(0.1f);
+						Thread.Sleep(100);
 					}
 					else if(!SCP575.keterkill)
 					{
 						player.Damage(SCP575.KeterDamage);
 						SCP575.Debug("Damaging " + player.Name + ".");
 						player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
-						yield return Timing.WaitForSeconds(0.1f);
+						Thread.Sleep(100);
 					}
 				SCP575.triggerkill = false;
 			}
