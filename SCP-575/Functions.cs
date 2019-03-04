@@ -124,7 +124,6 @@ namespace SCP575
 			for (int i = 0; i < SCP575.keterkill_num; i++)
 			{
 				if (!SCP575.keterkill || limit > 50 || players.Count == 0) break;
-				Thread.Sleep(100);
 				Player ply = players[UnityEngine.Random.Range(0, players.Count)];
 				if (ply.TeamRole.Team != Smod2.API.Team.SPECTATOR && ply.TeamRole.Team != Smod2.API.Team.SCP && IsInDangerZone(ply) && !HasFlashlight(ply))
 				{
@@ -142,9 +141,7 @@ namespace SCP575
 			{
 				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) continue;
 				if (HasFlashlight(player)) continue;
-				Thread.Sleep(100);
 				if (!IsInDangerZone(player)) continue;
-				Thread.Sleep(100);
 			
 					if (keterlist.Any(p => player.Name == p) && SCP575.keterkill)
 					{
@@ -153,14 +150,12 @@ namespace SCP575
 						keterlist.Remove(player.Name);
 						player.PersonalClearBroadcasts();
 						player.PersonalBroadcast(15, "You were killed by SCP-575. Having a flashlight out while in an area affected by a blackout will save you from this!", false);
-						Thread.Sleep(100);
 					}
 					else if(!SCP575.keterkill)
 					{
 						player.Damage(SCP575.KeterDamage);
 						SCP575.Debug("Damaging " + player.Name + ".");
 						player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
-						Thread.Sleep(100);
 					}
 				SCP575.triggerkill = false;
 			}
