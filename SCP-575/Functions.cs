@@ -43,8 +43,8 @@ namespace SCP575
 			yield return Timing.WaitForSeconds(delay);
 			while (SCP575.toggle)
 			{
-				RunBlackout();
-				yield return Timing.WaitForSeconds(11);
+				(new Thread(() => RunBlackout())).Start();
+				yield return Timing.WaitForSeconds(8f);
 			}
 		}
 		public IEnumerator<float> TimedBlackout(float delay)
@@ -79,8 +79,8 @@ namespace SCP575
 				do
 				{
 					SCP575.Debug("Running Blackout");
-					RunBlackout();
-					yield return Timing.WaitForSeconds(11f);
+					(new Thread(() => RunBlackout())).Start();
+					yield return Timing.WaitForSeconds(8f);
 				} while ((blackout_dur -= 11) > 0);
 				SCP575.Debug("Announcing Disabled.");
 				if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)

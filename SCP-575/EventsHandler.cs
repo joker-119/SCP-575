@@ -57,6 +57,7 @@ namespace SCP575
 			{
 				coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(SCP575.delayTime)));
 			}
+			List<Player> players = plugin.Server.GetPlayers();
 		}
 		public void OnRoundRestart(RoundRestartEvent ev)
 		{
@@ -67,6 +68,7 @@ namespace SCP575
 		}
 		public void OnRoundEnd(RoundEndEvent ev)
 		{
+			coroutines.Clear();
 			SCP575.triggerkill = false;
 			SCP575.timer = false;
 		}
