@@ -43,7 +43,7 @@ namespace SCP575
 			yield return Timing.WaitForSeconds(delay);
 			while (SCP575.toggle)
 			{
-				(new Thread(() => RunBlackout())).Start();
+				RunBlackout();
 				yield return Timing.WaitForSeconds(8f);
 			}
 		}
@@ -79,7 +79,7 @@ namespace SCP575
 				do
 				{
 					SCP575.Debug("Running Blackout");
-					(new Thread(() => RunBlackout())).Start();
+					RunBlackout();
 					yield return Timing.WaitForSeconds(8f);
 				} while ((blackout_dur -= 11) > 0);
 				SCP575.Debug("Announcing Disabled.");
@@ -162,7 +162,7 @@ namespace SCP575
 		}
 
 		public bool HasFlashlight(Player player) =>
-			(player.GetGameObject() as GameObject).GetComponent<WeaponManager>().NetworksyncFlash || player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
+			player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
 
 		public bool IsInDangerZone(Player player)
 		{
