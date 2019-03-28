@@ -14,7 +14,11 @@ namespace SCP575
     {
         private readonly SCP575 plugin;
         internal static Functions singleton;
-        public Functions(SCP575 plugin) => this.plugin = plugin;
+        public Functions(SCP575 plugin)
+        {
+            this.plugin = plugin;
+            singleton = this;
+        }
 
         public void RunBlackout()
         {
