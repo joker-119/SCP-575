@@ -22,7 +22,7 @@ namespace SCP575
 
         public void RunBlackout()
         {
-            plugin.Debug("Blackout Function has started");
+            plugin.Info("Blackout Function has started");
             if ((plugin.timer && plugin.timed_lcz) || (plugin.toggle && plugin.toggle_lcz))
             {
                 foreach (Room room in plugin.BlackoutRoom)
@@ -50,11 +50,11 @@ namespace SCP575
 
         public IEnumerator<float> TimedBlackout(float delay)
         {
-            plugin.Debug("Being Delayed");
+            plugin.Info("Being Delayed");
             yield return Timing.WaitForSeconds(delay);
             while (plugin.Timed)
             {
-                plugin.Debug("Announcing");
+                plugin.Info("Announcing");
                 if (plugin.announce && plugin.timed_lcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
@@ -75,18 +75,18 @@ namespace SCP575
                     blackout_dur = plugin.durTime;
                 }
 
-                plugin.Debug("Flipping Bools1");
+                plugin.Info("Flipping Bools1");
                 plugin.timer = true;
                 plugin.triggerkill = true;
-                plugin.Debug(plugin.timer.ToString() + plugin.triggerkill.ToString());
+                plugin.Info(plugin.timer.ToString() + plugin.triggerkill.ToString());
                 do
                 {
-                    plugin.Debug("Running Blackout");
+                    plugin.Info("Running Blackout");
                     RunBlackout();
                     yield return Timing.WaitForSeconds(11);
                 } while ((blackout_dur -= 11) > 0);
 
-                plugin.Debug("Announcing Disabled.");
+                plugin.Info("Announcing Disabled.");
                 if (plugin.announce && plugin.timed_lcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
@@ -97,11 +97,11 @@ namespace SCP575
                 }
                 yield return Timing.WaitForSeconds(8.7f);
 
-                plugin.Debug("Flipping bools2");
+                plugin.Info("Flipping bools2");
                 plugin.timer = false;
                 plugin.triggerkill = false;
-                plugin.Debug("Timer: " + plugin.timer);
-                plugin.Debug("Waiting to re-execute..");
+                plugin.Info("Timer: " + plugin.timer);
+                plugin.Info("Waiting to re-execute..");
 
                 if (plugin.random_events)
                 {
@@ -115,7 +115,7 @@ namespace SCP575
         }
         public IEnumerator<float> Keter()
         {
-            plugin.Debug("Keter function started.");
+            plugin.Info("Keter function started.");
             List<Player> players = plugin.Server.GetPlayers();
             List<Player> keterlist = new List<Player>();
 

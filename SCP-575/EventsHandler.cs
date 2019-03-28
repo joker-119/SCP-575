@@ -21,7 +21,7 @@ namespace SCP575
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
             plugin.RefreshConfig();
-
+            Functions.singleton.Get079Rooms();
         }
 
         public void OnRoundStart(RoundStartEvent ev)
