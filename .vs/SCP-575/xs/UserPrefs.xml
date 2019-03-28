@@ -1,8 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workbench ActiveDocument="SCP-575/SCP-575.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SCP-575/SCP-575Command.cs">
     <Files>
-      <File FileName="SCP-575/SCP-575.cs" Line="1" Column="1" />
-      <File FileName="SCP-575/EventsHandler.cs" Line="3" Column="20" />
+      <File FileName="SCP-575/SCP-575.cs" Line="6" Column="34" />
+      <File FileName="SCP-575/EventsHandler.cs" Line="4" Column="17" />
+      <File FileName="SCP-575/Functions.cs" Line="6" Column="19" />
+      <File FileName="SCP-575/SCP-575Command.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
