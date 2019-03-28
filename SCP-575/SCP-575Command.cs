@@ -7,7 +7,6 @@ namespace SCP575
     {
         private readonly SCP575 plugin;
         public SCP575Command(SCP575 plugin) => this.plugin = plugin;
-        private Functions Functions => Functions;
 
         public string GetCommandDescription()
         {
@@ -29,7 +28,7 @@ namespace SCP575
         {
             if (args.Length > 0)
             {
-                if (Functions.IsAllowed(sender))
+                if (Functions.singleton.IsAllowed(sender))
                 {
                     switch (args[0].ToLower())
                     {
@@ -45,7 +44,7 @@ namespace SCP575
                             };
                         case "toggle":
                             {
-                                Functions.ToggleBlackout();
+                                Functions.singleton.ToggleBlackout();
 
                                 return new string[]
                                 {
@@ -54,7 +53,7 @@ namespace SCP575
                             }
                         case "enable":
                             {
-                                Functions.EnableBlackouts();
+                                Functions.singleton.EnableBlackouts();
 
                                 return new string[]
                                 {
@@ -63,7 +62,7 @@ namespace SCP575
                             }
                         case "disable":
                             {
-                                Functions.DisableBlackouts();
+                                Functions.singleton.DisableBlackouts();
 
                                 return new string[]
                                 {
@@ -72,7 +71,7 @@ namespace SCP575
                             }
                         case "anoff":
                             {
-                                Functions.DisableAnnounce();
+                                Functions.singleton.DisableAnnounce();
 
                                 return new string[]
                                 {
@@ -81,7 +80,7 @@ namespace SCP575
                             }
                         case "anon":
                             {
-                                Functions.EnableAnnounce();
+                                Functions.singleton.EnableAnnounce();
 
                                 return new string[]
                                 {

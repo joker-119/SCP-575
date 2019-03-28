@@ -13,7 +13,7 @@ namespace SCP575
         name = "SCP-575",
         description = "Adds light blackout command + timed events",
         id = "joker.SCP575",
-        version = "2.4Sounds.0",
+        version = "2.4.0",
         SmodMajor = 3,
         SmodMinor = 3,
         SmodRevision = 0
