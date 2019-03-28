@@ -1,9 +1,6 @@
-﻿using System;
-using Smod2.EventHandlers;
+﻿using Smod2.EventHandlers;
 using Smod2.Events;
-using Smod2.API;
 using MEC;
-using System.Collections.Generic;
 
 namespace SCP575
 {
