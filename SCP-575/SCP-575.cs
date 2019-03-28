@@ -35,26 +35,26 @@ namespace SCP575
 
 
         public bool Timed { get; set; }
-        public bool announce { get; set; }
-        public bool toggle { get; set; }
-        public bool toggle_lcz { get; private set; }
-        public bool timed_lcz { get; private set; }
-        public bool timer { get; set; } = false;
-        public bool timed_override { get; set; } = false;
-        public bool toggleTesla { get; private set; }
-        public bool timedTesla { get; private set; }
-        public bool keter { get; private set; }
-        public bool triggerkill { get; set; }
-        public bool toggleketer { get; private set; }
-        public bool random_events { get; private set; }
-        public bool keterkill { get; private set; }
+        public bool Announce { get; set; }
+        public bool Toggle { get; set; }
+        public bool ToggleLcz { get; private set; }
+        public bool TimedLcz { get; private set; }
+        public bool Timer { get; set; } = false;
+        public bool TimedOverride { get; set; } = false;
+        public bool ToggleTesla { get; private set; }
+        public bool TimedTesla { get; private set; }
+        public bool Keter { get; private set; }
+        public bool TriggerKill { get; set; }
+        public bool ToggleKeter { get; private set; }
+        public bool RandomEvents { get; private set; }
+        public bool KeterKill { get; private set; }
 
         public int KeterDamage { get; private set; }
-        public int random_min { get; private set; }
-        public int random_max { get; private set; }
-        public int random_dur_min { get; private set; }
-        public int random_dur_max { get; private set; }
-        public int keterkill_num { get; private set; }
+        public int RandomMin { get; private set; }
+        public int RandomMax { get; private set; }
+        public int RandomDurMin { get; private set; }
+        public int RandomDurMax { get; private set; }
+        public int KeterKillNum { get; private set; }
 
         public override void OnDisable()
         {
@@ -102,23 +102,23 @@ namespace SCP575
             waitTime = GetConfigFloat("575_wait");
             durTime = GetConfigFloat("575_duration");
             Timed = GetConfigBool("575_timed");
-            announce = GetConfigBool("575_announce");
-            toggle_lcz = GetConfigBool("575_toggle_lcz");
-            timed_lcz = GetConfigBool("575_timed_lcz");
-            timedTesla = GetConfigBool("575_timed_tesla");
-            toggleTesla = GetConfigBool("575_toggle_tesla");
-            keter = GetConfigBool("575_keter");
+            Announce = GetConfigBool("575_announce");
+            ToggleLcz = GetConfigBool("575_toggle_lcz");
+            TimedLcz = GetConfigBool("575_timed_lcz");
+            TimedTesla = GetConfigBool("575_timed_tesla");
+            ToggleTesla = GetConfigBool("575_toggle_tesla");
+            Keter = GetConfigBool("575_keter");
             KeterDamage = GetConfigInt("575_keter_damage");
-            toggleketer = GetConfigBool("575_keter_toggle");
-            keterkill = GetConfigBool("575_keter_kill");
-            keterkill_num = GetConfigInt("575_keter_kill_num");
-            random_events = GetConfigBool("575_random_events");
-            random_min = GetConfigInt("575_random_min");
-            random_max = GetConfigInt("575_random_max") + 1;
-            random_dur_min = GetConfigInt("575_random_dur_min");
-            random_dur_max = GetConfigInt("575_random_dur_max") + 1;
-            timer = false;
-            triggerkill = false;
+            ToggleKeter = GetConfigBool("575_keter_toggle");
+            KeterKill = GetConfigBool("575_keter_kill");
+            KeterKillNum = GetConfigInt("575_keter_kill_num");
+            RandomEvents = GetConfigBool("575_random_events");
+            RandomMin = GetConfigInt("575_random_min");
+            RandomMax = GetConfigInt("575_random_max") + 1;
+            RandomDurMin = GetConfigInt("575_random_dur_min");
+            RandomDurMax = GetConfigInt("575_random_dur_max") + 1;
+            Timer = false;
+            TriggerKill = false;
         }
     }
 }

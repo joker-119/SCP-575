@@ -20,8 +20,8 @@ namespace SCP575
             "SCP575 TOGGLE \n" +
             "SCP575 ENABLE \n" +
             "SCP575 DISABLE \n" +
-            "SCP575 ANOFF \n" +
-            "SCP575 ANON \n";
+            "SCP575 ANNOUNCE ON \n" +
+            "SCP575 ANNOUNCE OFF \n";
         }
 
         public string[] OnCall(ICommandSender sender, string[] args)
@@ -39,8 +39,8 @@ namespace SCP575
                                 "SCP575 toggle - Toggles a manual SCP-575 on/off. \n"+
                                 "SCP575 enable - Enables timed SCP-575 events. \n"+
                                 "SCP575 disable - Disables timed SCP-575 events. \n"+
-                                "SCP575 anon - Enables CASSIE announcements for events. \n"+
-                                "SCP575 anoff - Disables CASSIE announcements for events. \n"
+                                "SCP575 announce on - Enables CASSIE announcements for events. \n"+
+                                "SCP575 announce off - Disables CASSIE announcements for events. \n"
                             };
                         case "toggle":
                             {
@@ -69,23 +69,31 @@ namespace SCP575
                                 "Timed events disabled."
                                 };
                             }
-                        case "anoff":
+                        case "announce":
                             {
-                                Functions.singleton.DisableAnnounce();
-
-                                return new string[]
+                                if (args.Length > 1)
                                 {
-                                "CASSIE Announcements disabled."
-                                };
-                            }
-                        case "anon":
-                            {
-                                Functions.singleton.EnableAnnounce();
+                                    switch (args[1].ToLower())
+                                    {
+                                        case "on":
+                                            {
+                                                Functions.singleton.EnableAnnounce();
 
-                                return new string[]
-                                {
-                                "CASSIE Announcements enabled."
-                                };
+                                                return new string[] { "Announcements enabled." };
+                                            }
+                                        case "off":
+                                            {
+                                                Functions.singleton.DisableAnnounce();
+
+                                                return new string[] { "Announcements disabled." };
+                                            }
+                                        default:
+                                            {
+                                                return new string[] { "Invalid argument." };
+                                            }
+                                    }
+                                }
+                                return new string[] { "No argument supplied." };
                             }
                         case "halt":
                             {

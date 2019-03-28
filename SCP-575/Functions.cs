@@ -23,7 +23,7 @@ namespace SCP575
         public void RunBlackout()
         {
             plugin.Debug("Blackout Function has started");
-            if ((plugin.timer && plugin.timed_lcz) || (plugin.toggle && plugin.toggle_lcz))
+            if ((plugin.Timer && plugin.TimedLcz) || (plugin.Toggle && plugin.ToggleLcz))
             {
                 foreach (Room room in plugin.BlackoutRoom)
                 {
@@ -32,7 +32,7 @@ namespace SCP575
             }
             Generator079.generators[0].CallRpcOvercharge();
 
-            if (plugin.keter)
+            if (plugin.Keter)
             {
                 plugin.coroutines.Add(Timing.RunCoroutine(Keter()));
             }
@@ -41,7 +41,7 @@ namespace SCP575
         public IEnumerator<float> ToggledBlackout(float delay)
         {
             yield return Timing.WaitForSeconds(delay);
-            while (plugin.toggle)
+            while (plugin.Toggle)
             {
                 RunBlackout();
                 yield return Timing.WaitForSeconds(8f);
@@ -55,7 +55,7 @@ namespace SCP575
             while (plugin.Timed)
             {
                 plugin.Debug("Announcing");
-                if (plugin.announce && plugin.timed_lcz && plugin.Timed)
+                if (plugin.Announce && plugin.TimedLcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
@@ -66,9 +66,9 @@ namespace SCP575
                 yield return Timing.WaitForSeconds(8.7f);
 
                 float blackout_dur;
-                if (plugin.random_events)
+                if (plugin.RandomEvents)
                 {
-                    blackout_dur = plugin.gen.Next(plugin.random_dur_min, plugin.random_dur_max);
+                    blackout_dur = plugin.gen.Next(plugin.RandomDurMin, plugin.RandomDurMax);
                 }
                 else
                 {
@@ -76,9 +76,9 @@ namespace SCP575
                 }
 
                 plugin.Debug("Flipping Bools1");
-                plugin.timer = true;
-                plugin.triggerkill = true;
-                plugin.Debug(plugin.timer.ToString() + plugin.triggerkill.ToString());
+                plugin.Timer = true;
+                plugin.TriggerKill = true;
+                plugin.Debug(plugin.Timer.ToString() + plugin.TriggerKill.ToString());
                 do
                 {
                     plugin.Debug("Running Blackout");
@@ -87,7 +87,7 @@ namespace SCP575
                 } while ((blackout_dur -= 11) > 0);
 
                 plugin.Debug("Announcing Disabled.");
-                if (plugin.announce && plugin.timed_lcz && plugin.Timed)
+                if (plugin.Announce && plugin.TimedLcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
                 }
@@ -98,14 +98,14 @@ namespace SCP575
                 yield return Timing.WaitForSeconds(8.7f);
 
                 plugin.Debug("Flipping bools2");
-                plugin.timer = false;
-                plugin.triggerkill = false;
-                plugin.Debug("Timer: " + plugin.timer);
+                plugin.Timer = false;
+                plugin.TriggerKill = false;
+                plugin.Debug("Timer: " + plugin.Timer);
                 plugin.Debug("Waiting to re-execute..");
 
-                if (plugin.random_events)
+                if (plugin.RandomEvents)
                 {
-                    yield return Timing.WaitForSeconds(plugin.gen.Next(plugin.random_min, plugin.random_max));
+                    yield return Timing.WaitForSeconds(plugin.gen.Next(plugin.RandomMin, plugin.RandomMax));
                 }
                 else
                 {
@@ -113,6 +113,7 @@ namespace SCP575
                 }
             }
         }
+
         public IEnumerator<float> Keter()
         {
             plugin.Debug("Keter function started.");
@@ -130,9 +131,9 @@ namespace SCP575
                 keterlist.Add(player);
             }
 
-            if (plugin.keterkill && keterlist.Count > 0)
+            if (plugin.KeterKill && keterlist.Count > 0)
             {
-                for (int i = 0; i < plugin.keterkill_num; i++)
+                for (int i = 0; i < plugin.KeterKillNum; i++)
                 {
                     if (keterlist.Count == 0) break;
 
@@ -144,7 +145,7 @@ namespace SCP575
                     ply.PersonalBroadcast(10, "You were killed by SCP-575!", false);
                 }
             }
-            else if (!plugin.keterkill && keterlist.Count > 0)
+            else if (!plugin.KeterKill && keterlist.Count > 0)
             {
                 foreach (Player player in keterlist)
                 {
@@ -163,11 +164,12 @@ namespace SCP575
             Vector loc = player.GetPosition();
             foreach (Room room in plugin.rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
             {
-                if (room.ZoneType == ZoneType.HCZ || (plugin.timer && plugin.timed_lcz && room.ZoneType == ZoneType.LCZ) || (plugin.toggle && plugin.toggle_lcz && room.ZoneType == ZoneType.LCZ))
+                if (room.ZoneType == ZoneType.HCZ || (plugin.Timer && plugin.TimedLcz && room.ZoneType == ZoneType.LCZ) || (plugin.Toggle && plugin.ToggleLcz && room.ZoneType == ZoneType.LCZ))
                     return true;
             }
             return false;
         }
+
         public void Get079Rooms()
         {
             foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
@@ -179,29 +181,30 @@ namespace SCP575
                 plugin.rooms.Add(room);
             }
         }
+
         public void ToggleBlackout()
         {
-            plugin.toggle = !plugin.toggle;
+            plugin.Toggle = !plugin.Toggle;
             if (plugin.Timed)
             {
-                plugin.timed_override = true;
+                plugin.TimedOverride = true;
                 plugin.Timed = false;
             }
-            else if (plugin.timed_override)
+            else if (plugin.TimedOverride)
             {
-                plugin.timed_override = false;
+                plugin.TimedOverride = false;
                 plugin.Timed = true;
             }
 
-            if (plugin.toggle)
+            if (plugin.Toggle)
             {
-                if (plugin.announce)
+                if (plugin.Announce)
                 {
-                    if (!plugin.toggle_lcz)
+                    if (!plugin.ToggleLcz)
                     {
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
-                    else if (plugin.toggle_lcz)
+                    else
                     {
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
@@ -240,12 +243,12 @@ namespace SCP575
 
         public void EnableAnnounce()
         {
-            plugin.announce = true;
+            plugin.Announce = true;
         }
 
         public void DisableAnnounce()
         {
-            plugin.announce = false;
+            plugin.Announce = false;
         }
     }
 }

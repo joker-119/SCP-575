@@ -15,8 +15,6 @@ namespace SCP575
             this.plugin = plugin;
             var f = new Functions(plugin);
         }
-        private DateTime updateTimer = DateTime.Now;
-
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
@@ -29,11 +27,11 @@ namespace SCP575
             plugin.Debug("Getting 079 rooms.");
 
             plugin.Debug("Initial Delay: " + plugin.delayTime + "s.");
-            if (plugin.toggle)
+            if (plugin.Toggle)
             {
-                plugin.timed_override = true;
+                plugin.TimedOverride = true;
                 plugin.Timed = false;
-                plugin.toggle = true;
+                plugin.Toggle = true;
                 plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(0)));
             }
             else if (plugin.Timed)
@@ -46,21 +44,21 @@ namespace SCP575
         {
             foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
             plugin.coroutines.Clear();
-            plugin.timer = false;
-            plugin.triggerkill = false;
+            plugin.Timer = false;
+            plugin.TriggerKill = false;
         }
 
         public void OnRoundEnd(RoundEndEvent ev)
         {
             foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
             plugin.coroutines.Clear();
-            plugin.triggerkill = false;
-            plugin.timer = false;
+            plugin.TriggerKill = false;
+            plugin.Timer = false;
         }
 
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
-            if ((plugin.timer && plugin.timedTesla) || (plugin.toggle && plugin.toggleTesla))
+            if ((plugin.Timer && plugin.TimedTesla) || (plugin.Toggle && plugin.ToggleTesla))
             {
                 ev.Triggerable = false;
             }
