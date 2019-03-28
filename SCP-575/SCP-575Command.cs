@@ -1,11 +1,13 @@
-﻿using System;
-using Smod2.Commands;
+﻿using Smod2.Commands;
 using MEC;
 
 namespace SCP575
 {
     public class SCP575Command : ICommandHandler
     {
+        private readonly SCP575 plugin;
+        public SCP575Command(SCP575 plugin) => this.plugin = plugin;
+
         public string GetCommandDescription()
         {
             return "";
@@ -13,92 +15,83 @@ namespace SCP575
 
         public string GetUsage()
         {
-            return "SCP575 Commands \n"+
-            "[SCP575 / 575] HELP \n"+
-            "SCP575 TOGGLE \n"+
-            "SCP575 ENABLE \n"+
-            "SCP575 DISABLE \n"+
-            "SCP575 ANOFF \n"+
-            "SCP575 ANON \n";
+            return "SCP575 Commands \n" +
+            "[SCP575 / 575] HELP \n" +
+            "SCP575 TOGGLE \n" +
+            "SCP575 ENABLE \n" +
+            "SCP575 DISABLE \n" +
+            "SCP575 ANNOUNCE ON \n" +
+            "SCP575 ANNOUNCE OFF \n";
         }
 
         public string[] OnCall(ICommandSender sender, string[] args)
         {
-            if (args.Length > 0)
+            if (args.Length <= 0) return new string[] { GetUsage() };
+            if (!plugin.Functions.IsAllowed(sender)) return new string[] { "Permission denied." };
+            switch (args[0].ToLower())
             {
-                switch (args[0].ToLower())
-                {
-                    case "help":
-                        return new string[]
-                        {
-                            "SCP575 Command List \n"+
-                            "SCP575 toggle - Toggles a manual SCP-575 on/off. \n"+
-                            "SCP575 enable - Enables timed SCP-575 events. \n"+
-                            "SCP575 disable - Disables timed SCP-575 events. \n"+
-                            "SCP575 anon - Enables CASSIE announcements for events. \n"+
-                            "SCP575 anoff - Disables CASSIE announcements for events. \n"
-                        };
-                    case "toggle":
+                case "help":
+                    return new string[]
                     {
-                        Functions.singleton.ToggleBlackout();
-                        return new string[] 
-                        { 
-                            "Manual SCP-575 event toggled." 
-                        };
-                    }
-                    case "enable":
+                                "SCP575 Command List \n"+
+                                "SCP575 toggle - Toggles a manual SCP-575 on/off. \n"+
+                                "SCP575 enable - Enables timed SCP-575 events. \n"+
+                                "SCP575 disable - Disables timed SCP-575 events. \n"+
+                                "SCP575 announce on - Enables CASSIE announcements for events. \n"+
+                                "SCP575 announce off - Disables CASSIE announcements for events. \n"
+                    };
+                case "toggle":
                     {
-                        Functions.singleton.EnableBlackouts();
-                        return new string[]
-                        {
-                            "Timed events enabled."
-                        };
+                        plugin.Functions.ToggleBlackout();
+
+                        return new string[] { "Manual 575 event toggled." };
                     }
-                    case "disable":
+                case "enable":
                     {
-                        Functions.singleton.DisableBlackouts();
-                        return new string[]
-                        {
-                            "Timed events disabled."
-                        };
+                        plugin.Functions.EnableBlackouts();
+
+                        return new string[] { "Timed events enabled." };
                     }
-                    case "anoff":
+                case "disable":
                     {
-                        Functions.singleton.DisableAnnounce();
-                        return new string[]
-                        {
-                            "CASSIE Announcements disabled."
-                        };
+                        plugin.Functions.DisableBlackouts();
+
+                        return new string[] { "Timed events disabled." };
                     }
-                    case "anon":
+                case "announce":
                     {
-                        Functions.singleton.EnableAnnounce();
-                        return new string[]
+                        if (args.Length <= 1) return new string[] { "No arguments supplied." };
+                        switch (args[1].ToLower())
                         {
-                            "CASSIE Announcements enabled."
-                        };
+                            case "on":
+                                {
+                                    plugin.Functions.EnableAnnounce();
+
+                                    return new string[] { "Announcements enabled." };
+                                }
+                            case "off":
+                                {
+                                    plugin.Functions.DisableAnnounce();
+
+                                    return new string[] { "Announcements disabled." };
+                                }
+                            default:
+                                {
+                                    return new string[] { "Invalid argument." };
+                                }
+                        }
                     }
-					case "halt":
-						{
-							foreach (CoroutineHandle handle in EventsHandler.coroutines) Timing.KillCoroutines(handle);
-							EventsHandler.coroutines.Clear();
-							return new string[] { "Halted all active Coroutines." };
-						}
-                    default:
+                case "halt":
                     {
-                        return new string[]
-                        {
-                            GetUsage()
-                        };
+                        foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
+                        plugin.coroutines.Clear();
+
+                        return new string[] { "Halted all active Coroutines." };
                     }
-                }
-            }
-            else
-            {
-                return new string[]
-                {
-                    GetUsage()
-                };
+                default:
+                    {
+                        return new string[] { GetUsage() };
+                    }
             }
         }
     }
