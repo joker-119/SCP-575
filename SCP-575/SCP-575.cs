@@ -21,8 +21,6 @@ namespace SCP575
 
     public class SCP575 : Plugin
     {
-        internal static SCP575 plugin;
-
         public string[] validRanks;
 
         public readonly System.Random gen = new System.Random();
@@ -30,8 +28,6 @@ namespace SCP575
         public List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
         public List<Room> BlackoutRoom = new List<Room>();
         public List<Room> rooms = new List<Room>();
-
-        public static bool enabled = true;
 
         public float waitTime { get; private set; }
         public float durTime { get; private set; }
