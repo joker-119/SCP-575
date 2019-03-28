@@ -92,8 +92,11 @@ namespace SCP575
             this.AddConfig(new ConfigSetting("575_random_max", 300, SettingType.NUMERIC, true, "The maximum wait time between random events."));
             this.AddConfig(new ConfigSetting("575_random_dur_min", 11, SettingType.NUMERIC, true, "The minimum amount of time a random event should last."));
             this.AddConfig(new ConfigSetting("575_random_dur_max", 90, SettingType.NUMERIC, true, "The maximum amount of time a random event should last."));
+
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
+
             new Functions(this);
+
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command(this));
         }
 

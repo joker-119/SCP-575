@@ -11,7 +11,8 @@ namespace SCP575
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
-        DateTime updateTimer = DateTime.Now;
+
+        private DateTime updateTimer = DateTime.Now;
 
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
@@ -36,6 +37,7 @@ namespace SCP575
                 plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(plugin.delayTime)));
             }
         }
+
         public void OnRoundRestart(RoundRestartEvent ev)
         {
             foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
@@ -43,6 +45,7 @@ namespace SCP575
             plugin.timer = false;
             plugin.triggerkill = false;
         }
+
         public void OnRoundEnd(RoundEndEvent ev)
         {
             foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
@@ -50,6 +53,7 @@ namespace SCP575
             plugin.triggerkill = false;
             plugin.timer = false;
         }
+
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
             if ((plugin.timer && plugin.timedTesla) || (plugin.toggle && plugin.toggleTesla))

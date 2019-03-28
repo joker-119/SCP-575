@@ -44,6 +44,7 @@ namespace SCP575
                         case "toggle":
                             {
                                 Functions.singleton.ToggleBlackout();
+
                                 return new string[]
                                 {
                                 "Manual SCP-575 event toggled."
@@ -52,6 +53,7 @@ namespace SCP575
                         case "enable":
                             {
                                 Functions.singleton.EnableBlackouts();
+
                                 return new string[]
                                 {
                                 "Timed events enabled."
@@ -60,6 +62,7 @@ namespace SCP575
                         case "disable":
                             {
                                 Functions.singleton.DisableBlackouts();
+
                                 return new string[]
                                 {
                                 "Timed events disabled."
@@ -68,6 +71,7 @@ namespace SCP575
                         case "anoff":
                             {
                                 Functions.singleton.DisableAnnounce();
+
                                 return new string[]
                                 {
                                 "CASSIE Announcements disabled."
@@ -76,6 +80,7 @@ namespace SCP575
                         case "anon":
                             {
                                 Functions.singleton.EnableAnnounce();
+
                                 return new string[]
                                 {
                                 "CASSIE Announcements enabled."
@@ -85,14 +90,12 @@ namespace SCP575
                             {
                                 foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
                                 plugin.coroutines.Clear();
+
                                 return new string[] { "Halted all active Coroutines." };
                             }
                         default:
                             {
-                                return new string[]
-                                {
-                                GetUsage()
-                                };
+                                return new string[] { GetUsage() };
                             }
                     }
                 }
@@ -101,10 +104,7 @@ namespace SCP575
             }
             else
             {
-                return new string[]
-                   {
-                    GetUsage()
-                  };
+                return new string[] { GetUsage() };
             }
         }
     }

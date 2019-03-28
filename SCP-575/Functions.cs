@@ -37,6 +37,7 @@ namespace SCP575
                 SCP575.coroutines.Add(Timing.RunCoroutine(Keter()));
             }
         }
+
         public IEnumerator<float> ToggledBlackout(float delay)
         {
             yield return Timing.WaitForSeconds(delay);
@@ -46,6 +47,7 @@ namespace SCP575
                 yield return Timing.WaitForSeconds(8f);
             }
         }
+
         public IEnumerator<float> TimedBlackout(float delay)
         {
             SCP575.Debug("Being Delayed");
@@ -62,6 +64,7 @@ namespace SCP575
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
                 yield return Timing.WaitForSeconds(8.7f);
+
                 float blackout_dur;
                 if (SCP575.random_events)
                 {
@@ -71,6 +74,7 @@ namespace SCP575
                 {
                     blackout_dur = SCP575.durTime;
                 }
+
                 SCP575.Debug("Flipping Bools1");
                 SCP575.timer = true;
                 SCP575.triggerkill = true;
@@ -81,6 +85,7 @@ namespace SCP575
                     RunBlackout();
                     yield return Timing.WaitForSeconds(11);
                 } while ((blackout_dur -= 11) > 0);
+
                 SCP575.Debug("Announcing Disabled.");
                 if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
                 {
@@ -91,11 +96,13 @@ namespace SCP575
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
                 }
                 yield return Timing.WaitForSeconds(8.7f);
+
                 SCP575.Debug("Flipping bools2");
                 SCP575.timer = false;
                 SCP575.triggerkill = false;
                 SCP575.Debug("Timer: " + SCP575.timer);
                 SCP575.Debug("Waiting to re-execute..");
+
                 if (SCP575.random_events)
                 {
                     yield return Timing.WaitForSeconds(SCP575.gen.Next(SCP575.random_min, SCP575.random_max));
@@ -119,6 +126,7 @@ namespace SCP575
                 if (HasFlashlight(player)) continue;
                 yield return Timing.WaitForSeconds(0.1f);
                 if (!IsInDangerZone(player)) continue;
+
                 keterlist.Add(player);
             }
 
@@ -127,7 +135,9 @@ namespace SCP575
                 for (int i = 0; i < SCP575.keterkill_num; i++)
                 {
                     if (keterlist.Count == 0) break;
+
                     Player ply = players[SCP575.gen.Next(keterlist.Count)];
+
                     ply.Kill();
                     keterlist.Remove(ply);
                     ply.PersonalClearBroadcasts();
@@ -182,6 +192,7 @@ namespace SCP575
                 SCP575.timed_override = false;
                 SCP575.Timed = true;
             }
+
             if (SCP575.toggle)
             {
                 if (SCP575.announce)
@@ -198,6 +209,7 @@ namespace SCP575
                 SCP575.coroutines.Add(Timing.RunCoroutine(ToggledBlackout(8.7f)));
             }
         }
+
         public bool IsAllowed(ICommandSender sender)
         {
             Player player = (sender is Player) ? sender as Player : null;
@@ -220,14 +232,17 @@ namespace SCP575
         {
             SCP575.Timed = true;
         }
+
         public void DisableBlackouts()
         {
             SCP575.Timed = false;
         }
+
         public void EnableAnnounce()
         {
             SCP575.announce = true;
         }
+
         public void DisableAnnounce()
         {
             SCP575.announce = false;
