@@ -6,8 +6,9 @@ namespace SCP575
     public class SCP575Command : ICommandHandler
     {
         private readonly SCP575 plugin;
-        private Functions Functions;
         public SCP575Command(SCP575 plugin) => this.plugin = plugin;
+        private Functions Functions => Functions;
+
         public string GetCommandDescription()
         {
             return "";

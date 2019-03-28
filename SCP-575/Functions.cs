@@ -13,10 +13,7 @@ namespace SCP575
     public class Functions
     {
         private readonly SCP575 plugin;
-        public Functions(SCP575 plugin)
-        {
-            this.plugin = plugin;
-        }
+        public Functions(SCP575 plugin) => this.plugin = plugin;
 
         public void RunBlackout()
         {

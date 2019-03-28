@@ -11,8 +11,7 @@ namespace SCP575
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
-        private Functions Functions;
-
+        private Functions Functions => Functions;
         private DateTime updateTimer = DateTime.Now;
 
 
