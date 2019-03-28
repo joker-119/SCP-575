@@ -7,16 +7,17 @@ namespace SCP575
     public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerRoundRestart
     {
         private readonly SCP575 plugin;
+
         public EventsHandler(SCP575 plugin)
         {
             this.plugin = plugin;
-            var f = new Functions(plugin);
         }
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
             plugin.RefreshConfig();
-            Functions.singleton.Get079Rooms();
+            plugin.Functions.Get079Rooms();
+
         }
 
         public void OnRoundStart(RoundStartEvent ev)
@@ -29,11 +30,11 @@ namespace SCP575
                 plugin.TimedOverride = true;
                 plugin.Timed = false;
                 plugin.Toggle = true;
-                plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(0)));
+                plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(0)));
             }
             else if (plugin.Timed)
             {
-                plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(plugin.delayTime)));
+                plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.delayTime)));
             }
         }
 

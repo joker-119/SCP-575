@@ -21,6 +21,8 @@ namespace SCP575
 
     public class SCP575 : Plugin
     {
+        public Functions Functions { get; private set; }
+
         public string[] validRanks;
 
         public readonly System.Random gen = new System.Random();
@@ -90,7 +92,7 @@ namespace SCP575
 
             this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
 
-            new Functions(this);
+            this.Functions = new Functions(this);
 
             this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command(this));
         }

@@ -11,12 +11,8 @@ namespace SCP575
     public class Functions
     {
         private readonly SCP575 plugin;
-        internal static Functions singleton;
-        public Functions(SCP575 plugin)
-        {
-            this.plugin = plugin;
-            singleton = this;
-        }
+
+        public Functions(SCP575 plugin) => this.plugin = plugin;
 
         public void RunBlackout()
         {
@@ -39,6 +35,7 @@ namespace SCP575
         public IEnumerator<float> ToggledBlackout(float delay)
         {
             yield return Timing.WaitForSeconds(delay);
+
             while (plugin.Toggle)
             {
                 RunBlackout();
@@ -50,6 +47,7 @@ namespace SCP575
         {
             plugin.Debug("Being Delayed");
             yield return Timing.WaitForSeconds(delay);
+
             while (plugin.Timed)
             {
                 plugin.Debug("Announcing");
@@ -76,7 +74,7 @@ namespace SCP575
                 plugin.Debug("Flipping Bools1");
                 plugin.Timer = true;
                 plugin.TriggerKill = true;
-                plugin.Debug(plugin.Timer.ToString() + plugin.TriggerKill.ToString());
+
                 do
                 {
                     plugin.Debug("Running Blackout");
@@ -160,6 +158,7 @@ namespace SCP575
         public bool IsInDangerZone(Player player)
         {
             Vector loc = player.GetPosition();
+
             foreach (Room room in plugin.rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
             {
                 if (room.ZoneType == ZoneType.HCZ || (plugin.Timer && plugin.TimedLcz && room.ZoneType == ZoneType.LCZ) || (plugin.Toggle && plugin.ToggleLcz && room.ZoneType == ZoneType.LCZ))
@@ -214,6 +213,7 @@ namespace SCP575
         public bool IsAllowed(ICommandSender sender)
         {
             Player player = (sender is Player) ? sender as Player : null;
+
             if (player != null)
             {
                 List<string> roleList = (plugin.validRanks != null && plugin.validRanks.Length > 0) ? plugin.validRanks.Select(role => role.ToUpper()).ToList() : new List<string>();
