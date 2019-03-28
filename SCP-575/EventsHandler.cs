@@ -17,7 +17,6 @@ namespace SCP575
         {
             plugin.RefreshConfig();
             plugin.Functions.Get079Rooms();
-
         }
 
         public void OnRoundStart(RoundStartEvent ev)
