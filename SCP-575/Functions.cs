@@ -12,36 +12,34 @@ namespace SCP575
 {
     public class Functions
     {
-        public static Functions singleton;
-        public SCP575 SCP575;
+        private readonly SCP575 plugin;
         public Functions(SCP575 plugin)
         {
-            this.SCP575 = plugin;
-            Functions.singleton = this;
+            this.plugin = plugin;
         }
 
         public void RunBlackout()
         {
-            SCP575.Debug("Blackout Function has started");
-            if ((SCP575.timer && SCP575.timed_lcz) || (SCP575.toggle && SCP575.toggle_lcz))
+            plugin.Debug("Blackout Function has started");
+            if ((plugin.timer && plugin.timed_lcz) || (plugin.toggle && plugin.toggle_lcz))
             {
-                foreach (Room room in SCP575.BlackoutRoom)
+                foreach (Room room in plugin.BlackoutRoom)
                 {
                     room.FlickerLights();
                 }
             }
             Generator079.generators[0].CallRpcOvercharge();
 
-            if (SCP575.keter)
+            if (plugin.keter)
             {
-                SCP575.coroutines.Add(Timing.RunCoroutine(Keter()));
+                plugin.coroutines.Add(Timing.RunCoroutine(Keter()));
             }
         }
 
         public IEnumerator<float> ToggledBlackout(float delay)
         {
             yield return Timing.WaitForSeconds(delay);
-            while (SCP575.toggle)
+            while (plugin.toggle)
             {
                 RunBlackout();
                 yield return Timing.WaitForSeconds(8f);
@@ -50,12 +48,12 @@ namespace SCP575
 
         public IEnumerator<float> TimedBlackout(float delay)
         {
-            SCP575.Debug("Being Delayed");
+            plugin.Debug("Being Delayed");
             yield return Timing.WaitForSeconds(delay);
-            while (SCP575.Timed)
+            while (plugin.Timed)
             {
-                SCP575.Debug("Announcing");
-                if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
+                plugin.Debug("Announcing");
+                if (plugin.announce && plugin.timed_lcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
                 }
@@ -66,28 +64,28 @@ namespace SCP575
                 yield return Timing.WaitForSeconds(8.7f);
 
                 float blackout_dur;
-                if (SCP575.random_events)
+                if (plugin.random_events)
                 {
-                    blackout_dur = SCP575.gen.Next(SCP575.random_dur_min, SCP575.random_dur_max);
+                    blackout_dur = plugin.gen.Next(plugin.random_dur_min, plugin.random_dur_max);
                 }
                 else
                 {
-                    blackout_dur = SCP575.durTime;
+                    blackout_dur = plugin.durTime;
                 }
 
-                SCP575.Debug("Flipping Bools1");
-                SCP575.timer = true;
-                SCP575.triggerkill = true;
-                SCP575.Debug(SCP575.timer.ToString() + SCP575.triggerkill.ToString());
+                plugin.Debug("Flipping Bools1");
+                plugin.timer = true;
+                plugin.triggerkill = true;
+                plugin.Debug(plugin.timer.ToString() + plugin.triggerkill.ToString());
                 do
                 {
-                    SCP575.Debug("Running Blackout");
+                    plugin.Debug("Running Blackout");
                     RunBlackout();
                     yield return Timing.WaitForSeconds(11);
                 } while ((blackout_dur -= 11) > 0);
 
-                SCP575.Debug("Announcing Disabled.");
-                if (SCP575.announce && SCP575.timed_lcz && SCP575.Timed)
+                plugin.Debug("Announcing Disabled.");
+                if (plugin.announce && plugin.timed_lcz && plugin.Timed)
                 {
                     PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
                 }
@@ -97,26 +95,26 @@ namespace SCP575
                 }
                 yield return Timing.WaitForSeconds(8.7f);
 
-                SCP575.Debug("Flipping bools2");
-                SCP575.timer = false;
-                SCP575.triggerkill = false;
-                SCP575.Debug("Timer: " + SCP575.timer);
-                SCP575.Debug("Waiting to re-execute..");
+                plugin.Debug("Flipping bools2");
+                plugin.timer = false;
+                plugin.triggerkill = false;
+                plugin.Debug("Timer: " + plugin.timer);
+                plugin.Debug("Waiting to re-execute..");
 
-                if (SCP575.random_events)
+                if (plugin.random_events)
                 {
-                    yield return Timing.WaitForSeconds(SCP575.gen.Next(SCP575.random_min, SCP575.random_max));
+                    yield return Timing.WaitForSeconds(plugin.gen.Next(plugin.random_min, plugin.random_max));
                 }
                 else
                 {
-                    yield return Timing.WaitForSeconds(SCP575.waitTime);
+                    yield return Timing.WaitForSeconds(plugin.waitTime);
                 }
             }
         }
         public IEnumerator<float> Keter()
         {
-            SCP575.Debug("Keter function started.");
-            List<Player> players = SCP575.Server.GetPlayers();
+            plugin.Debug("Keter function started.");
+            List<Player> players = plugin.Server.GetPlayers();
             List<Player> keterlist = new List<Player>();
 
             foreach (Player player in players)
@@ -130,13 +128,13 @@ namespace SCP575
                 keterlist.Add(player);
             }
 
-            if (SCP575.keterkill && keterlist.Count > 0)
+            if (plugin.keterkill && keterlist.Count > 0)
             {
-                for (int i = 0; i < SCP575.keterkill_num; i++)
+                for (int i = 0; i < plugin.keterkill_num; i++)
                 {
                     if (keterlist.Count == 0) break;
 
-                    Player ply = players[SCP575.gen.Next(keterlist.Count)];
+                    Player ply = players[plugin.gen.Next(keterlist.Count)];
 
                     ply.Kill();
                     keterlist.Remove(ply);
@@ -144,11 +142,11 @@ namespace SCP575
                     ply.PersonalBroadcast(10, "You were killed by SCP-575!", false);
                 }
             }
-            else if (!SCP575.keterkill && keterlist.Count > 0)
+            else if (!plugin.keterkill && keterlist.Count > 0)
             {
                 foreach (Player player in keterlist)
                 {
-                    player.Damage(SCP575.KeterDamage);
+                    player.Damage(plugin.KeterDamage);
                     player.PersonalClearBroadcasts();
                     player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
                 }
@@ -161,9 +159,9 @@ namespace SCP575
         public bool IsInDangerZone(Player player)
         {
             Vector loc = player.GetPosition();
-            foreach (Room room in SCP575.rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
+            foreach (Room room in plugin.rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
             {
-                if (room.ZoneType == ZoneType.HCZ || (SCP575.timer && SCP575.timed_lcz && room.ZoneType == ZoneType.LCZ) || (SCP575.toggle && SCP575.toggle_lcz && room.ZoneType == ZoneType.LCZ))
+                if (room.ZoneType == ZoneType.HCZ || (plugin.timer && plugin.timed_lcz && room.ZoneType == ZoneType.LCZ) || (plugin.toggle && plugin.toggle_lcz && room.ZoneType == ZoneType.LCZ))
                     return true;
             }
             return false;
@@ -174,39 +172,39 @@ namespace SCP575
             {
                 if (room.ZoneType == ZoneType.LCZ)
                 {
-                    SCP575.BlackoutRoom.Add(room);
+                    plugin.BlackoutRoom.Add(room);
                 }
-                SCP575.rooms.Add(room);
+                plugin.rooms.Add(room);
             }
         }
         public void ToggleBlackout()
         {
-            SCP575.toggle = !SCP575.toggle;
-            if (SCP575.Timed)
+            plugin.toggle = !plugin.toggle;
+            if (plugin.Timed)
             {
-                SCP575.timed_override = true;
-                SCP575.Timed = false;
+                plugin.timed_override = true;
+                plugin.Timed = false;
             }
-            else if (SCP575.timed_override)
+            else if (plugin.timed_override)
             {
-                SCP575.timed_override = false;
-                SCP575.Timed = true;
+                plugin.timed_override = false;
+                plugin.Timed = true;
             }
 
-            if (SCP575.toggle)
+            if (plugin.toggle)
             {
-                if (SCP575.announce)
+                if (plugin.announce)
                 {
-                    if (!SCP575.toggle_lcz)
+                    if (!plugin.toggle_lcz)
                     {
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
-                    else if (SCP575.toggle_lcz)
+                    else if (plugin.toggle_lcz)
                     {
                         PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
                     }
                 }
-                SCP575.coroutines.Add(Timing.RunCoroutine(ToggledBlackout(8.7f)));
+                plugin.coroutines.Add(Timing.RunCoroutine(ToggledBlackout(8.7f)));
             }
         }
 
@@ -215,7 +213,7 @@ namespace SCP575
             Player player = (sender is Player) ? sender as Player : null;
             if (player != null)
             {
-                List<string> roleList = (SCP575.validRanks != null && SCP575.validRanks.Length > 0) ? SCP575.validRanks.Select(role => role.ToUpper()).ToList() : new List<string>();
+                List<string> roleList = (plugin.validRanks != null && plugin.validRanks.Length > 0) ? plugin.validRanks.Select(role => role.ToUpper()).ToList() : new List<string>();
                 if (roleList != null && roleList.Count > 0 && (roleList.Contains(player.GetUserGroup().Name.ToUpper()) || roleList.Contains(player.GetRankName().ToUpper())))
                 {
                     return true;
@@ -230,22 +228,22 @@ namespace SCP575
 
         public void EnableBlackouts()
         {
-            SCP575.Timed = true;
+            plugin.Timed = true;
         }
 
         public void DisableBlackouts()
         {
-            SCP575.Timed = false;
+            plugin.Timed = false;
         }
 
         public void EnableAnnounce()
         {
-            SCP575.announce = true;
+            plugin.announce = true;
         }
 
         public void DisableAnnounce()
         {
-            SCP575.announce = false;
+            plugin.announce = false;
         }
     }
 }

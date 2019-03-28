@@ -21,7 +21,7 @@ namespace SCP575
 
     public class SCP575 : Plugin
     {
-        internal static SCP575 singleton;
+        internal static SCP575 plugin;
 
         public string[] validRanks;
 
@@ -66,7 +66,6 @@ namespace SCP575
         }
         public override void OnEnable()
         {
-            singleton = this;
             this.Debug(this.Details.name + " v." + this.Details.version + " has been enabled.");
         }
 

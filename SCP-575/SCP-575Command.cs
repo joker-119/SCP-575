@@ -6,6 +6,7 @@ namespace SCP575
     public class SCP575Command : ICommandHandler
     {
         private readonly SCP575 plugin;
+        private Functions Functions;
         public SCP575Command(SCP575 plugin) => this.plugin = plugin;
         public string GetCommandDescription()
         {
@@ -27,7 +28,7 @@ namespace SCP575
         {
             if (args.Length > 0)
             {
-                if (Functions.singleton.IsAllowed(sender))
+                if (Functions.IsAllowed(sender))
                 {
                     switch (args[0].ToLower())
                     {
@@ -43,7 +44,7 @@ namespace SCP575
                             };
                         case "toggle":
                             {
-                                Functions.singleton.ToggleBlackout();
+                                Functions.ToggleBlackout();
 
                                 return new string[]
                                 {
@@ -52,7 +53,7 @@ namespace SCP575
                             }
                         case "enable":
                             {
-                                Functions.singleton.EnableBlackouts();
+                                Functions.EnableBlackouts();
 
                                 return new string[]
                                 {
@@ -61,7 +62,7 @@ namespace SCP575
                             }
                         case "disable":
                             {
-                                Functions.singleton.DisableBlackouts();
+                                Functions.DisableBlackouts();
 
                                 return new string[]
                                 {
@@ -70,7 +71,7 @@ namespace SCP575
                             }
                         case "anoff":
                             {
-                                Functions.singleton.DisableAnnounce();
+                                Functions.DisableAnnounce();
 
                                 return new string[]
                                 {
@@ -79,7 +80,7 @@ namespace SCP575
                             }
                         case "anon":
                             {
-                                Functions.singleton.EnableAnnounce();
+                                Functions.EnableAnnounce();
 
                                 return new string[]
                                 {

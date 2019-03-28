@@ -11,6 +11,7 @@ namespace SCP575
     {
         private readonly SCP575 plugin;
         public EventsHandler(SCP575 plugin) => this.plugin = plugin;
+        private Functions Functions;
 
         private DateTime updateTimer = DateTime.Now;
 
@@ -30,11 +31,11 @@ namespace SCP575
                 plugin.timed_override = true;
                 plugin.Timed = false;
                 plugin.toggle = true;
-                plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.ToggledBlackout(0)));
+                plugin.coroutines.Add(Timing.RunCoroutine(Functions.TimedBlackout(0)));
             }
             else if (plugin.Timed)
             {
-                plugin.coroutines.Add(Timing.RunCoroutine(Functions.singleton.TimedBlackout(plugin.delayTime)));
+                plugin.coroutines.Add(Timing.RunCoroutine(Functions.TimedBlackout(plugin.delayTime)));
             }
         }
 
