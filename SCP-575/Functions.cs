@@ -112,7 +112,6 @@ namespace SCP575
 
         public IEnumerator<float> Keter()
         {
-            plugin.Debug("Keter function started.");
             List<Player> players = plugin.Server.GetPlayers();
             List<Player> keterlist = new List<Player>();
 
@@ -153,7 +152,7 @@ namespace SCP575
         }
 
         public bool HasFlashlight(Player player) =>
-            (player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT || (player.GetGameObject() as GameObject).GetComponent<WeaponManager>().flashlightEnabled);
+            (player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT);
 
         public bool IsInDangerZone(Player player)
         {

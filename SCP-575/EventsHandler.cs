@@ -16,12 +16,12 @@ namespace SCP575
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
             plugin.RefreshConfig();
-            plugin.Functions.Get079Rooms();
         }
 
         public void OnRoundStart(RoundStartEvent ev)
         {
             plugin.Debug("Getting 079 rooms.");
+            plugin.Functions.Get079Rooms();
 
             plugin.Debug("Initial Delay: " + plugin.delayTime + "s.");
             if (plugin.Toggle)
