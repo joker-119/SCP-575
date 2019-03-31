@@ -4,7 +4,7 @@ using MEC;
 
 namespace SCP575
 {
-	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerRoundRestart
+	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd
 	{
 		private readonly SCP575 plugin;
 
@@ -37,14 +37,6 @@ namespace SCP575
 			{
 				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.Vars.DelayTime)));
 			}
-		}
-
-		public void OnRoundRestart(RoundRestartEvent ev)
-		{
-			foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
-			plugin.coroutines.Clear();
-			plugin.Vars.TimerOn = false;
-			plugin.Vars.TriggerKill = false;
 		}
 
 		public void OnRoundEnd(RoundEndEvent ev)
