@@ -23,17 +23,19 @@ namespace SCP575
 			plugin.Debug("Getting 079 rooms.");
 			plugin.Functions.Get079Rooms();
 
-			plugin.Debug("Initial Delay: " + plugin.DelayTime + "s.");
-			if (plugin.Toggle)
+			plugin.Debug("Initial Delay: " + plugin.Vars.DelayTime + "s.");
+			if (plugin.Vars.Toggled)
 			{
-				plugin.TimedOverride = true;
-				plugin.Timed = false;
-				plugin.Toggle = true;
+				if (plugin.Vars.TimedEvents)
+					plugin.Vars.TimedOverride = true;
+
+				plugin.Vars.TimedEvents = false;
+				plugin.Vars.Toggled = true;
 				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(0)));
 			}
-			else if (plugin.Timed)
+			else if (plugin.Vars.TimedEvents)
 			{
-				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.DelayTime)));
+				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.Vars.DelayTime)));
 			}
 		}
 
@@ -41,21 +43,21 @@ namespace SCP575
 		{
 			foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
 			plugin.coroutines.Clear();
-			plugin.Timer = false;
-			plugin.TriggerKill = false;
+			plugin.Vars.TimerOn = false;
+			plugin.Vars.TriggerKill = false;
 		}
 
 		public void OnRoundEnd(RoundEndEvent ev)
 		{
 			foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
 			plugin.coroutines.Clear();
-			plugin.TriggerKill = false;
-			plugin.Timer = false;
+			plugin.Vars.TriggerKill = false;
+			plugin.Vars.TimerOn = false;
 		}
 
 		public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
 		{
-			if ((plugin.Timer && plugin.TimedTesla) || (plugin.Toggle && plugin.ToggleTesla))
+			if ((plugin.Vars.TimerOn && plugin.Vars.TimedTeslaDisable) || (plugin.Vars.Toggled && plugin.Vars.ToggleTeslaDisable))
 			{
 				ev.Triggerable = false;
 			}

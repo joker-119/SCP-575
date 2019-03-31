@@ -21,43 +21,10 @@ namespace SCP575
 
 	public class SCP575 : Plugin
 	{
-		public Functions Functions { get; private set; }
-
-		public string[] ValidRanks { get; private set; }
-
-		public readonly System.Random Gen = new System.Random();
-
+		public Properties Vars { get; private set; }
+		public Methods Functions { get; private set; }
 		public List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
-
-		public List<Room> BlackoutRoom = new List<Room>();
-		public List<Room> rooms = new List<Room>();
-
-		public float WaitTime { get; private set; }
-		public float DurTime { get; private set; }
-		public float DelayTime { get; private set; }
-
-
-		public bool Timed { get; set; }
-		public bool Announce { get; set; }
-		public bool Toggle { get; set; }
-		public bool ToggleLcz { get; private set; }
-		public bool TimedLcz { get; private set; }
-		public bool Timer { get; set; } = false;
-		public bool TimedOverride { get; set; } = false;
-		public bool ToggleTesla { get; private set; }
-		public bool TimedTesla { get; private set; }
-		public bool Keter { get; private set; }
-		public bool TriggerKill { get; set; }
-		public bool ToggleKeter { get; private set; }
-		public bool RandomEvents { get; private set; }
-		public bool KeterKill { get; private set; }
-
-		public int KeterDamage { get; private set; }
-		public int RandomMin { get; private set; }
-		public int RandomMax { get; private set; }
-		public int RandomDurMin { get; private set; }
-		public int RandomDurMax { get; private set; }
-		public int KeterKillNum { get; private set; }
+		public readonly System.Random Gen = new System.Random();
 
 		public override void OnDisable()
 		{
@@ -93,35 +60,37 @@ namespace SCP575
 
 			this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
 
-			this.Functions = new Functions(this);
+			Vars = new Properties(this);
+
+			Functions = new Methods(this);
 
 			this.AddCommands(new string[] { "SCP575", "575" }, new SCP575Command(this));
 		}
 
 		public void RefreshConfig()
 		{
-			ValidRanks = GetConfigList("575_ranks");
-			DelayTime = GetConfigFloat("575_delay");
-			WaitTime = GetConfigFloat("575_wait");
-			DurTime = GetConfigFloat("575_duration");
-			Timed = GetConfigBool("575_timed");
-			Announce = GetConfigBool("575_announce");
-			ToggleLcz = GetConfigBool("575_toggle_lcz");
-			TimedLcz = GetConfigBool("575_timed_lcz");
-			TimedTesla = GetConfigBool("575_timed_tesla");
-			ToggleTesla = GetConfigBool("575_toggle_tesla");
-			Keter = GetConfigBool("575_keter");
-			KeterDamage = GetConfigInt("575_keter_damage");
-			ToggleKeter = GetConfigBool("575_keter_toggle");
-			KeterKill = GetConfigBool("575_keter_kill");
-			KeterKillNum = GetConfigInt("575_keter_kill_num");
-			RandomEvents = GetConfigBool("575_random_events");
-			RandomMin = GetConfigInt("575_random_min");
-			RandomMax = GetConfigInt("575_random_max") + 1;
-			RandomDurMin = GetConfigInt("575_random_dur_min");
-			RandomDurMax = GetConfigInt("575_random_dur_max") + 1;
-			Timer = false;
-			TriggerKill = false;
+			Vars.ValidRanks = GetConfigList("575_ranks");
+			Vars.DelayTime = GetConfigFloat("575_delay");
+			Vars.WaitTime = GetConfigFloat("575_wait");
+			Vars.DurTime = GetConfigFloat("575_duration");
+			Vars.TimedEvents = GetConfigBool("575_timed");
+			Vars.Announce = GetConfigBool("575_announce");
+			Vars.ToggledLcz = GetConfigBool("575_toggle_lcz");
+			Vars.TimedLcz = GetConfigBool("575_timed_lcz");
+			Vars.TimedTeslaDisable = GetConfigBool("575_timed_tesla");
+			Vars.ToggleTeslaDisable = GetConfigBool("575_toggle_tesla");
+			Vars.Keter = GetConfigBool("575_keter");
+			Vars.KeterDamage = GetConfigInt("575_keter_damage");
+			Vars.ToggleKeter = GetConfigBool("575_keter_toggle");
+			Vars.KeterKill = GetConfigBool("575_keter_kill");
+			Vars.KeterKillNum = GetConfigInt("575_keter_kill_num");
+			Vars.RandomEvents = GetConfigBool("575_random_events");
+			Vars.RandomMin = GetConfigInt("575_random_min");
+			Vars.RandomMax = GetConfigInt("575_random_max") + 1;
+			Vars.RandomDurMin = GetConfigInt("575_random_dur_min");
+			Vars.RandomDurMax = GetConfigInt("575_random_dur_max") + 1;
+			Vars.TimerOn = false;
+			Vars.TriggerKill = false;
 		}
 	}
 }

@@ -55,6 +55,7 @@
 	<Compile Include="EventsHandler.cs" />
 	<Compile Include="SCP-575.cs" />
 	<Compile Include="Functions.cs" />
+	<Compile Include="Properties.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

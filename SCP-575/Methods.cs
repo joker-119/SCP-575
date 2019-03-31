@@ -8,25 +8,25 @@ using UnityEngine;
 
 namespace SCP575
 {
-	public class Functions
+	public class Methods
 	{
 		private readonly SCP575 plugin;
 
-		public Functions(SCP575 plugin) => this.plugin = plugin;
+		public Methods(SCP575 plugin) => this.plugin = plugin;
 
 		public void RunBlackout()
 		{
 			plugin.Debug("Blackout Function has started");
-			if ((plugin.Timer && plugin.TimedLcz) || (plugin.Toggle && plugin.ToggleLcz))
+			if ((plugin.Vars.TimerOn && plugin.Vars.TimedLcz) || (plugin.Vars.Toggled && plugin.Vars.ToggledLcz))
 			{
-				foreach (Room room in plugin.BlackoutRoom)
+				foreach (Room room in plugin.Vars.BlackoutRoom)
 				{
 					room.FlickerLights();
 				}
 			}
 			Generator079.generators[0].CallRpcOvercharge();
 
-			if (plugin.Keter)
+			if (plugin.Vars.Keter)
 			{
 				plugin.coroutines.Add(Timing.RunCoroutine(Keter()));
 			}
@@ -36,7 +36,7 @@ namespace SCP575
 		{
 			yield return Timing.WaitForSeconds(delay);
 
-			while (plugin.Toggle)
+			while (plugin.Vars.Toggled)
 			{
 				RunBlackout();
 				yield return Timing.WaitForSeconds(8f);
@@ -48,32 +48,28 @@ namespace SCP575
 			plugin.Debug("Being Delayed");
 			yield return Timing.WaitForSeconds(delay);
 
-			while (plugin.Timed)
+			while (plugin.Vars.TimedEvents)
 			{
 				plugin.Debug("Announcing");
-				if (plugin.Announce && plugin.TimedLcz && plugin.Timed)
-				{
+				if (plugin.Vars.Announce && plugin.Vars.TimedLcz)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
-				}
 				else
-				{
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
-				}
 				yield return Timing.WaitForSeconds(8.7f);
 
 				float blackout_dur;
-				if (plugin.RandomEvents)
+				if (plugin.Vars.RandomEvents)
 				{
-					blackout_dur = plugin.Gen.Next(plugin.RandomDurMin, plugin.RandomDurMax);
+					blackout_dur = plugin.Gen.Next(plugin.Vars.RandomDurMin, plugin.Vars.RandomDurMax);
 				}
 				else
 				{
-					blackout_dur = plugin.DurTime;
+					blackout_dur = plugin.Vars.DurTime;
 				}
 
 				plugin.Debug("Flipping Bools1");
-				plugin.Timer = true;
-				plugin.TriggerKill = true;
+				plugin.Vars.TimerOn = true;
+				plugin.Vars.TriggerKill = true;
 
 				do
 				{
@@ -83,29 +79,25 @@ namespace SCP575
 				} while ((blackout_dur -= 11) > 0);
 
 				plugin.Debug("Announcing Disabled.");
-				if (plugin.Announce && plugin.TimedLcz && plugin.Timed)
-				{
+				if (plugin.Vars.Announce && plugin.Vars.TimedLcz)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
-				}
 				else
-				{
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
-				}
 				yield return Timing.WaitForSeconds(8.7f);
 
 				plugin.Debug("Flipping bools2");
-				plugin.Timer = false;
-				plugin.TriggerKill = false;
-				plugin.Debug("Timer: " + plugin.Timer);
+				plugin.Vars.TimerOn = false;
+				plugin.Vars.TriggerKill = false;
+				plugin.Debug("Timer: " + plugin.Vars.TimerOn);
 				plugin.Debug("Waiting to re-execute..");
 
-				if (plugin.RandomEvents)
+				if (plugin.Vars.RandomEvents)
 				{
-					yield return Timing.WaitForSeconds(plugin.Gen.Next(plugin.RandomMin, plugin.RandomMax));
+					yield return Timing.WaitForSeconds(plugin.Gen.Next(plugin.Vars.RandomMin, plugin.Vars.RandomMax));
 				}
 				else
 				{
-					yield return Timing.WaitForSeconds(plugin.WaitTime);
+					yield return Timing.WaitForSeconds(plugin.Vars.WaitTime);
 				}
 			}
 		}
@@ -126,9 +118,9 @@ namespace SCP575
 				keterlist.Add(player);
 			}
 
-			if (plugin.KeterKill && keterlist.Count > 0)
+			if (plugin.Vars.KeterKill && keterlist.Count > 0)
 			{
-				for (int i = 0; i < plugin.KeterKillNum; i++)
+				for (int i = 0; i < plugin.Vars.KeterKillNum; i++)
 				{
 					if (keterlist.Count == 0) break;
 
@@ -140,11 +132,11 @@ namespace SCP575
 					ply.PersonalBroadcast(10, "You were killed by SCP-575!", false);
 				}
 			}
-			else if (!plugin.KeterKill && keterlist.Count > 0)
+			else if (!plugin.Vars.KeterKill && keterlist.Count > 0)
 			{
 				foreach (Player player in keterlist)
 				{
-					player.Damage(plugin.KeterDamage);
+					player.Damage(plugin.Vars.KeterDamage);
 					player.PersonalClearBroadcasts();
 					player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
 				}
@@ -158,9 +150,9 @@ namespace SCP575
 		{
 			Vector loc = player.GetPosition();
 
-			foreach (Room room in plugin.rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
+			foreach (Room room in plugin.Vars.Rooms.Where(p => Vector.Distance(loc, p.Position) <= 12f))
 			{
-				if (room.ZoneType == ZoneType.HCZ || (plugin.Timer && plugin.TimedLcz && room.ZoneType == ZoneType.LCZ) || (plugin.Toggle && plugin.ToggleLcz && room.ZoneType == ZoneType.LCZ))
+				if (room.ZoneType == ZoneType.HCZ || (plugin.Vars.TimerOn && plugin.Vars.TimedLcz && room.ZoneType == ZoneType.LCZ) || (plugin.Vars.Toggled && plugin.Vars.ToggledLcz && room.ZoneType == ZoneType.LCZ))
 					return true;
 			}
 			return false;
@@ -172,31 +164,31 @@ namespace SCP575
 			{
 				if (room.ZoneType == ZoneType.LCZ)
 				{
-					plugin.BlackoutRoom.Add(room);
+					plugin.Vars.BlackoutRoom.Add(room);
 				}
-				plugin.rooms.Add(room);
+				plugin.Vars.Rooms.Add(room);
 			}
 		}
 
 		public void ToggleBlackout()
 		{
-			plugin.Toggle = !plugin.Toggle;
-			if (plugin.Timed)
+			plugin.Vars.Toggled = !plugin.Vars.Toggled;
+			if (plugin.Vars.TimedEvents)
 			{
-				plugin.TimedOverride = true;
-				plugin.Timed = false;
+				plugin.Vars.TimedOverride = true;
+				plugin.Vars.TimedEvents = false;
 			}
-			else if (plugin.TimedOverride)
+			else if (plugin.Vars.TimedOverride)
 			{
-				plugin.TimedOverride = false;
-				plugin.Timed = true;
+				plugin.Vars.TimedOverride = false;
+				plugin.Vars.TimedEvents = true;
 			}
 
-			if (plugin.Toggle)
+			if (plugin.Vars.Toggled)
 			{
-				if (plugin.Announce)
+				if (plugin.Vars.Announce)
 				{
-					if (!plugin.ToggleLcz)
+					if (!plugin.Vars.ToggledLcz)
 					{
 						PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
 					}
@@ -211,11 +203,11 @@ namespace SCP575
 
 		public bool IsAllowed(ICommandSender sender)
 		{
-			Player player = (sender is Player) ? sender as Player : null;
+			Player player = sender as Player;
 
 			if (player != null)
 			{
-				List<string> roleList = (plugin.ValidRanks != null && plugin.ValidRanks.Length > 0) ? plugin.ValidRanks.Select(role => role.ToUpper()).ToList() : new List<string>();
+				List<string> roleList = (plugin.Vars.ValidRanks != null && plugin.Vars.ValidRanks.Length > 0) ? plugin.Vars.ValidRanks.Select(role => role.ToUpper()).ToList() : new List<string>();
 
 				if (roleList != null && roleList.Count > 0 && (roleList.Contains(player.GetUserGroup().Name.ToUpper()) || roleList.Contains(player.GetRankName().ToUpper())))
 				{
@@ -231,22 +223,22 @@ namespace SCP575
 
 		public void EnableBlackouts()
 		{
-			plugin.Timed = true;
+			plugin.Vars.TimedEvents = true;
 		}
 
 		public void DisableBlackouts()
 		{
-			plugin.Timed = false;
+			plugin.Vars.TimedEvents = false;
 		}
 
 		public void EnableAnnounce()
 		{
-			plugin.Announce = true;
+			plugin.Vars.Announce = true;
 		}
 
 		public void DisableAnnounce()
 		{
-			plugin.Announce = false;
+			plugin.Vars.Announce = false;
 		}
 	}
 }
