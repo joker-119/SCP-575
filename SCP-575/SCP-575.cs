@@ -21,7 +21,7 @@ namespace SCP575
 
 	public class SCP575 : Plugin
 	{
-		public Properties Vars { get; private set; }
+		public Settings Vars { get; private set; }
 		public Methods Functions { get; private set; }
 		public List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
 		public readonly System.Random Gen = new System.Random();
@@ -60,7 +60,7 @@ namespace SCP575
 
 			this.AddEventHandlers(new EventsHandler(this), Priority.Normal);
 
-			Vars = new Properties(this);
+			Vars = new Settings(this);
 
 			Functions = new Methods(this);
 

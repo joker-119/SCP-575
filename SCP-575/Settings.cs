@@ -5,10 +5,10 @@ using MEC;
 
 namespace SCP575
 {
-	public class Properties
+	public class Settings
 	{
 		private readonly SCP575 plugin;
-		public Properties(SCP575 plugin) => this.plugin = plugin;
+		public Settings(SCP575 plugin) => this.plugin = plugin;
 
 
 		public string[] ValidRanks { get; internal set; }
