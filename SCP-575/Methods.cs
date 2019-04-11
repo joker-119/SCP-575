@@ -125,6 +125,7 @@ namespace SCP575
 					if (keterlist.Count == 0) break;
 
 					Player ply = players[plugin.Gen.Next(keterlist.Count)];
+					if (ply.GetGodmode()) continue;
 
 					ply.Kill();
 					keterlist.Remove(ply);
@@ -136,6 +137,8 @@ namespace SCP575
 			{
 				foreach (Player player in keterlist)
 				{
+					if (player.GetGodmode()) continue;
+
 					player.Damage(plugin.Vars.KeterDamage);
 					player.PersonalClearBroadcasts();
 					player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
