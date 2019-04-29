@@ -4,18 +4,16 @@ using MEC;
 
 namespace SCP575
 {
-	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd
+	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerGeneratorFinish
 	{
-		private readonly SCP575 plugin;
+		private readonly Scp575 plugin;
 
-		public EventsHandler(SCP575 plugin)
-		{
-			this.plugin = plugin;
-		}
+		public EventsHandler(Scp575 plugin) => this.plugin = plugin;
 
 		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
 		{
-			plugin.RefreshConfig();
+			plugin.Vars.TimerOn = false;
+			plugin.Vars.TriggerKill = false;
 		}
 
 		public void OnRoundStart(RoundStartEvent ev)
@@ -31,28 +29,38 @@ namespace SCP575
 
 				plugin.Vars.TimedEvents = false;
 				plugin.Vars.Toggled = true;
-				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(0)));
+				plugin.Coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(0)));
 			}
-			else if (plugin.Vars.TimedEvents)
-			{
-				plugin.coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.Vars.DelayTime)));
-			}
+			else if (plugin.Vars.TimedEvents) plugin.Coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.Vars.DelayTime)));
 		}
 
 		public void OnRoundEnd(RoundEndEvent ev)
 		{
-			foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
-			plugin.coroutines.Clear();
+			foreach (CoroutineHandle handle in plugin.Coroutines) Timing.KillCoroutines(handle);
+			plugin.Coroutines.Clear();
 			plugin.Vars.TriggerKill = false;
 			plugin.Vars.TimerOn = false;
 		}
 
 		public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
 		{
-			if ((plugin.Vars.TimerOn && plugin.Vars.TimedTeslaDisable) || (plugin.Vars.Toggled && plugin.Vars.ToggleTeslaDisable))
-			{
+			if (plugin.Vars.TimerOn && plugin.Vars.TimedTeslaDisable || plugin.Vars.Toggled && plugin.Vars.ToggleTeslaDisable) 
 				ev.Triggerable = false;
-			}
+		}
+
+		public void OnGeneratorFinish(GeneratorFinishEvent ev)
+		{
+			plugin.Vars.GenCount++;
+			plugin.Info(plugin.Vars.GenCount.ToString());
+
+			plugin.Vars.BlackoutRoom.Remove(ev.Generator.Room);
+
+			if (plugin.Vars.GenCount != 5) return;
+			
+			foreach (CoroutineHandle handle in plugin.Coroutines)
+				Timing.KillCoroutines(handle);
+
+			plugin.Server.Map.AnnounceScpKill("575");
 		}
 	}
 }

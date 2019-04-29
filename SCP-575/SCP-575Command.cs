@@ -3,30 +3,25 @@ using MEC;
 
 namespace SCP575
 {
-	public class SCP575Command : ICommandHandler
+	public class Scp575Command : ICommandHandler
 	{
-		private readonly SCP575 plugin;
-		public SCP575Command(SCP575 plugin) => this.plugin = plugin;
+		private readonly Scp575 plugin;
+		public Scp575Command(Scp575 plugin) => this.plugin = plugin;
 
-		public string GetCommandDescription()
-		{
-			return "";
-		}
+		public string GetCommandDescription() => "";
 
-		public string GetUsage()
-		{
-			return "SCP575 Commands \n" +
+		public string GetUsage() =>
+			"SCP575 Commands \n" +
 			"[SCP575 / 575] HELP \n" +
 			"SCP575 TOGGLE \n" +
 			"SCP575 ENABLE \n" +
 			"SCP575 DISABLE \n" +
 			"SCP575 ANNOUNCE ON \n" +
 			"SCP575 ANNOUNCE OFF \n";
-		}
 
 		public string[] OnCall(ICommandSender sender, string[] args)
 		{
-			if (args.Length <= 0) return new string[] { GetUsage() };
+			if (args.Length <= 0) return new[] { GetUsage() };
 			if (!plugin.Functions.IsAllowed(sender)) return new string[] { "Permission denied." };
 			switch (args[0].ToLower())
 			{
@@ -84,8 +79,8 @@ namespace SCP575
 					}
 				case "halt":
 					{
-						foreach (CoroutineHandle handle in plugin.coroutines) Timing.KillCoroutines(handle);
-						plugin.coroutines.Clear();
+						foreach (CoroutineHandle handle in plugin.Coroutines) Timing.KillCoroutines(handle);
+						plugin.Coroutines.Clear();
 
 						return new string[] { "Halted all active Coroutines." };
 					}
