@@ -4,6 +4,8 @@ using MEC;
 using Smod2;
 using Smod2.API;
 using Smod2.Commands;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace SCP575
 {
@@ -13,16 +15,44 @@ namespace SCP575
 
 		public Methods(Scp575 plugin) => this.plugin = plugin;
 
-		private void RunBlackout()
+		private void RunBlackout(float duration)
 		{
-			plugin.Debug("Blackout Function has started");
-			if (plugin.Vars.TimerOn && plugin.Vars.TimedLcz || plugin.Vars.Toggled && plugin.Vars.ToggledLcz)
-				foreach (Room room in plugin.Vars.BlackoutRoom) room.FlickerLights();
+			plugin.Info("Blackout Function has started");
 			
-			Generator079.generators[0].CallRpcOvercharge();
+			Timing.RunCoroutine(LczBlackout(duration));
+			Timing.RunCoroutine(HczBlackout(duration));
+			Timing.RunCoroutine(LockDoors());
+		}
 
-			if (plugin.Vars.Keter && !plugin.Vars.Toggled || plugin.Vars.Toggled && plugin.Vars.ToggleKeter) 
-				plugin.Coroutines.Add(Timing.RunCoroutine(Keter()));
+		private IEnumerator<float> LczBlackout(float duration)
+		{
+			do
+			{
+				if (!plugin.Vars.TimerOn)
+						yield break;
+				foreach (Room room in plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA).Where(rm => rm.ZoneType == ZoneType.LCZ))
+					room.FlickerLights();
+				plugin.Info("LCZ Loop");
+				if (plugin.Vars.Keter && !plugin.Vars.Toggled || plugin.Vars.Toggled && plugin.Vars.ToggleKeter) 
+					plugin.Coroutines.Add(Timing.RunCoroutine(Keter()));
+				yield return Timing.WaitForSeconds(8f);
+			} while ((duration -= 8) > 0);
+		}
+
+		private IEnumerator<float> HczBlackout(float duration)
+		{
+			foreach (Room room in plugin.Vars.BlackoutRoom.Where(rm => rm.ZoneType == ZoneType.HCZ))
+				do
+				{
+					if (!plugin.Vars.TimerOn)
+						yield break;
+					Generator079.generators[0].CallRpcOvercharge();
+					plugin.Info("HCZ Loop");
+					room.FlickerLights();
+					if (plugin.Vars.Keter && !plugin.Vars.Toggled || plugin.Vars.Toggled && plugin.Vars.ToggleKeter) 
+						plugin.Coroutines.Add(Timing.RunCoroutine(Keter()));
+					yield return Timing.WaitForSeconds(11f);
+				} while ((duration -= 11) > 0);
 		}
 
 		private IEnumerator<float> ToggledBlackout(float delay)
@@ -31,22 +61,57 @@ namespace SCP575
 
 			while (plugin.Vars.Toggled)
 			{
-				RunBlackout();
-				yield return Timing.WaitForSeconds(8f);
+				RunBlackout(11f);
+				yield return Timing.WaitForSeconds(11f);
 			}
+		}
+
+		public IEnumerator<float> LockDoors()
+		{
+			List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
+			List<Smod2.API.Door> toClose = new List<Smod2.API.Door>();
+			int count = plugin.Gen.Next(doors.Count);
+			for (int i = 0; i < count; i++)
+				toClose.Add(doors[plugin.Gen.Next(doors.Count)]);
+			foreach (Smod2.API.Door door in toClose)
+				door.Open = false;
+			yield return Timing.WaitForSeconds(3f);
+			foreach (Smod2.API.Door door in toClose)
+				door.Open = true;
+			yield return Timing.WaitForSeconds(3f);
+			foreach (Smod2.API.Door door in toClose)
+			{
+				door.Open = false;
+				door.Locked = true;
+			}
+
+			yield return Timing.WaitForSeconds(2f);
+			foreach (Smod2.API.Door door in toClose)
+			{
+				door.Locked = false;
+				if (plugin.Vars.WarheadCounting)
+					door.Open = true;
+			}
+		}
+
+		public void Scp575Voice(float pitch)
+		{
+			plugin.Info("Voice.");
+			PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement($"pitch_{pitch} No Containment", true);
 		}
 
 		public IEnumerator<float> TimedBlackout(float delay)
 		{
-			plugin.Debug("Being Delayed");
+			plugin.Info("Being Delayed");
+			
 			yield return Timing.WaitForSeconds(delay);
 
 			while (plugin.Vars.TimedEvents)
 			{
-				plugin.Debug("Announcing");
+				plugin.Info("Announcing");
 				if (plugin.Vars.Announce && plugin.Vars.TimedLcz)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
-				else
+				else if (plugin.Vars.Announce)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3 . 2 . 1 .", false);
 				yield return Timing.WaitForSeconds(8.7f);
 
@@ -56,29 +121,26 @@ namespace SCP575
 				else
 					blackoutDur = plugin.Vars.DurTime;
 
-				plugin.Debug("Flipping Bool 1");
+				plugin.Info("Flipping Bool 1");
 				plugin.Vars.TimerOn = true;
 				plugin.Vars.TriggerKill = true;
 
-				do
-				{
-					plugin.Debug("Running Blackout");
-					RunBlackout();
-					yield return Timing.WaitForSeconds(11);
-				} while ((blackoutDur -= 11) > 0);
+				RunBlackout(blackoutDur);
+				Scp575Voice(0.15f);
+				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
 
-				plugin.Debug("Announcing Disabled.");
+				plugin.Info("Announcing Disabled.");
 				if (plugin.Vars.Announce && plugin.Vars.TimedLcz)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("FACILITY POWER SYSTEM NOW OPERATIONAL", false);
-				else
+				else if (plugin.Vars.Announce)
 					PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement("HEAVY CONTAINMENT POWER SYSTEM NOW OPERATIONAL", false);
 				yield return Timing.WaitForSeconds(8.7f);
 
-				plugin.Debug("Flipping Bool 2");
+				plugin.Info("Flipping Bool 2");
 				plugin.Vars.TimerOn = false;
 				plugin.Vars.TriggerKill = false;
-				plugin.Debug("Timer: " + plugin.Vars.TimerOn);
-				plugin.Debug("Waiting to re-execute..");
+				plugin.Info("Timer: " + plugin.Vars.TimerOn);
+				plugin.Info("Waiting to re-execute..");
 
 				if (plugin.Vars.RandomEvents)
 					yield return Timing.WaitForSeconds(plugin.Gen.Next(plugin.Vars.RandomMin, plugin.Vars.RandomMax));
@@ -121,7 +183,6 @@ namespace SCP575
 				plugin.Vars.TriggerKill = false;
 			}
 			else if (!plugin.Vars.KeterKill && keterList.Count > 0)
-			{
 				foreach (Player player in keterList)
 				{
 					if (player.GetGodmode()) continue;
@@ -129,12 +190,24 @@ namespace SCP575
 					player.Damage(plugin.Vars.KeterDamage);
 					player.PersonalClearBroadcasts();
 					player.PersonalBroadcast(5, "You were damaged by SCP-575!", false);
+					ShakeScreen((GameObject)player.GetGameObject());
 				}
-			}
+		}
+
+		private static void ShakeScreen(GameObject ply)
+		{
+			int rpcId = -737840022;
+			NetworkWriter writer = new NetworkWriter();
+			writer.Write((short)0);
+			writer.Write((short)2);
+			writer.WritePackedUInt32((uint)rpcId);
+			writer.Write(ply.GetComponent<NetworkIdentity>().netId);
+			writer.FinishMessage();
+			ply.GetComponent<CharacterClassManager>().connectionToClient.SendWriter(writer, 0);
 		}
 
 		private static bool HasFlashlight(Player player) =>
-			player.GetCurrentItem().ItemType == ItemType.FLASHLIGHT;
+			((GameObject) player.GetGameObject()).GetComponent<Scp173PlayerScript>().SMHasLightSource();
 
 		private bool IsInDangerZone(Player player)
 		{
@@ -148,9 +221,10 @@ namespace SCP575
 
 		public void Get079Rooms()
 		{
-			foreach (Room room in PluginManager.Manager.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA))
-				if (room.ZoneType == ZoneType.HCZ || plugin.Vars.TimedLcz && room.ZoneType == ZoneType.LCZ || plugin.Vars.ToggledLcz && room.ZoneType == ZoneType.LCZ) 
-					plugin.Vars.BlackoutRoom.Add(room);
+			Room[] rooms = plugin.Server.Map.Get079InteractionRooms(Scp079InteractionType.CAMERA);
+
+			foreach (Room room in rooms)
+				plugin.Vars.BlackoutRoom.Add(room);
 		}
 
 		public void ToggleBlackout()
@@ -170,13 +244,11 @@ namespace SCP575
 			if (!plugin.Vars.Toggled) return;
 			
 			if (plugin.Vars.Announce)
-			{
 				PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement(
 					!plugin.Vars.ToggledLcz
 						? "HEAVY CONTAINMENT POWER SYSTEM FAILURE IN 3. . 2. . 1. . "
 						: "FACILITY POWER SYSTEM FAILURE IN 3. . 2. . 1. . ", false);
-			}
-			
+
 			plugin.Coroutines.Add(Timing.RunCoroutine(ToggledBlackout(8.7f)));
 		}
 

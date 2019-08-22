@@ -4,7 +4,8 @@ using MEC;
 
 namespace SCP575
 {
-	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla, IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerGeneratorFinish
+	public class EventsHandler : IEventHandlerRoundStart, IEventHandlerPlayerTriggerTesla,
+		IEventHandlerWaitingForPlayers, IEventHandlerRoundEnd, IEventHandlerGeneratorFinish, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown
 	{
 		private readonly Scp575 plugin;
 
@@ -14,14 +15,16 @@ namespace SCP575
 		{
 			plugin.Vars.TimerOn = false;
 			plugin.Vars.TriggerKill = false;
+			plugin.Vars.GenCount = 0;
+			plugin.Vars.BlackoutRoom.Clear();
 		}
 
 		public void OnRoundStart(RoundStartEvent ev)
 		{
-			plugin.Debug("Getting 079 rooms.");
+			plugin.Info("Getting 079 rooms.");
 			plugin.Functions.Get079Rooms();
 
-			plugin.Debug("Initial Delay: " + plugin.Vars.DelayTime + "s.");
+			plugin.Info("Initial Delay: " + plugin.Vars.DelayTime + "s.");
 			if (plugin.Vars.Toggled)
 			{
 				if (plugin.Vars.TimedEvents)
@@ -61,6 +64,16 @@ namespace SCP575
 				Timing.KillCoroutines(handle);
 
 			plugin.Server.Map.AnnounceScpKill("575");
+		}
+
+		public void OnStartCountdown(WarheadStartEvent ev)
+		{
+			plugin.Vars.WarheadCounting = true;
+		}
+
+		public void OnStopCountdown(WarheadStopEvent ev)
+		{
+			plugin.Vars.WarheadCounting = false;
 		}
 	}
 }

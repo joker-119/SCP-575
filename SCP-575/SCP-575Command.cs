@@ -47,6 +47,14 @@ namespace SCP575
 
 						return new string[] { "Timed events enabled." };
 					}
+
+				case "test":
+				{
+					if (!float.TryParse(args[1], out float result))
+						return new[] { "Bad float." };
+					plugin.Functions.Scp575Voice(result);
+					return new[] { "Done." };
+				}
 				case "disable":
 					{
 						plugin.Functions.DisableBlackouts();

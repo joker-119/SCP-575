@@ -6,7 +6,7 @@ namespace SCP575
 {
 	public class Settings
 	{
-		[ConfigOption] public string[] ValidRanks;
+		[ConfigOption] public string[] ValidRanks = new string[]{};
 
 		[ConfigOption] public float WaitTime = 180f;
 		[ConfigOption] public float DurTime = 90f;
@@ -29,7 +29,7 @@ namespace SCP575
 		[ConfigOption] public int RandomDurMin = 11;
 		[ConfigOption] public int RandomDurMax = 90;
 		[ConfigOption] public int KeterKillNum = 1;
-		
+
 		public List<Room> BlackoutRoom = new List<Room>();
 		
 		public bool TimerOn { get; internal set; }
@@ -38,5 +38,6 @@ namespace SCP575
 		public bool TimedOverride { get; internal set; }
 		
 		public int GenCount { get; internal set; }
+		public bool WarheadCounting { get; internal set; }
 	}
 }
