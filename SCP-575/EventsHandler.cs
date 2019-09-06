@@ -24,17 +24,17 @@ namespace SCP575
 			plugin.Info("Getting 079 rooms.");
 			plugin.Functions.Get079Rooms();
 
-			plugin.Info("Initial Delay: " + plugin.Vars.DelayTime + "s.");
+			plugin.Info("Initial Delay: " + plugin.DelayTime + "s.");
 			if (plugin.Vars.Toggled)
 			{
-				if (plugin.Vars.TimedEvents)
+				if (plugin.TimedEvents)
 					plugin.Vars.TimedOverride = true;
 
-				plugin.Vars.TimedEvents = false;
+				plugin.TimedEvents = false;
 				plugin.Vars.Toggled = true;
 				plugin.Coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(0)));
 			}
-			else if (plugin.Vars.TimedEvents) plugin.Coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.Vars.DelayTime)));
+			else if (plugin.TimedEvents) plugin.Coroutines.Add(Timing.RunCoroutine(plugin.Functions.TimedBlackout(plugin.DelayTime)));
 		}
 
 		public void OnRoundEnd(RoundEndEvent ev)
@@ -47,7 +47,7 @@ namespace SCP575
 
 		public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
 		{
-			if (plugin.Vars.TimerOn && plugin.Vars.TimedTeslaDisable || plugin.Vars.Toggled && plugin.Vars.ToggleTeslaDisable) 
+			if (plugin.Vars.TimerOn && plugin.TimedTeslaDisable || plugin.Vars.Toggled && plugin.ToggleTeslaDisable)
 				ev.Triggerable = false;
 		}
 
