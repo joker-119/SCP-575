@@ -50,6 +50,7 @@ namespace SCP575
 
 		private IEnumerator<float> HczBlackout(float duration)
 		{
+			plugin.Vars.DisableTeslas = true;
 			foreach (Room room in plugin.Vars.BlackoutRoom.Where(rm => rm.ZoneType == ZoneType.HCZ))
 				do
 				{
@@ -62,7 +63,8 @@ namespace SCP575
 						plugin.Coroutines.Add(Timing.RunCoroutine(Keter()));
 					yield return Timing.WaitForSeconds(11f);
 				} while ((duration -= 11) > 0);
-			plugin.Vars.TimerOn = false;
+
+			plugin.Vars.DisableTeslas = false;
 		}
 
 		private IEnumerator<float> ToggledBlackout(float delay)
@@ -143,6 +145,7 @@ namespace SCP575
 
 				plugin.Info("Flipping Bool 2");
 				plugin.Vars.TriggerKill = false;
+				plugin.Vars.TimerOn = false;
 				plugin.Info("Timer: " + plugin.Vars.TimerOn);
 				plugin.Info("Waiting to re-execute..");
 
@@ -163,11 +166,14 @@ namespace SCP575
 
 			foreach (Player player in players)
 			{
-				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) continue;
+				if (player.TeamRole.Team == Smod2.API.Team.SPECTATOR || player.TeamRole.Team == Smod2.API.Team.SCP) 
+					continue;
 				yield return Timing.WaitForSeconds(0.1f);
-				if (HasFlashlight(player)) continue;
+				if (HasFlashlight(player)) 
+					continue;
 				yield return Timing.WaitForSeconds(0.1f);
-				if (!IsInDangerZone(player)) continue;
+				if (!IsInDangerZone(player)) 
+					continue;
 
 				keterList.Add(player);
 			}
@@ -221,9 +227,11 @@ namespace SCP575
 			Vector loc = player.GetPosition();
 
 			return plugin.Vars.BlackoutRoom.Where(p => Vector.Distance(loc, p.Position) <= 12f).Any(room =>
-				room.ZoneType == ZoneType.HCZ ||
+				(room.ZoneType == ZoneType.HCZ ||
 				plugin.Vars.TimerOn && plugin.TimedLcz && room.ZoneType == ZoneType.LCZ ||
-				plugin.Vars.Toggled && plugin.ToggledLcz && room.ZoneType == ZoneType.LCZ);
+				plugin.Vars.Toggled && plugin.ToggledLcz && room.ZoneType == ZoneType.LCZ) &&
+				room.RoomType != RoomType.CHECKPOINT_A && room.RoomType != RoomType.CHECKPOINT_B &&
+				room.RoomType != RoomType.ENTRANCE_CHECKPOINT);
 		}
 
 		public void Get079Rooms()
@@ -237,6 +245,7 @@ namespace SCP575
 		public void ToggleBlackout()
 		{
 			plugin.Vars.Toggled = !plugin.Vars.Toggled;
+			
 			if (plugin.TimedEvents)
 			{
 				plugin.Vars.TimedOverride = true;
@@ -248,7 +257,8 @@ namespace SCP575
 				plugin.TimedEvents = true;
 			}
 
-			if (!plugin.Vars.Toggled) return;
+			if (!plugin.Vars.Toggled) 
+				return;
 
 			if (plugin.Announce)
 				PlayerManager.localPlayer.GetComponent<MTFRespawn>().CallRpcPlayCustomAnnouncement(

@@ -9,6 +9,7 @@ namespace SCP575
 		public List<Room> BlackoutRoom = new List<Room>();
 		
 		public bool TimerOn { get; internal set; }
+		public bool DisableTeslas { get; internal set; }
 		public bool Toggled { get; internal set; }
 		public bool TriggerKill { get; internal set; }
 		public bool TimedOverride { get; internal set; }

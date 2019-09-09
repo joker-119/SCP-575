@@ -47,7 +47,7 @@ namespace SCP575
 
 		public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
 		{
-			if (plugin.Vars.TimerOn && plugin.TimedTeslaDisable || plugin.Vars.Toggled && plugin.ToggleTeslaDisable)
+			if (plugin.Vars.DisableTeslas && plugin.TimedTeslaDisable || plugin.Vars.DisableTeslas && plugin.ToggleTeslaDisable)
 				ev.Triggerable = false;
 		}
 
