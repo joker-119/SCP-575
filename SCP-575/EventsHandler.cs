@@ -17,6 +17,7 @@ namespace SCP575
 			plugin.Vars.TriggerKill = false;
 			plugin.Vars.GenCount = 0;
 			plugin.Vars.BlackoutRoom.Clear();
+			plugin.Vars.DisableTeslas = false;
 		}
 
 		public void OnRoundStart(RoundStartEvent ev)

@@ -55,7 +55,11 @@ namespace SCP575
 				do
 				{
 					if (!plugin.Vars.TimerOn)
+					{
+						plugin.Vars.DisableTeslas = false;
 						yield break;
+					}
+
 					Generator079.generators[0].CallRpcOvercharge();
 					plugin.Info("HCZ Loop");
 					room.FlickerLights();
