@@ -51,6 +51,8 @@ namespace SCP_575
 
 		public override void OnDisable()
 		{
+			foreach (CoroutineHandle handle in EventHandlers.Coroutines)
+				Timing.KillCoroutines(handle);
 			Events.RoundStartEvent -= EventHandlers.OnRoundStart;
 			Events.RoundEndEvent -= EventHandlers.OnRoundEnd;
 			Events.WaitingForPlayersEvent -= EventHandlers.OnWaitingForPlayers;
@@ -101,7 +103,7 @@ namespace SCP_575
 				if (RandomEvents)
 					blackoutDur = (float)Gen.NextDouble() * (DurationMax - DurationMin) + DurationMin;
 				if (EnableKeter)
-					Timing.RunCoroutine(Keter(blackoutDur));
+					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur)));
 
 				Generator079.generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, OnlyHeavy);
 				if (Voice)
