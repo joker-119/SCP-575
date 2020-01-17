@@ -112,9 +112,9 @@ namespace SCP_575
 				EventHandlers.TeslasDisabled = false;
 				TimerOn = false;
 				if (RandomEvents)
-					Timing.WaitForSeconds(Gen.Next(DelayMin, DelayMax));
+					yield return Timing.WaitForSeconds(Gen.Next(DelayMin, DelayMax));
 				else
-					Timing.WaitForSeconds(InitialDelay);
+					yield return Timing.WaitForSeconds(InitialDelay);
 			}
 		}
 
