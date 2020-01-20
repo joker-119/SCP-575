@@ -103,7 +103,7 @@ namespace SCP_575
 				if (RandomEvents)
 					blackoutDur = (float)Gen.NextDouble() * (DurationMax - DurationMin) + DurationMin;
 				if (EnableKeter)
-					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur)));
+					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
 				Generator079.generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, OnlyHeavy);
 				if (Voice)
@@ -111,6 +111,7 @@ namespace SCP_575
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
 				Respawn.RpcPlayCustomAnnouncement("facility power system now operational", false, true);
 				yield return Timing.WaitForSeconds(8.7f);
+				Timing.KillCoroutines("keter");
 				EventHandlers.TeslasDisabled = false;
 				TimerOn = false;
 				if (RandomEvents)
@@ -132,6 +133,7 @@ namespace SCP_575
 							if (hub.characterClassManager.IsHuman() &&
 							    hub.characterClassManager.CurClass != RoleType.Spectator && !hub.HasLightSource())
 							{
+								damaged = true;
 								hub.playerStats.HurtPlayer(new PlayerStats.HitInfo(KeterDamage, "SCP-575", DamageTypes.Wall, 0), hub.gameObject);
 								hub.Broadcast(5, "You were damaged by SCP-575! Equip a flashlight!");
 							}
