@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
-using EXILED;
+using Exiled.API.Features;
+using Exiled.API.Interfaces;
+using Exiled.Events;
 using MEC;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
+using Handlers = Exiled.Events.Handlers;
 
 namespace SCP_575
 {
-	public class Plugin : EXILED.Plugin
+	public class Plugin : Exiled.API.Features.Plugin
 	{
 		public Random Gen = new Random();
 		
@@ -16,97 +19,71 @@ namespace SCP_575
 		public MTFRespawn Respawn;
 		public static bool TimerOn;
 		
-		public bool RandomEvents;
-		public bool DisableTeslas;
-		public bool EnableKeter;
-		public bool OnlyHeavy;
-		public bool Voice;
-		public float InitialDelay;
-		public float DurationMin;
-		public float DurationMax;
-		public int DelayMax;
-		public int DelayMin;
-		public int SpawnChance;
-		public float KeterDamage;
+		public Config cfg;
 
-		public override void OnEnable()
+		public override void OnEnabled()
 		{
 			try
 			{
-				Info("loaded.");
-				ReloadConfig();
-				Info("Configs loaded.");
+				Log.Info("loaded.");
+				cfg = (Config) Config;
+				cfg.Reload();
+				Log.Info("Configs loaded.");
+				
 				EventHandlers = new EventHandlers(this);
 
-				Events.RoundStartEvent += EventHandlers.OnRoundStart;
-				Events.RoundEndEvent += EventHandlers.OnRoundEnd;
-				Events.WaitingForPlayersEvent += EventHandlers.OnWaitingForPlayers;
-				Events.TriggerTeslaEvent += EventHandlers.OnTriggerTesla;
+				Handlers.Server.RoundStarted += EventHandlers.OnRoundStart;
+				Handlers.Server.RoundEnded += EventHandlers.OnRoundEnd;
+				Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
+				Handlers.Player.TriggeringTesla += EventHandlers.OnTriggerTesla;
 			}
 			catch (Exception e)
 			{
-				Error($"OnEnable Error: {e}");
+				Log.Error($"OnEnable Error: {e}");
 			}
 		}
 
-		public override void OnDisable()
+		public override void OnDisabled()
 		{
 			foreach (CoroutineHandle handle in EventHandlers.Coroutines)
 				Timing.KillCoroutines(handle);
-			Events.RoundStartEvent -= EventHandlers.OnRoundStart;
-			Events.RoundEndEvent -= EventHandlers.OnRoundEnd;
-			Events.WaitingForPlayersEvent -= EventHandlers.OnWaitingForPlayers;
-			Events.TriggerTeslaEvent -= EventHandlers.OnTriggerTesla;
+			Handlers.Server.RoundStarted -= EventHandlers.OnRoundStart;
+			Handlers.Server.RoundEnded -= EventHandlers.OnRoundEnd;
+			Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
+			Handlers.Player.TriggeringTesla -= EventHandlers.OnTriggerTesla;
 			EventHandlers = null;
 		}
 
-		public override void OnReload()
+		public override void OnReloaded()
 		{
 			
 		}
 
-		public override string getName { get; } = "SCP-575";
-
-		public void ReloadConfig()
-		{
-			Info($"Config Path: {Config.Path}");
-			RandomEvents = Config.GetBool("575_random_events", true);
-			DisableTeslas = Config.GetBool("575_disable_teslas", true);
-			InitialDelay = Config.GetFloat("575_initial_delay", 300f);
-			DurationMin = Config.GetFloat("575_dur_min", 30f);
-			DurationMax = Config.GetFloat("575_dur_max", 90);
-			DelayMin = Config.GetInt("575_delay_min", 180);
-			DelayMax = Config.GetInt("575_delay_max", 500);
-			SpawnChance = Config.GetInt("575_spawn_chance", 45);
-			EnableKeter = Config.GetBool("575_keter", true);
-			OnlyHeavy = Config.GetBool("575_only_hcz", false);
-			Voice = Config.GetBool("575_voice", true);
-			KeterDamage = Config.GetFloat("575_keter_dmg", 10f);
-		}
+		public override IConfig Config { get; } = new Config();
 
 		public IEnumerator<float> RunBlackoutTimer()
 		{
 			if (Respawn == null)
 				Respawn = PlayerManager.localPlayer.GetComponent<MTFRespawn>();
-			yield return Timing.WaitForSeconds(InitialDelay);
+			yield return Timing.WaitForSeconds(cfg.InitialDelay);
 
 			for (;;)
 			{
 				Respawn.RpcPlayCustomAnnouncement("facility power system failure in 3 . 2 . 1 .", false, true);
 
-				if (DisableTeslas)
+				if (cfg.DisableTeslas)
 					EventHandlers.TeslasDisabled = true;
 				TimerOn = true;
 				yield return Timing.WaitForSeconds(8.7f);
 			
-				float blackoutDur = DurationMax;
-				if (RandomEvents)
-					blackoutDur = (float)Gen.NextDouble() * (DurationMax - DurationMin) + DurationMin;
-				if (EnableKeter)
+				float blackoutDur = cfg.DurationMax;
+				if (cfg.RandomEvents)
+					blackoutDur = (float)Gen.NextDouble() * (cfg.DurationMax - cfg.DurationMin) + cfg.DurationMin;
+				if (cfg.EnableKeter)
 					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
-				Generator079.generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, OnlyHeavy);
-				if (Voice)
+				Generator079.generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, cfg.OnlyHeavy);
+				if (cfg.Voice)
 					Respawn.RpcPlayCustomAnnouncement("pitch_0.15 .g7", false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
 				Respawn.RpcPlayCustomAnnouncement("facility power system now operational", false, true);
@@ -114,10 +91,10 @@ namespace SCP_575
 				Timing.KillCoroutines("keter");
 				EventHandlers.TeslasDisabled = false;
 				TimerOn = false;
-				if (RandomEvents)
-					yield return Timing.WaitForSeconds(Gen.Next(DelayMin, DelayMax));
+				if (cfg.RandomEvents)
+					yield return Timing.WaitForSeconds(Gen.Next(cfg.DelayMin, cfg.DelayMax));
 				else
-					yield return Timing.WaitForSeconds(InitialDelay);
+					yield return Timing.WaitForSeconds(cfg.InitialDelay);
 			}
 		}
 
@@ -125,17 +102,17 @@ namespace SCP_575
 		{
 			do
 			{
-				foreach (ReferenceHub hub in GetHubs())
+				foreach (Player player in Player.List)
 				{
 					bool damaged = false;
 					foreach (FlickerableLight light in Object.FindObjectsOfType<FlickerableLight>())
-						if (Vector3.Distance(light.transform.position, hub.gameObject.transform.position) < 10f && !damaged)
-							if (hub.characterClassManager.IsHuman() &&
-							    hub.characterClassManager.CurClass != RoleType.Spectator && !hub.HasLightSource())
+						if (Vector3.Distance(light.transform.position, player.Position) < 10f && !damaged)
+							if (player.ReferenceHub.characterClassManager.IsHuman() &&
+							    player.Role != RoleType.Spectator && !player.ReferenceHub.HasLightSource())
 							{
 								damaged = true;
-								hub.playerStats.HurtPlayer(new PlayerStats.HitInfo(KeterDamage, "SCP-575", DamageTypes.Wall, 0), hub.gameObject);
-								hub.Broadcast(5, "You were damaged by SCP-575! Equip a flashlight!");
+								player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(cfg.KeterDamage, "SCP-575", DamageTypes.Wall, 0), player.GameObject);
+								player.Broadcast(5, "You were damaged by SCP-575! Equip a flashlight!", Broadcast.BroadcastFlags.Normal);
 							}
 
 					yield return Timing.WaitForSeconds(5f);

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using EXILED;
+using Exiled.Events.Handlers.EventArgs;
 using MEC;
-using UnityEngine;
 
 namespace SCP_575
 {
@@ -18,11 +17,11 @@ namespace SCP_575
 			foreach (CoroutineHandle handle in Coroutines)
 				Timing.KillCoroutines(handle);
 			TeslasDisabled = false;
-			if (plugin.Gen.Next(100) > plugin.SpawnChance)
+			if (plugin.Gen.Next(100) > plugin.cfg.SpawnChance)
 				Coroutines.Add(Timing.RunCoroutine(plugin.RunBlackoutTimer()));
 		}
 
-		public void OnRoundEnd()
+		public void OnRoundEnd(RoundEndedEventArgs ev)
 		{
 			foreach (CoroutineHandle handle in Coroutines)
 				Timing.KillCoroutines(handle);
@@ -35,10 +34,10 @@ namespace SCP_575
 			TeslasDisabled = false;
 		}
 
-		public void OnTriggerTesla(ref TriggerTeslaEvent ev)
+		public void OnTriggerTesla(TriggeringTeslaEventArgs ev)
 		{
 			if (TeslasDisabled)
-				ev.Triggerable = false;
+				ev.IsTriggerable = false;
 		}
 	}
 }
