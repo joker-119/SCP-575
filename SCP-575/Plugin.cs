@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
-using Exiled.Events;
 using MEC;
 using UnityEngine;
 using Object = UnityEngine.Object;

@@ -18,9 +18,5 @@ namespace SCP_575
 				return true;
 			return false;
 		}
-		
-		public static void Broadcast(this ReferenceHub rh, uint time, string message) =>
-			rh.GetComponent<Broadcast>()
-				.TargetAddElement(rh.scp079PlayerScript.connectionToClient, message, (ushort)time, global::Broadcast.BroadcastFlags.Normal);
 	}
 }
