@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Exiled.Events.Handlers.EventArgs;
+using Exiled.Events.EventArgs;
 using MEC;
 
 namespace SCP_575
