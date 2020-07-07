@@ -17,7 +17,7 @@ namespace SCP_575
 			foreach (CoroutineHandle handle in Coroutines)
 				Timing.KillCoroutines(handle);
 			TeslasDisabled = false;
-			if (plugin.Gen.Next(100) > plugin.cfg.SpawnChance)
+			if (plugin.Gen.Next(100) > plugin.Config.SpawnChance)
 				Coroutines.Add(Timing.RunCoroutine(plugin.RunBlackoutTimer()));
 		}
 
