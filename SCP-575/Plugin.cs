@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using MEC;
+using Respawning;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -12,10 +13,15 @@ namespace SCP_575
 {
 	public class Plugin : Exiled.API.Features.Plugin<Config>
 	{
+		public override string Author { get; } = "Galaxy119";
+		public override string Name { get; } = "SCP-575";
+		public override string Prefix { get; } = "575";
+		public override Version Version { get; } = new Version(3, 5, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(2, 0, 0);
+		
 		public Random Gen = new Random();
 		
 		public EventHandlers EventHandlers;
-		public MTFRespawn Respawn;
 		public static bool TimerOn;
 		public override PluginPriority Priority { get; } = PluginPriority.Default;
 
@@ -57,13 +63,11 @@ namespace SCP_575
 
 		public IEnumerator<float> RunBlackoutTimer()
 		{
-			if (Respawn == null)
-				Respawn = PlayerManager.localPlayer.GetComponent<MTFRespawn>();
 			yield return Timing.WaitForSeconds(Config.InitialDelay);
 
 			for (;;)
 			{
-				Respawn.RpcPlayCustomAnnouncement("facility power system failure in 3 . 2 . 1 .", false, true);
+				RespawnEffectsController.PlayCassieAnnouncement("facility power system failure in 3 . 2 . 1 .", false, true);
 
 				if (Config.DisableTeslas)
 					EventHandlers.TeslasDisabled = true;
@@ -78,9 +82,9 @@ namespace SCP_575
 
 				Generator079.Generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, Config.OnlyHeavy);
 				if (Config.Voice)
-					Respawn.RpcPlayCustomAnnouncement("pitch_0.15 .g7", false, false);
+					RespawnEffectsController.PlayCassieAnnouncement("pitch_0.15 .g7", false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
-				Respawn.RpcPlayCustomAnnouncement("facility power system now operational", false, true);
+				RespawnEffectsController.PlayCassieAnnouncement("facility power system now operational", false, true);
 				yield return Timing.WaitForSeconds(8.7f);
 				Timing.KillCoroutines("keter");
 				EventHandlers.TeslasDisabled = false;
