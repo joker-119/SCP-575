@@ -67,7 +67,7 @@ namespace SCP_575
 
 			for (;;)
 			{
-				RespawnEffectsController.PlayCassieAnnouncement("facility power system failure in 3 . 2 . 1 .", false, true);
+				RespawnEffectsController.PlayCassieAnnouncement(Config.CassieMessageStart, false, true);
 
 				if (Config.DisableTeslas)
 					EventHandlers.TeslasDisabled = true;
@@ -84,7 +84,7 @@ namespace SCP_575
 				if (Config.Voice)
 					RespawnEffectsController.PlayCassieAnnouncement("pitch_0.15 .g7", false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
-				RespawnEffectsController.PlayCassieAnnouncement("facility power system now operational", false, true);
+				RespawnEffectsController.PlayCassieAnnouncement(Config.CassieMessageEnd, false, true);
 				yield return Timing.WaitForSeconds(8.7f);
 				Timing.KillCoroutines("keter");
 				EventHandlers.TeslasDisabled = false;
@@ -109,8 +109,8 @@ namespace SCP_575
 							    player.Role != RoleType.Spectator && !player.ReferenceHub.HasLightSource())
 							{
 								damaged = true;
-								player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(Config.KeterDamage, "SCP-575", DamageTypes.Wall, 0), player.GameObject);
-								player.Broadcast(5, "You were damaged by SCP-575! Equip a flashlight!", Broadcast.BroadcastFlags.Normal);
+								player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(Config.KeterDamage, Config.KilledBy, DamageTypes.Wall, 0), player.GameObject);
+								player.Broadcast(Config.DamageBroadcastDuration, Config.DamageBroadcast, Broadcast.BroadcastFlags.Normal);
 							}
 
 					yield return Timing.WaitForSeconds(5f);
