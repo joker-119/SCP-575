@@ -82,7 +82,7 @@ namespace SCP_575
 
 				Generator079.Generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, Config.OnlyHeavy);
 				if (Config.Voice)
-					RespawnEffectsController.PlayCassieAnnouncement("pitch_0.15 .g7", false, false);
+					RespawnEffectsController.PlayCassieAnnouncement(Config.CassieKeter, false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
 				RespawnEffectsController.PlayCassieAnnouncement(Config.CassieMessageEnd, false, true);
 				yield return Timing.WaitForSeconds(8.7f);

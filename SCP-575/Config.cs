@@ -36,6 +36,7 @@ namespace SCP_575
         public string KilledBy { get; set; } = "SCP-575";
         [Description("Message said by Cassie.")]
         public string CassieMessageStart { get; set; } = "facility power system failure in 3 . 2 . 1 .";
+        public string CassieKeter { get; set; } = "pitch_0.15 .g7";
         public string CassieMessageEnd { get; set; } = "facility power system now operational";
         [Description("Broadcast shown when a player is damaged by SCP-575.")]
         public string DamageBroadcast { get; set; } = "You were damaged by SCP-575! Equip a flashlight!";
