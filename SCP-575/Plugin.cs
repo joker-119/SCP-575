@@ -16,8 +16,8 @@ namespace SCP_575
 		public override string Author { get; } = "Galaxy119";
 		public override string Name { get; } = "SCP-575";
 		public override string Prefix { get; } = "575";
-		public override Version Version { get; } = new Version(3, 5, 0);
-		public override Version RequiredExiledVersion { get; } = new Version(2, 0, 0);
+		public override Version Version { get; } = new Version(3, 5, 1);
+		public override Version RequiredExiledVersion { get; } = new Version(2, 0, 10);
 		
 		public Random Gen = new Random();
 		
@@ -80,7 +80,7 @@ namespace SCP_575
 				if (Config.EnableKeter)
 					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
-				Generator079.Generators[0].RpcCustomOverchargeForOurBeautifulModCreators(blackoutDur, Config.OnlyHeavy);
+				Generator079.Generators[0].ServerOvercharge(blackoutDur, Config.OnlyHeavy);
 				if (Config.Voice)
 					RespawnEffectsController.PlayCassieAnnouncement("pitch_0.15 .g7", false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
