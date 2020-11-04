@@ -16,8 +16,8 @@ namespace SCP_575
 		public override string Author { get; } = "Galaxy119";
 		public override string Name { get; } = "SCP-575";
 		public override string Prefix { get; } = "575";
-		public override Version Version { get; } = new Version(3, 5, 1);
-		public override Version RequiredExiledVersion { get; } = new Version(2, 0, 10);
+		public override Version Version { get; } = new Version(3, 6, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(2, 1, 12);
 		
 		public Random Gen = new Random();
 		
@@ -102,16 +102,8 @@ namespace SCP_575
 			{
 				foreach (Player player in Player.List)
 				{
-					bool damaged = false;
-					foreach (FlickerableLight light in Object.FindObjectsOfType<FlickerableLight>())
-						if (Vector3.Distance(light.transform.position, player.Position) < 10f && !damaged)
-							if (player.ReferenceHub.characterClassManager.IsHuman() &&
-							    player.Role != RoleType.Spectator && !player.ReferenceHub.HasLightSource())
-							{
-								damaged = true;
-								player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(Config.KeterDamage, Config.KilledBy, DamageTypes.Wall, 0), player.GameObject);
-								player.Broadcast(Config.DamageBroadcastDuration, Config.DamageBroadcast, Broadcast.BroadcastFlags.Normal);
-							}
+					if (player.CurrentRoom.LightsOff && !player.ReferenceHub.HasLightSource() && player.ReferenceHub.characterClassManager.IsHuman())
+						player.Hurt(Config.KeterDamage, DamageTypes.Bleeding, Config.KilledBy);
 
 					yield return Timing.WaitForSeconds(5f);
 				}
