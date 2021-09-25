@@ -8,6 +8,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
 using Handlers = Exiled.Events.Handlers;
+using Exiled.API.Features.Items;
 
 namespace SCP_575
 {
@@ -16,8 +17,8 @@ namespace SCP_575
 		public override string Author { get; } = "Galaxy119";
 		public override string Name { get; } = "SCP-575";
 		public override string Prefix { get; } = "575";
-		public override Version Version { get; } = new Version(3, 6, 0);
-		public override Version RequiredExiledVersion { get; } = new Version(2, 1, 12);
+		public override Version Version { get; } = new Version(3, 7, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
 		
 		public Random Gen = new Random();
 		
@@ -80,7 +81,15 @@ namespace SCP_575
 				if (Config.EnableKeter)
 					EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
-				Generator079.Generators[0].ServerOvercharge(blackoutDur, Config.OnlyHeavy);
+				List<ZoneType> affectedZones = new List<ZoneType>();
+
+				if (Config.OnlyHeavy) affectedZones.Add(ZoneType.HeavyContainment);
+				else
+					affectedZones.AddRange(new List<ZoneType> { ZoneType.Surface, ZoneType.Entrance, ZoneType.HeavyContainment, ZoneType.LightContainment });
+
+				foreach (ZoneType type in affectedZones)
+					Map.TurnOffAllLights(blackoutDur, type);
+
 				if (Config.Voice)
 					RespawnEffectsController.PlayCassieAnnouncement(Config.CassieKeter, false, false);
 				yield return Timing.WaitForSeconds(blackoutDur - 8.7f);
@@ -102,7 +111,7 @@ namespace SCP_575
 			{
 				foreach (Player player in Player.List)
 				{
-					if (player.CurrentRoom.LightsOff && !player.ReferenceHub.HasLightSource() && player.ReferenceHub.characterClassManager.IsHuman())
+					if (player.CurrentRoom.LightsOff && !player.HasFlashlightModuleEnabled && !(player.CurrentItem is Flashlight flashlight && flashlight.Active) && player.ReferenceHub.characterClassManager.IsHuman())
 						player.Hurt(Config.KeterDamage, DamageTypes.Bleeding, Config.KilledBy);
 
 					yield return Timing.WaitForSeconds(5f);
