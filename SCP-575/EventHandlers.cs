@@ -1,43 +1,34 @@
-using System.Collections.Generic;
-using Exiled.Events.EventArgs;
-using MEC;
-
 namespace SCP_575
 {
+	using System.Collections.Generic;
+	using Exiled.Events.EventArgs;
+	using Exiled.Loader;
+	using MEC;
+	using SCP_575.ConfigObjects;
+
 	public class EventHandlers
 	{
-		public Plugin plugin;
-		public EventHandlers(Plugin plugin) => this.plugin = plugin;
+		private readonly Plugin _plugin;
+		public EventHandlers(Plugin plugin) => _plugin = plugin;
 
 		public bool TeslasDisabled = false;
 		public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
 
-		public void OnRoundStart()
+		public void OnSpawningRagdoll(SpawningRagdollEventArgs ev)
 		{
-			foreach (CoroutineHandle handle in Coroutines)
-				Timing.KillCoroutines(handle);
-			TeslasDisabled = false;
-			if (plugin.Gen.Next(100) < plugin.Config.SpawnChance)
-				Coroutines.Add(Timing.RunCoroutine(plugin.RunBlackoutTimer()));
-		}
-
-		public void OnRoundEnd(RoundEndedEventArgs ev)
-		{
-			foreach (CoroutineHandle handle in Coroutines)
-				Timing.KillCoroutines(handle);
+			if (!_plugin.StopRagdollList.Contains(ev.Owner)) 
+				return;
+			
+			ev.IsAllowed = false;
+			_plugin.StopRagdollList.Remove(ev.Owner);
 		}
 
 		public void OnWaitingForPlayers()
 		{
-			foreach (CoroutineHandle handle in Coroutines)
-				Timing.KillCoroutines(handle);
-			TeslasDisabled = false;
-		}
-
-		public void OnTriggerTesla(TriggeringTeslaEventArgs ev)
-		{
-			if (TeslasDisabled)
-				ev.IsTriggerable = false;
+			if (_plugin.Config.SpawnType == InstanceType.Npc || (_plugin.Config.SpawnType == InstanceType.Random && Loader.Random.Next(100) > 55))
+					_plugin.Npc.Methods.Init();
+			else
+					_plugin.CanSpawn575 = true;
 		}
 	}
 }

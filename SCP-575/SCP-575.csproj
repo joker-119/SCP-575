@@ -35,58 +35,92 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\References\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\References\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.API, Version=2.1.12.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.API.dll</HintPath>
+    <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\References\CommandSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Exiled.API, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exiled.Bootstrap, Version=2.1.12.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.Bootstrap.dll</HintPath>
+    <Reference Include="Exiled.Bootstrap, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.Bootstrap.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exiled.Events, Version=2.1.12.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.Events.dll</HintPath>
+    <Reference Include="Exiled.CreditTags, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.CreditTags.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exiled.Loader, Version=2.1.12.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.Loader.dll</HintPath>
+    <Reference Include="Exiled.CustomItems, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.CustomItems.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exiled.Permissions, Version=2.1.12.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.Permissions.dll</HintPath>
+    <Reference Include="Exiled.CustomRoles, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.CustomRoles.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exiled.Updater, Version=3.0.3.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\EXILED.2.1.12\lib\net472\Exiled.Updater.dll</HintPath>
+    <Reference Include="Exiled.Events, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.Events.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Exiled.Loader, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.Loader.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Exiled.Permissions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.Permissions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Exiled.Updater, Version=3.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\EXILED.4.2.0-rc.2\lib\net472\Exiled.Updater.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
+      <HintPath>..\..\References\Mirror.dll</HintPath>
+    </Reference>
+    <Reference Include="NorthwoodLib, Version=1.2.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\References\NorthwoodLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\References\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\References\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="ConfigObjects\InstanceType.cs" />
+    <Compile Include="ConfigObjects\NpcConfig.cs" />
+    <Compile Include="ConfigObjects\PlayableConfig.cs" />
     <Compile Include="EventHandlers.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Methods.cs" />
+    <Compile Include="NestingObjects\Playable.cs" />
+    <Compile Include="Npc\EventHandlers.cs" />
+    <Compile Include="Npc\Methods.cs" />
+    <Compile Include="NestingObjects\Npc.cs" />
+    <Compile Include="Playable\BlackoutAbility.cs" />
+    <Compile Include="Playable\EventHandlers.cs" />
+    <Compile Include="Playable\Methods.cs" />
+    <Compile Include="Playable\Scp575.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
