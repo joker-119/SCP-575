@@ -21,7 +21,6 @@ namespace SCP_575
 		public NestingObjects.Npc Npc { get; private set; }
 		public NestingObjects.Playable Playable { get; private set; }
 		public List<Player> StopRagdollList { get; } = new List<Player>();
-		public bool CanSpawn575 { get; set; }
 
 		public override void OnEnabled()
 		{

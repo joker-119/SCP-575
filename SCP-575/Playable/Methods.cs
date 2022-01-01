@@ -2,6 +2,7 @@ namespace SCP_575.Playable
 {
     using System.Linq;
     using Exiled.Events.Handlers;
+    using Exiled.Loader;
     using Player = Exiled.API.Features.Player;
 
     public class Methods
@@ -21,12 +22,15 @@ namespace SCP_575.Playable
 
         public void TrySpawn575()
         {
-            Player player = Player.Get(RoleType.Scp106).FirstOrDefault();
-            if (player == null)
-                return;
-            
-            _plugin.Config.PlayableConfig.Scp575.AddRole(player);
-            Disable();
+            if (Loader.Random.Next(100) <= _plugin.Config.PlayableConfig.Scp575.SpawnChance)
+            {
+                Player player = Player.Get(RoleType.Scp106).FirstOrDefault();
+                if (player == null)
+                    return;
+
+                _plugin.Config.PlayableConfig.Scp575.AddRole(player);
+                Disable();
+            }
         }
     }
 }

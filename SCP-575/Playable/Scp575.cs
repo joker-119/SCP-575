@@ -86,6 +86,9 @@ namespace SCP_575.Playable
             new BlackoutAbility(),
         };
 
+        [Description("Spawn chance percentage.")]
+        public int SpawnChance { get; set; } = 60;
+
         private List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
 
         protected override void RoleAdded(Player player)

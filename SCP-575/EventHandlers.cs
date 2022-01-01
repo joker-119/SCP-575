@@ -28,7 +28,7 @@ namespace SCP_575
 			if (_plugin.Config.SpawnType == InstanceType.Npc || (_plugin.Config.SpawnType == InstanceType.Random && Loader.Random.Next(100) > 55))
 					_plugin.Npc.Methods.Init();
 			else
-					_plugin.CanSpawn575 = true;
+					_plugin.Playable.Methods.Init();
 		}
 	}
 }
