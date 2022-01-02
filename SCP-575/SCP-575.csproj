@@ -105,7 +105,6 @@
     <Compile Include="ConfigObjects\NpcConfig.cs" />
     <Compile Include="ConfigObjects\PlayableConfig.cs" />
     <Compile Include="EventHandlers.cs" />
-    <Compile Include="Methods.cs" />
     <Compile Include="NestingObjects\Playable.cs" />
     <Compile Include="Npc\EventHandlers.cs" />
     <Compile Include="Npc\Methods.cs" />

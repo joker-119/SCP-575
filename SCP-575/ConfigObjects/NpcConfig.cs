@@ -47,8 +47,10 @@ namespace SCP_575.ConfigObjects
         [Description("Message said by Cassie when a blackout starts.")]
         public string CassieMessageStart { get; set; } = "facility power system failure in 3 . 2 . 1 .";
         
+        [Description("The sound CASSIE will make when a blackout begins.")]
         public string CassieKeter { get; set; } = "pitch_0.15 .g7";
         
+        [Description("The message CASSIE will say when a blackout ends.")]
         public string CassieMessageEnd { get; set; } = "facility power system now operational";
 
         [Description("Broadcast shown when a player is damaged by SCP-575.")]

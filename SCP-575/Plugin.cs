@@ -17,7 +17,6 @@ namespace SCP_575
 		public override Version RequiredExiledVersion { get; } = new Version(4, 2, 0);
 
 		public EventHandlers EventHandlers { get; private set; }
-		public Methods Methods { get; private set; }
 		public NestingObjects.Npc Npc { get; private set; }
 		public NestingObjects.Playable Playable { get; private set; }
 		public List<Player> StopRagdollList { get; } = new List<Player>();
@@ -29,7 +28,6 @@ namespace SCP_575
 			{
 				Config.PlayableConfig.Scp575.TryRegister();
 				EventHandlers = new EventHandlers(this);
-				Methods = new Methods(this);
 				Npc = new NestingObjects.Npc(this);
 				Playable = new NestingObjects.Playable(this);
 
@@ -52,7 +50,6 @@ namespace SCP_575
 			Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
 			Exiled.Events.Handlers.Player.SpawningRagdoll -= EventHandlers.OnSpawningRagdoll;
 
-			Methods = null;
 			EventHandlers = null;
 			Npc = null;
 			Playable = null;

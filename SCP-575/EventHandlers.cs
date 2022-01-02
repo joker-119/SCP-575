@@ -26,9 +26,9 @@ namespace SCP_575
 		public void OnWaitingForPlayers()
 		{
 			if (_plugin.Config.SpawnType == InstanceType.Npc || (_plugin.Config.SpawnType == InstanceType.Random && Loader.Random.Next(100) > 55))
-					_plugin.Npc.Methods.Init();
+				_plugin.Npc.Methods.Init();
 			else
-					_plugin.Playable.Methods.Init();
+				_plugin.Playable.Methods.Init();
 		}
 	}
 }
