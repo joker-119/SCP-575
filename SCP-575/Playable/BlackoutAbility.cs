@@ -38,6 +38,7 @@ namespace SCP_575.Playable
         {
             foreach (var handle in _coroutines)
                 Timing.KillCoroutines(handle);
+            _coroutines.Clear();
         }
 
         private void DoBlackout(Player player)
@@ -68,8 +69,7 @@ namespace SCP_575.Playable
         private static bool HasLightSource(Player player)
         {
             return player.CurrentItem is Flashlight flashlight && flashlight.Active ||
-                   player.CurrentItem is Firearm firearm &&
-                   firearm.Base.Status.Flags.HasFlagFast(FirearmStatusFlags.FlashlightEnabled);
+                   player.HasFlashlightModuleEnabled;
         }
     }
 }

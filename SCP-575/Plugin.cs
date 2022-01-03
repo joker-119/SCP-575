@@ -24,22 +24,15 @@ namespace SCP_575
 		public override void OnEnabled()
 		{
 			Singleton = this;
-			try
-			{
-				Config.PlayableConfig.Scp575.TryRegister();
+			Config.PlayableConfig.Scp575.TryRegister();
 				EventHandlers = new EventHandlers(this);
 				Npc = new NestingObjects.Npc(this);
 				Playable = new NestingObjects.Playable(this);
 
 				Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
 				Exiled.Events.Handlers.Player.SpawningRagdoll += EventHandlers.OnSpawningRagdoll;
-			}
-			catch (Exception e)
-			{
-				Log.Error($"OnEnable Error: {e}");
-			}
-			
-			base.OnEnabled();
+
+				base.OnEnabled();
 		}
 
 		public override void OnDisabled()
@@ -47,6 +40,7 @@ namespace SCP_575
 			Config.PlayableConfig.Scp575.TryUnregister();
 			foreach (CoroutineHandle handle in EventHandlers.Coroutines)
 				Timing.KillCoroutines(handle);
+			EventHandlers.Coroutines.Clear();
 			Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
 			Exiled.Events.Handlers.Player.SpawningRagdoll -= EventHandlers.OnSpawningRagdoll;
 
