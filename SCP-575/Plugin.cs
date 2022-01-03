@@ -25,14 +25,14 @@ namespace SCP_575
 		{
 			Singleton = this;
 			Config.PlayableConfig.Scp575.TryRegister();
-				EventHandlers = new EventHandlers(this);
-				Npc = new NestingObjects.Npc(this);
-				Playable = new NestingObjects.Playable(this);
+			EventHandlers = new EventHandlers(this);
+			Npc = new NestingObjects.Npc(this);
+			Playable = new NestingObjects.Playable(this);
 
-				Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
-				Exiled.Events.Handlers.Player.SpawningRagdoll += EventHandlers.OnSpawningRagdoll;
+			Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
+			Exiled.Events.Handlers.Player.SpawningRagdoll += EventHandlers.OnSpawningRagdoll;
 
-				base.OnEnabled();
+			base.OnEnabled();
 		}
 
 		public override void OnDisabled()
