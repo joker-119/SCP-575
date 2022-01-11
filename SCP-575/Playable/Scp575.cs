@@ -5,6 +5,7 @@ namespace SCP_575.Playable
     using System.ComponentModel;
     using Exiled.API.Enums;
     using Exiled.API.Features;
+    using Exiled.API.Features.Attributes;
     using Exiled.API.Features.Spawn;
     using Exiled.CustomRoles.API.Features;
     using Exiled.Events.EventArgs;
@@ -20,6 +21,7 @@ namespace SCP_575.Playable
     using Player = Exiled.API.Features.Player;
     using Server = Exiled.API.Features.Server;
 
+    [ExiledSerializable]
     public class Scp575 : CustomRole
     {
         public readonly Dictionary<Player, int> ConsumptionStacks = new Dictionary<Player, int>();
@@ -29,6 +31,7 @@ namespace SCP_575.Playable
         public override int MaxHealth { get; set; } = 550;
         public override string Name { get; set; } = "SCP-575";
         public override string Description { get; set; } = "An entity that appears as a shapeless void, that moves slowly but grows in power the more biological material it consumes. Capable of causing wide-spread power outages.\n\nUse client command \".special\" to trigger a blackout. This can be keyboudn with \"cmdbind KEY .special\"";
+        public override string CustomInfo { get; set; } = "SCP-575";
 
         [Description("The base(minimum) damage his hits will deal.")]
         public float BaseDamage { get; set; } = 30;
@@ -54,7 +57,7 @@ namespace SCP_575.Playable
         [Description("Whether or not 575 is teleported to a random HCZ room when flashbanged.")]
         public bool TeleportOnFlashed { get; set; } = true;
 
-        protected override SpawnProperties SpawnProperties { get; set; } = new SpawnProperties
+        public override SpawnProperties SpawnProperties { get; set; } = new SpawnProperties
         {
             RoleSpawnPoints = new List<RoleSpawnPoint>
             {
@@ -135,7 +138,7 @@ namespace SCP_575.Playable
             base.SubscribeEvents();
         }
 
-        protected override void UnSubscribeEvents()
+        protected override void UnsubscribeEvents()
         {
             Log.Debug($"{Name} unloading events.");
             Exiled.Events.Handlers.Player.Dying -= OnDying;
@@ -145,7 +148,7 @@ namespace SCP_575.Playable
             Map.ExplodingGrenade -= OnExplodingGrenade;
             Map.AnnouncingScpTermination -= OnAnnouncingScpTermination;
             Exiled.Events.Handlers.Player.EnteringPocketDimension -= OnEnteringPocketDimension;
-            base.UnSubscribeEvents();
+            base.UnsubscribeEvents();
         }
 
         public bool CanUseAbility(Player player, BlackoutAbility ability)
