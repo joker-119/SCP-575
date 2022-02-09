@@ -27,7 +27,7 @@ namespace SCP_575.Playable
         public readonly Dictionary<Player, int> ConsumptionStacks = new Dictionary<Player, int>();
 
         public override uint Id { get; set; } = 12;
-        public override RoleType Role { get; set; } = RoleType.Scp0492;
+        public override RoleType Role { get; set; } = RoleType.Scp106;
         public override int MaxHealth { get; set; } = 550;
         public override string Name { get; set; } = "SCP-575";
         public override string Description { get; set; } = "An entity that appears as a shapeless void, that moves slowly but grows in power the more biological material it consumes. Capable of causing wide-spread power outages.\n\nUse client command \".special\" to trigger a blackout. This can be keyboudn with \"cmdbind KEY .special\"";
