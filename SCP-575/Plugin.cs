@@ -3,6 +3,7 @@ namespace SCP_575
 	using System;
 	using System.Collections.Generic;
 	using Exiled.API.Features;
+	using Exiled.CustomRoles.API;
 	using Exiled.CustomRoles.API.Features;
 	using MEC;
 	using Server = Exiled.Events.Handlers.Server;
@@ -25,7 +26,7 @@ namespace SCP_575
 		public override void OnEnabled()
 		{
 			Singleton = this;
-			CustomRole.RegisterRoles();
+			Config.PlayableConfig.Scp575.Register();
 			EventHandlers = new EventHandlers(this);
 			Npc = new NestingObjects.Npc(this);
 			Playable = new NestingObjects.Playable(this);
