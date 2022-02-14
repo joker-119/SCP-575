@@ -70,7 +70,7 @@ namespace SCP_575.Npc
         				{
         					if (player.CurrentRoom.LightsOff && player.IsHuman && !player.HasFlashlightModuleEnabled && (!(player.CurrentItem is Flashlight flashlight) || !flashlight.Active))
         					{
-        						player.Hurt(_plugin.Config.NpcConfig.KilledBy, _plugin.Config.NpcConfig.KeterDamage);
+        						player.Hurt(_plugin.Config.NpcConfig.KeterDamage, _plugin.Config.NpcConfig.KilledBy);
         						player.Broadcast(_plugin.Config.NpcConfig.KeterBroadcast);
         					}
         

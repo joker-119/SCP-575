@@ -21,7 +21,7 @@ namespace SCP_575.Playable
     using Player = Exiled.API.Features.Player;
     using Server = Exiled.API.Features.Server;
 
-    [ExiledSerializable]
+    [CustomRole(RoleType.Scp106)]
     public class Scp575 : CustomRole
     {
         public readonly Dictionary<Player, int> ConsumptionStacks = new Dictionary<Player, int>();
@@ -296,7 +296,7 @@ namespace SCP_575.Playable
                         break;
                     }
 
-                    Door hczArmoryDoor = Exiled.API.Features.Map.GetDoorByName("HCZ_ARMORY");
+                    Door hczArmoryDoor = Door.Get("HCZ_ARMORY");
                     Transform transform = hczArmoryDoor.Base.transform;
                     player.Position = transform.position + transform.forward * 2f;
                 });

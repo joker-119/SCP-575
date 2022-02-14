@@ -44,7 +44,7 @@ namespace SCP_575.Playable
         private void DoBlackout(Player player)
         {
             Cassie.Message("pitch_0.15 .g7");
-            foreach (var room in Map.Rooms)
+            foreach (var room in Room.List)
                 if (room.Zone != ZoneType.Surface)
                     room.TurnOffLights(Duration);
 
@@ -58,7 +58,7 @@ namespace SCP_575.Playable
                 foreach (var player in Player.List)
                     if (player.CurrentRoom.LightsOff && !HasLightSource(player) && player.IsHuman)
                     {
-                        player.Hurt(DamageType.Bleeding.ToString(), KeterDamage);
+                        player.Hurt(KeterDamage, DamageType.Bleeding);
                         player.ShowHint(KeterHint, 5f);
                     }
 
