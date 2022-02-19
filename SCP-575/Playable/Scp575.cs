@@ -112,12 +112,6 @@ namespace SCP_575.Playable
                 Log.Debug($"{Name} added to {player.Nickname}");
                 Cassie.GlitchyMessage("Alert . scp 5 7 5 has breached containment", 0.5f, 0.1f);
                 _coroutines.Add(Timing.RunCoroutine(Invisibility(player)));
-                player.CustomInfo = $"<color=red>{player.Nickname}\nSCP-575</color>";
-                player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Nickname;
-                player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Badge;
-                player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.PowerStatus;
-                player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.UnitName;
             }
             catch (Exception e)
             {
@@ -153,6 +147,9 @@ namespace SCP_575.Playable
 
         public bool CanUseAbility(Player player, BlackoutAbility ability)
         {
+            if (!ConsumptionStacks.ContainsKey(player))
+                ConsumptionStacks.Add(player, 1);
+
             if (ConsumptionStacks[player] < AbilityStackRequirement)
             {
                 player.ShowHint($"You are unable to use Blackout until you are power level {AbilityStackRequirement}. You are currently at {ConsumptionStacks[player]}. Gain power levels by killing players.");
@@ -180,10 +177,6 @@ namespace SCP_575.Playable
 
         protected override void RoleRemoved(Player player)
         {
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.PowerStatus;
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.UnitName;
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Nickname;
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
             foreach (CoroutineHandle handle in _coroutines)
                 Timing.KillCoroutines(handle);
             player.IsInvisible = false;
@@ -260,6 +253,9 @@ namespace SCP_575.Playable
 
         private void DoFlashEffect(Player player, float distance)
         {
+            if (!ConsumptionStacks.ContainsKey(player))
+                ConsumptionStacks.Add(player, 1);
+
             if (ResetConsumptionOnFlashed)
             {
                 if (ConsumptionStacks[player] > 0)
@@ -305,6 +301,9 @@ namespace SCP_575.Playable
 
         private void OnEnteringPocketDimension(EnteringPocketDimensionEventArgs ev)
         {
+            if (!ConsumptionStacks.ContainsKey(ev.Scp106))
+                ConsumptionStacks.Add(ev.Scp106, 1);
+
             if (Check(ev.Scp106))
             {
                 ev.IsAllowed = false;
@@ -314,6 +313,9 @@ namespace SCP_575.Playable
 
         public void IncreasePower(Player player)
         {
+            if (!ConsumptionStacks.ContainsKey(player))
+                ConsumptionStacks.Add(player, 1);
+
             if (ConsumptionStacks[player] >= MaxConsumption)
                 return;
 
