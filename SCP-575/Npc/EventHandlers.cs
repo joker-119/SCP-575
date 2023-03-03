@@ -1,7 +1,8 @@
 namespace SCP_575.Npc
 {
 	using System.Collections.Generic;
-	using Exiled.Events.EventArgs;
+	using Exiled.Events.EventArgs.Player;
+	using Exiled.Events.EventArgs.Server;
 	using Exiled.Loader;
 	using MEC;
 
@@ -11,7 +12,7 @@ namespace SCP_575.Npc
 		public EventHandlers(Plugin plugin) => _plugin = plugin;
 
 		public bool TeslasDisabled;
-		public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
+		public List<CoroutineHandle> Coroutines = new();
 
 		public void OnRoundStart()
 		{
@@ -40,7 +41,7 @@ namespace SCP_575.Npc
 		public void OnTriggerTesla(TriggeringTeslaEventArgs ev)
 		{
 			if (TeslasDisabled)
-				ev.IsTriggerable = false;
+				ev.IsAllowed = false;
 		}
 	}
 }

@@ -6,14 +6,11 @@ namespace SCP_575.Playable
     using Exiled.API.Features;
     using Exiled.API.Features.Items;
     using Exiled.CustomRoles.API.Features;
-    using InventorySystem.Items.Firearms;
-    using InventorySystem.Items.Firearms.BasicMessages;
     using MEC;
-    using Firearm = Exiled.API.Features.Items.Firearm;
 
     public class BlackoutAbility : ActiveAbility
     {
-        private readonly List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
+        private readonly List<CoroutineHandle> _coroutines = new();
         public override string Name { get; set; } = "Blackout";
 
         public override string Description { get; set; } =
@@ -56,7 +53,7 @@ namespace SCP_575.Playable
             do
             {
                 foreach (var player in Player.List)
-                    if (player.CurrentRoom.LightsOff && !HasLightSource(player) && player.IsHuman)
+                    if (player.CurrentRoom.AreLightsOff && !HasLightSource(player) && player.IsHuman)
                     {
                         player.Hurt(KeterDamage, DamageType.Bleeding);
                         player.ShowHint(KeterHint, 5f);
@@ -68,7 +65,7 @@ namespace SCP_575.Playable
 
         private static bool HasLightSource(Player player)
         {
-            return player.CurrentItem is Flashlight flashlight && flashlight.Active ||
+            return player.CurrentItem is Flashlight { Active: true } ||
                    player.HasFlashlightModuleEnabled;
         }
     }

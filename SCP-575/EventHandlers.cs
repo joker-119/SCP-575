@@ -1,7 +1,7 @@
 namespace SCP_575
 {
 	using System.Collections.Generic;
-	using Exiled.Events.EventArgs;
+	using Exiled.Events.EventArgs.Player;
 	using Exiled.Loader;
 	using MEC;
 	using SCP_575.ConfigObjects;
@@ -12,15 +12,15 @@ namespace SCP_575
 		public EventHandlers(Plugin plugin) => _plugin = plugin;
 
 		public bool TeslasDisabled = false;
-		public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
+		public List<CoroutineHandle> Coroutines = new();
 
 		public void OnSpawningRagdoll(SpawningRagdollEventArgs ev)
 		{
-			if (!_plugin.StopRagdollList.Contains(ev.Owner)) 
+			if (!_plugin.StopRagdollList.Contains(ev.Player)) 
 				return;
 			
 			ev.IsAllowed = false;
-			_plugin.StopRagdollList.Remove(ev.Owner);
+			_plugin.StopRagdollList.Remove(ev.Player);
 		}
 
 		public void OnWaitingForPlayers()

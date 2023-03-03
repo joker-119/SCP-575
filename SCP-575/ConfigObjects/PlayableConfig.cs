@@ -4,6 +4,6 @@ namespace SCP_575.ConfigObjects
 
     public class PlayableConfig
     {
-        public Scp575 Scp575 { get; set; } = new Scp575();
+        public Scp575 Scp575 { get; set; } = new();
     }
 }

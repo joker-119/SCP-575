@@ -54,6 +54,6 @@ namespace SCP_575.ConfigObjects
         public string CassieMessageEnd { get; set; } = "facility power system now operational";
 
         [Description("Broadcast shown when a player is damaged by SCP-575.")]
-        public Broadcast KeterBroadcast { get; set; } = new Broadcast("You were damaged by SCP-575! Equip a flashlight!", 5);
+        public Broadcast KeterBroadcast { get; set; } = new("You were damaged by SCP-575! Equip a flashlight!", 5);
     }
 }

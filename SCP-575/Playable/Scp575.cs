@@ -3,17 +3,21 @@ namespace SCP_575.Playable
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using CustomPlayerEffects;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Attributes;
     using Exiled.API.Features.Spawn;
     using Exiled.CustomRoles.API.Features;
-    using Exiled.Events.EventArgs;
+    using Exiled.Events.EventArgs.Map;
+    using Exiled.Events.EventArgs.Player;
+    using Exiled.Events.EventArgs.Scp106;
     using Exiled.Events.Handlers;
     using Footprinting;
     using MEC;
     using Mirror;
-    using PlayableScps;
+    using PlayerRoles;
+    using PlayerRoles.PlayableScps;
     using PlayerStatsSystem;
     using UnityEngine;
     using Cassie = Exiled.API.Features.Cassie;
@@ -21,13 +25,13 @@ namespace SCP_575.Playable
     using Player = Exiled.API.Features.Player;
     using Server = Exiled.API.Features.Server;
 
-    [CustomRole(RoleType.Scp106)]
+    [CustomRole(RoleTypeId.Scp106)]
     public class Scp575 : CustomRole
     {
-        public readonly Dictionary<Player, int> ConsumptionStacks = new Dictionary<Player, int>();
+        public readonly Dictionary<Player, int> ConsumptionStacks = new();
 
         public override uint Id { get; set; } = 12;
-        public override RoleType Role { get; set; } = RoleType.Scp106;
+        public override RoleTypeId Role { get; set; } = RoleTypeId.Scp106;
         public override int MaxHealth { get; set; } = 550;
         public override string Name { get; set; } = "SCP-575";
         public override string Description { get; set; } = "An entity that appears as a shapeless void, that moves slowly but grows in power the more biological material it consumes. Capable of causing wide-spread power outages.\n\nUse client command \".special\" to trigger a blackout. This can be keyboudn with \"cmdbind KEY .special\"";
@@ -57,34 +61,34 @@ namespace SCP_575.Playable
         [Description("Whether or not 575 is teleported to a random HCZ room when flashbanged.")]
         public bool TeleportOnFlashed { get; set; } = true;
 
-        public override SpawnProperties SpawnProperties { get; set; } = new SpawnProperties
+        public override SpawnProperties SpawnProperties { get; set; } = new()
         {
             RoleSpawnPoints = new List<RoleSpawnPoint>
             {
-                new RoleSpawnPoint
+                new()
                 {
-                    Role = RoleType.Scp173,
+                    Role = RoleTypeId.Scp173,
                     Chance = 10,
                 },
-                new RoleSpawnPoint
+                new()
                 {
-                    Role = RoleType.Scp079,
+                    Role = RoleTypeId.Scp079,
                     Chance = 20,
                 },
-                new RoleSpawnPoint
+                new()
                 {
-                    Role = RoleType.Scp049,
+                    Role = RoleTypeId.Scp049,
                     Chance = 30,
                 },
-                new RoleSpawnPoint
+                new()
                 {
-                    Role = RoleType.Scp106,
+                    Role = RoleTypeId.Scp106,
                     Chance = 100,
                 }
             }
         };
 
-        public override List<CustomAbility> CustomAbilities { get; set; } = new List<CustomAbility>
+        public override List<CustomAbility> CustomAbilities { get; set; } = new()
         {
             new BlackoutAbility(),
         };
@@ -92,7 +96,7 @@ namespace SCP_575.Playable
         [Description("Spawn chance percentage.")]
         public int SpawnChance { get; set; } = 60;
 
-        private List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
+        private List<CoroutineHandle> _coroutines = new();
 
         protected override void RoleAdded(Player player)
         {
@@ -108,7 +112,8 @@ namespace SCP_575.Playable
 
                 if (!ConsumptionStacks.ContainsKey(player))
                     ConsumptionStacks[player] = 1;
-                player.UnitName = "Scp575";
+                player.InfoArea &= ~PlayerInfoArea.UnitName;
+                player.CustomInfo = "<color=red>SCP-575</color>";
                 Log.Debug($"{Name} added to {player.Nickname}");
                 Cassie.GlitchyMessage("Alert . scp 5 7 5 has breached containment", 0.5f, 0.1f);
                 _coroutines.Add(Timing.RunCoroutine(Invisibility(player)));
@@ -125,7 +130,6 @@ namespace SCP_575.Playable
             Exiled.Events.Handlers.Player.Dying += OnDying;
             Exiled.Events.Handlers.Player.Hurting += OnHurting;
             Scp106.Teleporting += OnTeleporting;
-            Scp106.CreatingPortal += OnCreatingPortal;
             Map.ExplodingGrenade += OnExplodingGrenade;
             Map.AnnouncingScpTermination += OnAnnouncingScpTermination;
             Exiled.Events.Handlers.Player.EnteringPocketDimension += OnEnteringPocketDimension;
@@ -138,7 +142,6 @@ namespace SCP_575.Playable
             Exiled.Events.Handlers.Player.Dying -= OnDying;
             Exiled.Events.Handlers.Player.Hurting -= OnHurting;
             Scp106.Teleporting -= OnTeleporting;
-            Scp106.CreatingPortal -= OnCreatingPortal;
             Map.ExplodingGrenade -= OnExplodingGrenade;
             Map.AnnouncingScpTermination -= OnAnnouncingScpTermination;
             Exiled.Events.Handlers.Player.EnteringPocketDimension -= OnEnteringPocketDimension;
@@ -166,7 +169,7 @@ namespace SCP_575.Playable
 
         private void OnAnnouncingScpTermination(AnnouncingScpTerminationEventArgs ev)
         {
-            if (ev.Role.roleId == RoleType.Scp106)
+            if (ev.Role.Type == RoleTypeId.Scp106)
             {
                 string message = $"scp 5 7 5 has been successfully terminated . termination cause {ev.TerminationCause}";
 
@@ -179,37 +182,37 @@ namespace SCP_575.Playable
         {
             foreach (CoroutineHandle handle in _coroutines)
                 Timing.KillCoroutines(handle);
-            player.IsInvisible = false;
+            player.DisableEffect<Invisible>();
         }
 
         private void OnDying(DyingEventArgs ev)
         {
-            if (Check(ev.Killer) && !Check(ev.Target))
-                IncreasePower(ev.Killer);
-            else if (Check(ev.Target))
+            if (Check(ev.Attacker) && !Check(ev.Player))
+                IncreasePower(ev.Attacker);
+            else if (Check(ev.Player))
             {
-                Log.Warn($"Adding {ev.Target.Nickname} to stop doll list.");
-                Plugin.Singleton.StopRagdollList.Add(ev.Target);
-                RagdollInfo info = new RagdollInfo(ev.Target.ReferenceHub, ev.Handler.Base, Role, ev.Target.Position,
-                    Quaternion.Euler(ev.Target.Rotation), ev.Target.Nickname, NetworkTime.time);
-                Ragdoll.Spawn(info);
+                Log.Warn($"Adding {ev.Player.Nickname} to stop doll list.");
+                Plugin.Singleton.StopRagdollList.Add(ev.Player);
+                RagdollData info = new(ev.Player.ReferenceHub, ev.DamageHandler.Base, Role, ev.Player.Position,
+                    Quaternion.Euler(ev.Player.Rotation), ev.Player.Nickname, NetworkTime.time);
+                Ragdoll.CreateAndSpawn(info);
             }
         }
 
         private void OnHurting(HurtingEventArgs ev)
         {
-            if (Check(ev.Target))
+            if (Check(ev.Player))
             {
-                if (ev.Handler.Type == DamageType.Scp207)
+                if (ev.DamageHandler.Type == DamageType.Scp207)
                     ev.Amount = 0.0f;
-                else if (ev.Handler.Type == DamageType.Explosion)
+                else if (ev.DamageHandler.Type == DamageType.Explosion)
                     ev.Amount *= 0.40f;
-                else if (ev.Handler.Type == DamageType.Recontainment)
+                else if (ev.DamageHandler.Type == DamageType.Recontainment)
                 {
                     ev.Amount = 0;
                     ev.IsAllowed = false;
                 }
-                else if (ev.Handler.Type != DamageType.Warhead)
+                else if (ev.DamageHandler.Type != DamageType.Warhead)
                     ev.Amount *= 0.70f;
             }
         }
@@ -220,22 +223,16 @@ namespace SCP_575.Playable
                 ev.IsAllowed = false;
         }
 
-        private void OnCreatingPortal(CreatingPortalEventArgs ev)
-        {
-            if (Check(ev.Player))
-                ev.IsAllowed = false;
-        }
-
         private void OnExplodingGrenade(ExplodingGrenadeEventArgs ev)
         {
-            if (ev.GrenadeType == GrenadeType.Flashbang)
+            if (ev.Projectile.ProjectileType == ProjectileType.Flashbang)
             {
                 foreach (Player player in TrackedPlayers)
                 {
-                    float dist = Vector3.Distance(ev.Grenade.transform.position, player.Position);
+                    float dist = Vector3.Distance(ev.Projectile.Transform.position, player.Position);
                     if (dist <= 20f)
                     {
-                        if (Physics.Linecast(ev.Grenade.transform.position, player.Position, player.ReferenceHub.playerMovementSync.CollidableSurfaces))
+                        if (Physics.Linecast(ev.Projectile.Transform.position, player.Position))
                             return;
                         float damage = FlashbangBaseDamage - (dist * FlashbangFalloffMultiplier);
                         if (damage < 0)
@@ -243,8 +240,8 @@ namespace SCP_575.Playable
                         else if (damage > FlashbangBaseDamage)
                             damage = FlashbangBaseDamage;
 
-                        Log.Debug($"{nameof(OnExplodingGrenade)}: Damage: {damage} - {dist} {player.Nickname}", Plugin.Singleton.Config.Debug);
-                        player.Hurt(new ExplosionDamageHandler(ev.Thrower != null ? ev.Thrower.Footprint : new Footprint(Server.Host.ReferenceHub), Vector3.zero, damage, 0));
+                        Log.Debug($"{nameof(OnExplodingGrenade)}: Damage: {damage} - {dist} {player.Nickname}");
+                        player.Hurt(new ExplosionDamageHandler(ev.Player?.Footprint ?? new Footprint(Server.Host.ReferenceHub), Vector3.zero, damage, 0));
                         DoFlashEffect(player, dist);
                     }
                 }
@@ -284,7 +281,7 @@ namespace SCP_575.Playable
 
                 Timing.CallDelayed(15f, () =>
                 {
-                    foreach (Player ply in Player.Get(Team.SCP))
+                    foreach (Player ply in Player.Get(Team.SCPs))
                     {
                         if (player == ply)
                             continue;
@@ -329,21 +326,23 @@ namespace SCP_575.Playable
 
         private IEnumerator<float> Invisibility(Player player)
         {
-            Log.Debug($"{nameof(Scp575)}: {nameof(Invisibility)}: Starting 268 loop for {player.Nickname}", Plugin.Singleton.Config.Debug);
+            Log.Debug($"{nameof(Scp575)}: {nameof(Invisibility)}: Starting 268 loop for {player.Nickname}");
             for (;;)
             {
                 foreach (Player ply in Player.List)
                 {
-                    if (VisionInformation.GetVisionInformation(ply.ReferenceHub, player.Position, -2f, 40f, false, false, ply.ReferenceHub.localCurrentRoomEffects).IsLooking)
+                    VisionInformation info = VisionInformation.GetVisionInformation(ply.ReferenceHub,
+                        ply.ReferenceHub.PlayerCameraReference.transform, player.Position, 40f, 20f);
+                    if (info.IsLooking && !info.IsInDarkness && info.IsInLineOfSight)
                     {
-                        player.IsInvisible = false;
+                        player.DisableEffect<Invisible>();
                         break;
                     }
 
-                    player.IsInvisible = true;
+                    player.EnableEffect<Invisible>(3f);
                 }
 
-                if (!player.CurrentRoom.LightsOff)
+                if (!player.CurrentRoom.AreLightsOff)
                     player.CurrentRoom.TurnOffLights(10f);
                 
                 yield return Timing.WaitForSeconds(0.25f);

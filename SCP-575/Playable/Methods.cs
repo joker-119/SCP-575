@@ -3,6 +3,7 @@ namespace SCP_575.Playable
     using System.Linq;
     using Exiled.Events.Handlers;
     using Exiled.Loader;
+    using PlayerRoles;
     using Player = Exiled.API.Features.Player;
 
     public class Methods
@@ -24,8 +25,8 @@ namespace SCP_575.Playable
         {
             if (Loader.Random.Next(100) <= _plugin.Config.PlayableConfig.Scp575.SpawnChance)
             {
-                Player player = Player.Get(RoleType.Scp106).FirstOrDefault();
-                if (player == null)
+                Player? player = Player.Get(RoleTypeId.Scp106).FirstOrDefault();
+                if (player is null)
                     return;
 
                 _plugin.Config.PlayableConfig.Scp575.AddRole(player);

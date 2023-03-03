@@ -13,10 +13,10 @@ namespace SCP_575
         public InstanceType SpawnType { get; set; } = InstanceType.Playable;
 
         [Description("The configs for NPC instances of SCP-575.")]
-        public NpcConfig NpcConfig { get; set; } = new NpcConfig();
+        public NpcConfig NpcConfig { get; set; } = new();
 
         [Description("The configs for playable instances of SCP-575.")]
-        public PlayableConfig PlayableConfig { get; set; } = new PlayableConfig();
+        public PlayableConfig PlayableConfig { get; set; } = new();
 
         [Description("Whether of not debug messages are displayed in the console.")]
         public bool Debug { get; set; } = false;
