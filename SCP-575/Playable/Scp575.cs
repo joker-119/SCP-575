@@ -7,6 +7,7 @@ namespace SCP_575.Playable
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Attributes;
+    using Exiled.API.Features.Roles;
     using Exiled.API.Features.Spawn;
     using Exiled.CustomRoles.API.Features;
     using Exiled.Events.EventArgs.Map;
@@ -93,9 +94,6 @@ namespace SCP_575.Playable
             new BlackoutAbility(),
         };
 
-        [Description("Spawn chance percentage.")]
-        public int SpawnChance { get; set; } = 60;
-
         private List<CoroutineHandle> _coroutines = new();
 
         protected override void RoleAdded(Player player)
@@ -116,7 +114,7 @@ namespace SCP_575.Playable
                 player.CustomInfo = "<color=red>SCP-575</color>";
                 Log.Debug($"{Name} added to {player.Nickname}");
                 Cassie.GlitchyMessage("Alert . scp 5 7 5 has breached containment", 0.5f, 0.1f);
-                _coroutines.Add(Timing.RunCoroutine(Invisibility(player)));
+                _coroutines.Add(Timing.RunCoroutine(Invisibility(player.Role as FpcRole)));
             }
             catch (Exception e)
             {
@@ -324,27 +322,33 @@ namespace SCP_575.Playable
             player.ShowHint($"You now have {ConsumptionStacks[player]} stacks of Consumption!");
         }
 
-        private IEnumerator<float> Invisibility(Player player)
+        private IEnumerator<float> Invisibility(FpcRole? role)
         {
-            Log.Debug($"{nameof(Scp575)}: {nameof(Invisibility)}: Starting 268 loop for {player.Nickname}");
+            Log.Debug($"{nameof(Scp575)}: {nameof(Invisibility)}: Starting 268 loop for {role?.Owner.Nickname}");
             for (;;)
             {
-                foreach (Player ply in Player.List)
+                if (role is null)
                 {
-                    VisionInformation info = VisionInformation.GetVisionInformation(ply.ReferenceHub,
-                        ply.ReferenceHub.PlayerCameraReference.transform, player.Position, 40f, 20f);
-                    if (info.IsLooking && !info.IsInDarkness && info.IsInLineOfSight)
-                    {
-                        player.DisableEffect<Invisible>();
-                        break;
-                    }
-
-                    player.EnableEffect<Invisible>(3f);
+                    Log.Error($"SCP-575 FPC role is null.");
+                    break;
                 }
 
-                if (!player.CurrentRoom.AreLightsOff)
-                    player.CurrentRoom.TurnOffLights(10f);
-                
+                foreach (Player ply in Player.List)
+                {
+                    VisionInformation info = VisionInformation.GetVisionInformation(ply.ReferenceHub, ply.CameraTransform, role.Owner.Position, 70f, 60f);
+                    if (info.IsLooking && !info.IsInDarkness && info.IsInLineOfSight && role.IsInvisibleFor.Contains(ply))
+                    {
+                        role.IsInvisibleFor.Remove(ply);
+                        continue;
+                    }
+
+                    if (!role.IsInvisibleFor.Contains(ply))
+                        role.IsInvisibleFor.Add(ply);
+                }
+
+                if (!role.Owner.CurrentRoom.AreLightsOff)
+                    role.Owner.CurrentRoom.TurnOffLights(10f);
+
                 yield return Timing.WaitForSeconds(0.25f);
             }
         }
