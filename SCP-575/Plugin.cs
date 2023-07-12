@@ -12,16 +12,16 @@ namespace SCP_575
 	{
 		public static Plugin Singleton;
 
-		public override string Author { get; } = "Joker119";
+		public override string Author { get; } = "Joker119 & iomatix";
 		public override string Name { get; } = "SCP-575";
 		public override string Prefix { get; } = "575";
-		public override Version Version { get; } = new(5, 0, 0);
-		public override Version RequiredExiledVersion { get; } = new(6,0,0);
+		public override Version Version { get; } = new Version(5, 6, 6);
+		public override Version RequiredExiledVersion { get; } = new Version(7,0,0);
 
 		public EventHandlers EventHandlers { get; private set; }
 		public NestingObjects.Npc Npc { get; private set; }
 		public NestingObjects.Playable Playable { get; private set; }
-		public List<Player> StopRagdollList { get; } = new();
+		public List<Player> StopRagdollList { get; } = new List<Player>();
 
 		public override void OnEnabled()
 		{

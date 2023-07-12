@@ -1,5 +1,6 @@
 namespace SCP_575.Playable
 {
+    using System;
     using System.Linq;
     using Exiled.Events.Handlers;
     using Exiled.Loader;
@@ -25,9 +26,15 @@ namespace SCP_575.Playable
         {
             if (Loader.Random.Next(100) <= _plugin.Config.PlayableConfig.Scp575.SpawnChance)
             {
-                Player? player = Player.Get(RoleTypeId.Scp106).FirstOrDefault();
-                if (player is null)
+                Player player = Player.Get(RoleTypeId.Scp106).FirstOrDefault();
+                try
+                {
+                    if (player is null) return;
+                }
+                catch (NullReferenceException e)
+                {
                     return;
+                }
 
                 _plugin.Config.PlayableConfig.Scp575.AddRole(player);
                 Disable();
