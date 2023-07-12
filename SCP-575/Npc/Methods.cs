@@ -191,7 +191,6 @@ namespace SCP_575.Npc
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
                         Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, true);
                     }
-                    else Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, true);
 
                 }
 
