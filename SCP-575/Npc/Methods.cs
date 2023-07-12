@@ -66,7 +66,7 @@ namespace SCP_575.Npc
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageLight, 33f, 33f);
+                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageLight, false, false);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceHeavy)
                     {
@@ -78,33 +78,33 @@ namespace SCP_575.Npc
                         }
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageHeavy, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageHeavy, false, false);
 
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceEntrance)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageEntrance, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageEntrance, false, false);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceSurface)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageSurface, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageSurface, false, false);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceOther)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Other);
                         isBlackout = true;
-                        if (!isOtherMessage) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        if (!isOtherMessage) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, false);
                         isOtherMessage = true;
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceUnspecified)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Unspecified);
                         isBlackout = true;
-                        if (!isOtherMessage) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        if (!isOtherMessage) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, false);
                         isOtherMessage = true;
                     }
                     if (!isBlackout && _plugin.Config.NpcConfig.EnableFacilityBlackout)
@@ -120,7 +120,7 @@ namespace SCP_575.Npc
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
-                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageFacility, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, false);
                         
 
                     }
@@ -200,17 +200,17 @@ namespace SCP_575.Npc
                             Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                             Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                             Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
-                            Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageFacility, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                            Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, false);
                         }
                     }
-                    else Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                    else Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, false);
 
                 }
 
                 // End Event
                 if (isBlackout)
                 {
-                    if (_plugin.Config.NpcConfig.Voice) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieKeter, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                    if (_plugin.Config.NpcConfig.Voice) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieKeter, false, false);
                     yield return Timing.WaitForSeconds(blackoutDur - _plugin.Config.NpcConfig.TimeBetweenSentenceAndStart);
                     Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageEnd, false, false);
                     yield return Timing.WaitForSeconds(8.0f);
