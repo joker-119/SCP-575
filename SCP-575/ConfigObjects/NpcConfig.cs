@@ -57,6 +57,12 @@ namespace SCP_575.ConfigObjects
         public string KilledBy { get; set; } = "SCP-575";
 
         // MESSAGES
+        [Description("Glitch chance during message per word in CASSIE sentence.")]
+        public float GlitchChance { get; private set; } = 10f;
+
+        [Description("Jam chance during message per word in CASSIE sentence.")]
+        public float JamChance { get; private set; } = 5f;
+
         [Description("Message said by Cassie if no blackout occurs")]
         public string CassieMessageWrong { get; set; } = ". I have prevented the system failure . .g5 Sorry for a .g3 . false alert .";
 

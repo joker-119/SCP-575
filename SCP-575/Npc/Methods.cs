@@ -40,7 +40,7 @@ namespace SCP_575.Npc
             {
                 bool isBlackout = false;
 
-                Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageStart, false, true);
+                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageStart, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
 
                 if (_plugin.Config.NpcConfig.FlickerLights)
                 {
@@ -55,7 +55,7 @@ namespace SCP_575.Npc
                 if (_plugin.Config.NpcConfig.RandomEvents) blackoutDur = (float)Loader.Random.NextDouble() * (_plugin.Config.NpcConfig.DurationMax - _plugin.Config.NpcConfig.DurationMin) + _plugin.Config.NpcConfig.DurationMin;
                 if (_plugin.Config.NpcConfig.EnableKeter) _plugin.EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
-                Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassiePostMessage, false, true);
+                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassiePostMessage, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                 //Per Zone
                 if (_plugin.Config.NpcConfig.UsePerRoomChances == false)
                 {
@@ -66,7 +66,7 @@ namespace SCP_575.Npc
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageLight, false, true);
+                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageLight, 33f, 33f);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceHeavy)
                     {
@@ -78,33 +78,33 @@ namespace SCP_575.Npc
                         }
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageHeavy, false, true);
+                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageHeavy, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
 
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceEntrance)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageEntrance, false, true);
+                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageEntrance, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceSurface)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                         isBlackout = true;
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageSurface, false, true);
+                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageSurface, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceOther)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Other);
                         isBlackout = true;
-                        if (!isOtherMessage) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, true);
+                        if (!isOtherMessage) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                         isOtherMessage = true;
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceUnspecified)
                     {
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Unspecified);
                         isBlackout = true;
-                        if (!isOtherMessage) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, true);
+                        if (!isOtherMessage) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                         isOtherMessage = true;
                     }
                     if (!isBlackout && _plugin.Config.NpcConfig.EnableFacilityBlackout)
@@ -120,8 +120,8 @@ namespace SCP_575.Npc
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, true);
-
+                        Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageFacility, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
+                        
 
                     }
 
@@ -200,17 +200,17 @@ namespace SCP_575.Npc
                             Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                             Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                             Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
-                            Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, true);
+                            Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageFacility, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                         }
                     }
-                    else Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, true);
+                    else Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageOther, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
 
                 }
 
                 // End Event
                 if (isBlackout)
                 {
-                    if (_plugin.Config.NpcConfig.Voice) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieKeter, false, false);
+                    if (_plugin.Config.NpcConfig.Voice) Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieKeter, _plugin.Config.NpcConfig.GlitchChance, _plugin.Config.NpcConfig.JamChance);
                     yield return Timing.WaitForSeconds(blackoutDur - _plugin.Config.NpcConfig.TimeBetweenSentenceAndStart);
                     Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageEnd, false, false);
                     yield return Timing.WaitForSeconds(8.0f);
