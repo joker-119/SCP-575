@@ -46,12 +46,18 @@ namespace SCP_575.Npc
 
         public void OnTriggerTesla(TriggeringTeslaEventArgs ev)
         {
-            if (TeslasDisabled) ev.IsAllowed = false;
+            if (TeslasDisabled)
+            {
+                ev.IsAllowed = false;
+            }
         }
 
         public void onTriggerNukeStart(ActivatingWarheadPanelEventArgs ev)
         {
-            if (NukeDisabled) ev.IsAllowed = false;
+            if (NukeDisabled)
+            {
+                ev.IsAllowed = false;
+            }
 
         }
 

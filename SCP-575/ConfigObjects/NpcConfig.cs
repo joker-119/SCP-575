@@ -41,6 +41,12 @@ namespace SCP_575.ConfigObjects
         [Description("Whether or not SCP-575's \"roar\" should happen after a blackout starts.")]
         public bool Voice { get; private set; } = true;
 
+        [Description("Flicker lights when the event starts.")]
+        public bool FlickerLights { get; private set; } = true;
+
+        [Description("The number of seconds a first flickering lasts.")]
+        public float FlickerLightsDuration { get; private set; } = 1.5f;
+
         [Description("Base damage per delay inflicted if EnableKeter is set to true.")]
         public float KeterDamage { get; private set; } = 10f;
 

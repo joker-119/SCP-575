@@ -41,6 +41,15 @@ namespace SCP_575.Npc
                 bool isBlackout = false;
 
                 Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageStart, false, true);
+
+                if (_plugin.Config.NpcConfig.FlickerLights)
+                {
+                    Map.TurnOffAllLights(_plugin.Config.NpcConfig.FlickerLightsDuration, ZoneType.Entrance);
+                    Map.TurnOffAllLights(_plugin.Config.NpcConfig.FlickerLightsDuration, ZoneType.Surface);
+                    Map.TurnOffAllLights(_plugin.Config.NpcConfig.FlickerLightsDuration, ZoneType.LightContainment);
+                    Map.TurnOffAllLights(_plugin.Config.NpcConfig.FlickerLightsDuration, ZoneType.HeavyContainment);
+                }
+
                 yield return Timing.WaitForSeconds(_plugin.Config.NpcConfig.TimeBetweenSentenceAndStart);
                 float blackoutDur = _plugin.Config.NpcConfig.DurationMax;
                 if (_plugin.Config.NpcConfig.RandomEvents) blackoutDur = (float)Loader.Random.NextDouble() * (_plugin.Config.NpcConfig.DurationMax - _plugin.Config.NpcConfig.DurationMin) + _plugin.Config.NpcConfig.DurationMin;
@@ -176,21 +185,25 @@ namespace SCP_575.Npc
                         }
 
                     }
-                    if (!isBlackout && _plugin.Config.NpcConfig.EnableFacilityBlackout)
+                    if (!isBlackout)
                     {
-                        isBlackout = true;
-                        if (_plugin.Config.NpcConfig.DisableTeslas) _plugin.EventHandlers.TeslasDisabled = true;
-                        if (_plugin.Config.NpcConfig.DisableNuke)
+                        if (_plugin.Config.NpcConfig.EnableFacilityBlackout)
                         {
-                            _plugin.EventHandlers.NukeDisabled = true;
-                            if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
+                            isBlackout = true;
+                            if (_plugin.Config.NpcConfig.DisableTeslas) _plugin.EventHandlers.TeslasDisabled = true;
+                            if (_plugin.Config.NpcConfig.DisableNuke)
+                            {
+                                _plugin.EventHandlers.NukeDisabled = true;
+                                if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
+                            }
+                            Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
+                            Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
+                            Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
+                            Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
+                            Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, true);
                         }
-                        Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
-                        Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
-                        Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
-                        Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
-                        Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, true);
                     }
+                    else Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageOther, false, true);
 
                 }
 
