@@ -211,7 +211,7 @@ namespace SCP_575.Npc
                 if (isBlackout)
                 {
                     if (_plugin.Config.NpcConfig.Voice) Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieKeter, false, false);
-                    yield return Timing.WaitForSeconds(blackoutDur - _plugin.Config.NpcConfig.TimeBetweenSentenceAndStart);
+                    yield return Timing.WaitForSeconds(blackoutDur);
                     Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageEnd, false, false);
                     yield return Timing.WaitForSeconds(8.0f);
                 }
