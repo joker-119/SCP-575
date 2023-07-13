@@ -19,8 +19,6 @@ namespace SCP_575.Npc
         {
             Server.RoundEnded += _plugin.Npc.EventHandlers.OnRoundEnd;
             Server.RoundStarted += _plugin.Npc.EventHandlers.OnRoundStart;
-            Player.TriggeringTesla += _plugin.Npc.EventHandlers.OnTriggerTesla;
-            Player.ActivatingWarheadPanel += _plugin.Npc.EventHandlers.onTriggerNukeStart;
             _plugin.Npc.EventHandlers.OnWaitingForPlayers();
         }
 
@@ -28,8 +26,6 @@ namespace SCP_575.Npc
         {
             Server.RoundEnded -= _plugin.Npc.EventHandlers.OnRoundEnd;
             Server.RoundStarted -= _plugin.Npc.EventHandlers.OnRoundStart;
-            Player.TriggeringTesla -= _plugin.Npc.EventHandlers.OnTriggerTesla;
-            Player.ActivatingWarheadPanel -= _plugin.Npc.EventHandlers.onTriggerNukeStart;
         }
 
         public IEnumerator<float> RunBlackoutTimer()
@@ -40,7 +36,7 @@ namespace SCP_575.Npc
             {
                 bool isBlackout = false;
 
-                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageStart, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassieMessageStart, _plugin.Config.NpcConfig.GlitchChance / 100, _plugin.Config.NpcConfig.JamChance / 100);
 
                 if (_plugin.Config.NpcConfig.FlickerLights)
                 {
@@ -55,7 +51,7 @@ namespace SCP_575.Npc
                 if (_plugin.Config.NpcConfig.RandomEvents) blackoutDur = (float)Loader.Random.NextDouble() * (_plugin.Config.NpcConfig.DurationMax - _plugin.Config.NpcConfig.DurationMin) + _plugin.Config.NpcConfig.DurationMin;
                 if (_plugin.Config.NpcConfig.EnableKeter) _plugin.EventHandlers.Coroutines.Add(Timing.RunCoroutine(Keter(blackoutDur), "keter"));
 
-                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassiePostMessage, _plugin.Config.NpcConfig.GlitchChance/100, _plugin.Config.NpcConfig.JamChance/100);
+                Exiled.API.Features.Cassie.GlitchyMessage(_plugin.Config.NpcConfig.CassiePostMessage, _plugin.Config.NpcConfig.GlitchChance / 100, _plugin.Config.NpcConfig.JamChance / 100);
                 //Per Zone
                 if (_plugin.Config.NpcConfig.UsePerRoomChances == false)
                 {
@@ -70,11 +66,17 @@ namespace SCP_575.Npc
                     }
                     if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceHeavy)
                     {
-                        if (_plugin.Config.NpcConfig.DisableTeslas) _plugin.EventHandlers.TeslasDisabled = true;
+                        if (_plugin.Config.NpcConfig.DisableTeslas)
+                        {
+                            foreach (Exiled.API.Features.TeslaGate tg in Exiled.API.Features.TeslaGate.List)
+                            {
+                                tg.CooldownTime = blackoutDur + 0.5f;
+                                tg.ForceTrigger();
+                            }
+                        }
                         if (_plugin.Config.NpcConfig.DisableNuke)
                         {
-                            _plugin.EventHandlers.NukeDisabled = true;
-                            if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
+                            if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Stop();
                         }
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
                         isBlackout = true;
@@ -110,18 +112,24 @@ namespace SCP_575.Npc
                     if (!isBlackout && _plugin.Config.NpcConfig.EnableFacilityBlackout)
                     {
                         isBlackout = true;
-                        if (_plugin.Config.NpcConfig.DisableTeslas) _plugin.EventHandlers.TeslasDisabled = true;
+                        if (_plugin.Config.NpcConfig.DisableTeslas)
+                        {
+                            foreach (Exiled.API.Features.TeslaGate tg in Exiled.API.Features.TeslaGate.List)
+                            {
+                                tg.CooldownTime = blackoutDur + 0.5f;
+                                tg.ForceTrigger();
+                            }
+                        }
                         if (_plugin.Config.NpcConfig.DisableNuke)
                         {
-                            _plugin.EventHandlers.NukeDisabled = true;
-                            if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
+                            if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Stop();
                         }
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.LightContainment);
                         Map.TurnOffAllLights(blackoutDur, ZoneType.HeavyContainment);
                         Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageFacility, false, false);
-                        
+
 
                     }
 
@@ -137,14 +145,14 @@ namespace SCP_575.Npc
                         {
                             if (((float)Loader.Random.NextDouble() * 100) < _plugin.Config.NpcConfig.ChanceHeavy)
                             {
-                                if (_plugin.Config.NpcConfig.DisableNuke && r.Type.ToString().ToLower().Contains("nuke"))
-                                {
-                                    _plugin.EventHandlers.NukeDisabled = true;
-                                    if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
-                                }
                                 if (_plugin.Config.NpcConfig.DisableTeslas && r.Type.ToString().ToLower().Contains("tesla"))
                                 {
-                                    _plugin.EventHandlers.TeslasDisabled = true;
+                                    r.TeslaGate.CooldownTime = blackoutDur+0.5f;
+                                    r.TeslaGate.ForceTrigger();
+                                }
+                                if (_plugin.Config.NpcConfig.DisableNuke && r.Type.ToString().ToLower().Contains("nuke"))
+                                {
+                                    if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Stop();
                                 }
                                 r.TurnOffLights(blackoutDur);
                                 isBlackout = true;
@@ -190,11 +198,17 @@ namespace SCP_575.Npc
                         if (_plugin.Config.NpcConfig.EnableFacilityBlackout)
                         {
                             isBlackout = true;
-                            if (_plugin.Config.NpcConfig.DisableTeslas) _plugin.EventHandlers.TeslasDisabled = true;
+                            if (_plugin.Config.NpcConfig.DisableTeslas)
+                            {
+                                foreach (Exiled.API.Features.TeslaGate tg in Exiled.API.Features.TeslaGate.List)
+                                {
+                                    tg.CooldownTime = blackoutDur + 0.5f;
+                                    tg.ForceTrigger();
+                                }
+                            }
                             if (_plugin.Config.NpcConfig.DisableNuke)
                             {
-                                _plugin.EventHandlers.NukeDisabled = true;
-                                if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Controller.CancelDetonation();
+                                if (Exiled.API.Features.Warhead.Controller.isActiveAndEnabled) Exiled.API.Features.Warhead.Stop();
                             }
                             Map.TurnOffAllLights(blackoutDur, ZoneType.Entrance);
                             Map.TurnOffAllLights(blackoutDur, ZoneType.Surface);
@@ -218,8 +232,15 @@ namespace SCP_575.Npc
                 else Exiled.API.Features.Cassie.Message(_plugin.Config.NpcConfig.CassieMessageWrong, false, false);
 
                 Timing.KillCoroutines("keter");
-                _plugin.EventHandlers.TeslasDisabled = false;
-                _plugin.EventHandlers.NukeDisabled = false;
+
+                if (_plugin.Config.NpcConfig.DisableTeslas)
+                {
+                    foreach (Exiled.API.Features.TeslaGate tg in Exiled.API.Features.TeslaGate.List)
+                    {
+                        tg.ForceTrigger();
+                        tg.CooldownTime = 0.5f;
+                    }
+                }
                 if (_plugin.Config.NpcConfig.RandomEvents)
                     yield return Timing.WaitForSeconds(Loader.Random.Next(_plugin.Config.NpcConfig.DelayMin, _plugin.Config.NpcConfig.DelayMax));
                 else

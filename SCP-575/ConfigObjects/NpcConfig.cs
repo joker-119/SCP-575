@@ -11,7 +11,7 @@ namespace SCP_575.ConfigObjects
         [Description("Whether or not tesla gates should be disabled during blackouts.")]
         public bool DisableTeslas { get; private set; } = true;
 
-        [Description("Whether or not nuke should be disabled during blackouts.")]
+        [Description("Whether or not nuke detonation should be cancelled during blackouts.")]
         public bool DisableNuke { get; private set; } = true;
 
         [Description("The delay before the first event of each round, in seconds.")]

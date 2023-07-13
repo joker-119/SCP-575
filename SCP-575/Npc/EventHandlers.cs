@@ -2,22 +2,17 @@ namespace SCP_575.Npc
 {
     using System.Collections.Generic;
     using Exiled.API.Features;
-    using Exiled.Events.EventArgs.Player;
     using Exiled.Events.EventArgs.Server;
     using Exiled.Events.Handlers;
     using Exiled.Loader;
     using MEC;
-    using PluginAPI.Events;
 
     public class EventHandlers
     {
         private readonly Plugin _plugin;
         public EventHandlers(Plugin plugin) => _plugin = plugin;
 
-        public bool TeslasDisabled;
-        public bool NukeDisabled;
         public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
-
         public void OnRoundStart()
         {
             if (Loader.Random.Next(100) < _plugin.Config.NpcConfig.SpawnChance)
@@ -26,10 +21,12 @@ namespace SCP_575.Npc
 
         public void OnRoundEnd(RoundEndedEventArgs ev)
         {
-            foreach (CoroutineHandle handle in Coroutines)
-                Timing.KillCoroutines(handle);
-            TeslasDisabled = false;
-            NukeDisabled = false;
+            foreach (CoroutineHandle handle in Coroutines) Timing.KillCoroutines(handle);
+            if (_plugin.Config.NpcConfig.DisableTeslas)
+            {
+                foreach (TeslaGate tg in TeslaGate.List) tg.CooldownTime = 0.5f;
+            }
+
             Coroutines.Clear();
             _plugin.Npc.Methods.Disable();
         }
@@ -37,28 +34,13 @@ namespace SCP_575.Npc
         // This shouldn't be necessary, but incase someone force-restarts a round, ig.
         public void OnWaitingForPlayers()
         {
-            foreach (CoroutineHandle handle in Coroutines)
-                Timing.KillCoroutines(handle);
-            TeslasDisabled = false;
-            NukeDisabled = false;
+            foreach (CoroutineHandle handle in Coroutines) Timing.KillCoroutines(handle);
+            if (_plugin.Config.NpcConfig.DisableTeslas)
+            {
+                foreach (TeslaGate tg in TeslaGate.List) tg.ActivationTime = 0.5f;
+            }
+
             Coroutines.Clear();
-        }
-
-        public void OnTriggerTesla(TriggeringTeslaEventArgs ev)
-        {
-            if (TeslasDisabled)
-            {
-                ev.IsAllowed = false;
-            }
-        }
-
-        public void onTriggerNukeStart(ActivatingWarheadPanelEventArgs ev)
-        {
-            if (NukeDisabled)
-            {
-                ev.IsAllowed = false;
-            }
-
         }
 
     }
