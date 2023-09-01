@@ -7,6 +7,7 @@ namespace SCP_575.Playable
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Attributes;
+    using Exiled.API.Features.Doors;
     using Exiled.API.Features.Roles;
     using Exiled.API.Features.Spawn;
     using Exiled.CustomRoles.API.Features;
@@ -192,7 +193,7 @@ namespace SCP_575.Playable
                 Log.Warn($"Adding {ev.Player.Nickname} to stop doll list.");
                 Plugin.Singleton.StopRagdollList.Add(ev.Player);
                 RagdollData info = new(ev.Player.ReferenceHub, ev.DamageHandler.Base, Role, ev.Player.Position,
-                    Quaternion.Euler(ev.Player.Rotation), ev.Player.Nickname, NetworkTime.time);
+                    ev.Player.Rotation, ev.Player.Nickname, NetworkTime.time);
                 Ragdoll.CreateAndSpawn(info);
             }
         }
