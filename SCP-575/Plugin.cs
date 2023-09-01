@@ -15,8 +15,7 @@ namespace SCP_575
 		public override string Author { get; } = "Joker119";
 		public override string Name { get; } = "SCP-575";
 		public override string Prefix { get; } = "575";
-		public override Version Version { get; } = new(5, 0, 0);
-		public override Version RequiredExiledVersion { get; } = new(7,0,0);
+		public override Version RequiredExiledVersion { get; } = new(8,0,0);
 
 		public EventHandlers EventHandlers { get; private set; }
 		public NestingObjects.Npc Npc { get; private set; }
