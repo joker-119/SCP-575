@@ -13,7 +13,8 @@ namespace SCP_575
         public EventHandlers(Plugin plugin) => _plugin = plugin;
 
         public bool TeslasDisabled = false;
-        public List<CoroutineHandle> Coroutines = new();
+        public bool NukeDisabled = false;
+        public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
 
         public void OnSpawningRagdoll(SpawningRagdollEventArgs ev)
         {

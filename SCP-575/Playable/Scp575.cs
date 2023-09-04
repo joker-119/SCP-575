@@ -30,7 +30,7 @@ namespace SCP_575.Playable
     [CustomRole(RoleTypeId.Scp106)]
     public class Scp575 : CustomRole
     {
-        public readonly Dictionary<Player, int> ConsumptionStacks = new();
+        public readonly Dictionary<Player, int> ConsumptionStacks = new Dictionary<Player, int>();
 
         public override uint Id { get; set; } = 12;
         public override RoleTypeId Role { get; set; } = RoleTypeId.Scp106;
@@ -63,26 +63,26 @@ namespace SCP_575.Playable
         [Description("Whether or not 575 is teleported to a random HCZ room when flashbanged.")]
         public bool TeleportOnFlashed { get; set; } = true;
 
-        public override SpawnProperties SpawnProperties { get; set; } = new()
+        public override SpawnProperties SpawnProperties { get; set; } = new SpawnProperties()
         {
             RoleSpawnPoints = new List<RoleSpawnPoint>
             {
-                new()
+                new RoleSpawnPoint()
                 {
                     Role = RoleTypeId.Scp173,
                     Chance = 10,
                 },
-                new()
+                new RoleSpawnPoint()
                 {
                     Role = RoleTypeId.Scp079,
                     Chance = 20,
                 },
-                new()
+                new RoleSpawnPoint()
                 {
                     Role = RoleTypeId.Scp049,
                     Chance = 30,
                 },
-                new()
+                new RoleSpawnPoint()
                 {
                     Role = RoleTypeId.Scp106,
                     Chance = 100,
@@ -90,12 +90,12 @@ namespace SCP_575.Playable
             }
         };
 
-        public override List<CustomAbility> CustomAbilities { get; set; } = new()
+        public override List<CustomAbility> CustomAbilities { get; set; } = new List<CustomAbility>()
         {
             new BlackoutAbility(),
         };
 
-        private List<CoroutineHandle> _coroutines = new();
+        private List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
 
         protected override void RoleAdded(Player player)
         {
@@ -192,8 +192,10 @@ namespace SCP_575.Playable
             {
                 Log.Warn($"Adding {ev.Player.Nickname} to stop doll list.");
                 Plugin.Singleton.StopRagdollList.Add(ev.Player);
+
                 RagdollData info = new(ev.Player.ReferenceHub, ev.DamageHandler.Base, Role, ev.Player.Position,
                     ev.Player.Rotation, ev.Player.Nickname, NetworkTime.time);
+
                 Ragdoll.CreateAndSpawn(info);
             }
         }
@@ -323,16 +325,25 @@ namespace SCP_575.Playable
             player.ShowHint($"You now have {ConsumptionStacks[player]} stacks of Consumption!");
         }
 
-        private IEnumerator<float> Invisibility(FpcRole? role)
+        private IEnumerator<float> Invisibility(FpcRole role) //Nullable type? FpcRole?
         {
             Log.Debug($"{nameof(Scp575)}: {nameof(Invisibility)}: Starting 268 loop for {role?.Owner.Nickname}");
-            for (;;)
+            for (; ; )
             {
-                if (role is null)
+                try
+                {
+                    if (role is null)
+                    {
+                        Log.Error($"SCP-575 FPC role is null.");
+                        break;
+                    }
+                }
+                catch (NullReferenceException e)
                 {
                     Log.Error($"SCP-575 FPC role is null.");
                     break;
                 }
+
 
                 foreach (Player ply in Player.List)
                 {
@@ -350,7 +361,7 @@ namespace SCP_575.Playable
                 if (!role.Owner.CurrentRoom.AreLightsOff)
                     role.Owner.CurrentRoom.TurnOffLights(10f);
 
-                yield return Timing.WaitForSeconds(0.25f);
+                yield return Timing.WaitForSeconds(0.27f);
             }
         }
     }
