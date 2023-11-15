@@ -10,7 +10,7 @@ namespace SCP_575.Playable
 
     public class BlackoutAbility : ActiveAbility
     {
-        private readonly List<CoroutineHandle> _coroutines = new();
+        private readonly List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
         public override string Name { get; set; } = "Blackout";
 
         public override string Description { get; set; } =
@@ -65,8 +65,12 @@ namespace SCP_575.Playable
 
         private static bool HasLightSource(Player player)
         {
-            return player.CurrentItem is Flashlight { Active: true } ||
-                   player.HasFlashlightModuleEnabled;
+            if (player.CurrentItem is Flashlight)
+            {
+                Flashlight temp = (Flashlight) player.CurrentItem;
+                return temp.Active;
+            }
+            return player.HasFlashlightModuleEnabled;
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1500
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCP-575", "SCP-575\SCP-575.csproj", "{1F91DFB4-F72E-4308-98F8-A2444EB7FF95}"
 EndProject
 Global
@@ -12,5 +15,11 @@ Global
 		{1F91DFB4-F72E-4308-98F8-A2444EB7FF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F91DFB4-F72E-4308-98F8-A2444EB7FF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F91DFB4-F72E-4308-98F8-A2444EB7FF95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B1C54697-1D15-4CA9-8975-318AB3EBA323}
 	EndGlobalSection
 EndGlobal
